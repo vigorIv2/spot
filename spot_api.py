@@ -38,18 +38,30 @@ users = [
     }
 ]
 
-tasks = [
+spots = [
     {
-        'id': 1,
-        'title': u'Buy groceries',
-        'description': u'Milk, Cheese, Pizza, Fruit, Tylenol', 
-        'done': False
+        'id': "blah",
+        'uid': "blh", 
+        'loc': {
+            "lt" : 125.12,
+            "lg" : 23.234,
+            "al" : 3434.12
+            },
+        'spot' : [1,2,3,4],
+        'deg' : 12.12,
+        'at': '2017-01-02 00:02:03', 
     },
     {
-        'id': 2,
-        'title': u'Learn Python',
-        'description': u'Need to find a good Python tutorial on the web', 
-        'done': False
+        'id': "blah2",
+        'uid': "blh", 
+        'loc': {
+            "lt" : 145.12,
+            "lg" : 34.234,
+            "al" : 34.12
+            },
+        'spot' : [3,4],
+        'deg' : 1.2,
+        'at': '2017-01-02 00:02:03', 
     }
 ]
 
@@ -65,32 +77,24 @@ def make_public_user(user):
                 new_user[field] = user[field]
     return new_user
 
-def make_public_task(task):
-    new_task = {}
-    for field in task:
+def make_public_spot(spot):
+    new_spot = {}
+    for field in spot:
         if field == 'id':
-            new_task['uri'] = url_for('get_task', task_id = task['id'], _external = True)
+            new_spot['uri'] = url_for('create_spot', id = spot['id'], _external = True)
         else:
-            new_task[field] = task[field]
-    return new_task
-    
-@app.route('/spot/api/v1.0/tasks', methods = ['GET'])
-@auth.login_required
-def get_tasks():
-    return jsonify( { 'tasks': map(make_public_task, tasks) } )
+            new_spot[field] = spot[field]
+    return new_spot
 
 @app.route('/spot/api/v1.0/users', methods = ['GET'])
 @auth.login_required
 def get_users():
     return jsonify( { 'users': map(make_public_user, users) } )
 
-@app.route('/spot/api/v1.0/tasks/<int:task_id>', methods = ['GET'])
+@app.route('/spot/api/v1.0/spots', methods = ['GET'])
 @auth.login_required
-def get_task(task_id):
-    task = filter(lambda t: t['id'] == task_id, tasks)
-    if len(task) == 0:
-        abort(404)
-    return jsonify( { 'task': make_public_task(task[0]) } )
+def get_spots():
+    return jsonify( { 'spots': map(make_public_spot, spots) } )
 
 @app.route('/spot/api/v1.0/users/<string:user_id>', methods = ['GET'])
 @auth.login_required
@@ -99,21 +103,6 @@ def get_user(user_id):
     if len(user) == 0:
         abort(404)
     return jsonify( { 'user': make_public_user(user[0]) } )
-
-
-@app.route('/spot/api/v1.0/tasks', methods = ['POST'])
-@auth.login_required
-def create_task():
-    if not request.json or not 'title' in request.json:
-        abort(400)
-    task = {
-        'id': tasks[-1]['id'] + 1,
-        'title': request.json['title'],
-        'description': request.json.get('description', ""),
-        'done': False
-    }
-    tasks.append(task)
-    return jsonify( { 'task': make_public_task(task) } ), 201
 
 @app.route('/spot/api/v1.0/register', methods = ['POST'])
 @auth.login_required
@@ -129,34 +118,54 @@ def create_user():
     users.append(user)
     return jsonify( { 'user': make_public_user(user) } ), 201
 
-@app.route('/spot/api/v1.0/tasks/<int:task_id>', methods = ['PUT'])
+@app.route('/spot/api/v1.0/spot', methods = ['POST'])
 @auth.login_required
-def update_task(task_id):
-    task = filter(lambda t: t['id'] == task_id, tasks)
-    if len(task) == 0:
-        abort(404)
-    if not request.json:
+def create_spot():
+    if not request.json or not 'uid' in request.json:
         abort(400)
-    if 'title' in request.json and type(request.json['title']) != unicode:
+    if not request.json or not 'loc' in request.json:
         abort(400)
-    if 'description' in request.json and type(request.json['description']) is not unicode:
+    if not request.json or not 'spot' in request.json:
         abort(400)
-    if 'done' in request.json and type(request.json['done']) is not bool:
+    if not request.json or not 'deg' in request.json:
         abort(400)
-    task[0]['title'] = request.json.get('title', task[0]['title'])
-    task[0]['description'] = request.json.get('description', task[0]['description'])
-    task[0]['done'] = request.json.get('done', task[0]['done'])
-    return jsonify( { 'task': make_public_task(task[0]) } )
-    
-@app.route('/spot/api/v1.0/tasks/<int:task_id>', methods = ['DELETE'])
+    spot = {
+        'id': "h2",
+        'uid': request.json['uid'], 
+        'loc': request.json['loc'],
+        'spot' : request.json['spot'],
+        'deg' : request.json['deg'],
+        'at': time.time(),
+    }
+    spots.append(spot)
+    return jsonify( { 'spot': make_public_spot(spot) } ), 201
+
+@app.route('/spot/api/v1.0/take', methods = ['POST'])
 @auth.login_required
-def delete_task(task_id):
-    task = filter(lambda t: t['id'] == task_id, tasks)
-    if len(task) == 0:
-        abort(404)
-    tasks.remove(task[0])
-    return jsonify( { 'result': True } )
-    
+def take_spot():
+    if not request.json or not 'uid' in request.json:
+        abort(400)
+    if not request.json or not 'loc' in request.json:
+        abort(400)
+    if not request.json or not 'spot' in request.json:
+        abort(400)
+    spot = {
+        'id': "h2",
+        'uid': request.json['uid'], 
+        'loc': request.json['loc'],
+        'spot' : request.json['spot'],
+        'at': time.time(),
+    }
+    spots.append(spot)
+    return jsonify( { 'spot': make_public_spot(spot) } ), 201
+
+@app.route('/spot/api/v1.0/locate', methods = ['POST'])
+@auth.login_required
+def get_locate():
+    if not request.json or not 'loc' in request.json:
+        abort(400)
+    return jsonify( { 'spots': map(make_public_spot, spots) } )
+
 if __name__ == '__main__':
 #    app.run(debug = True)
     import logging, logging.config, yaml

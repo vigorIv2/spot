@@ -1,0 +1,4 @@
+#!/bin/bash
+PW=`pwd`
+nohup ${PW}/spot_api.py &
+echo "Spot Started pid=$!"
