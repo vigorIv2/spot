@@ -27,14 +27,19 @@ def not_found(error):
 
 users = [
     {
-        'id': "blah",
+        'id': "olga",
         'wallet': '0x12341q42134khjsagdf2345235',
         'created_at': '2017-01-02 00:02:03', 
     },
     {
-        'id': "blah2",
+        'id': "igor",
+        'wallet': '0x12341q42134khjsagdf2345235',
+        'created_at': '2017-01-03 00:02:03', 
+    },
+    {
+        'id': "nastya",
         'wallet': '0x12341412134khjsagdf2345235',
-        'created_at': '2017-11-02 00:02:03', 
+        'created_at': '2017-11-04 00:02:03', 
     }
 ]
 

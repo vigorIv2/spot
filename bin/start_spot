@@ -1,4 +1,6 @@
 #!/bin/bash
+cd /home/debian/spot
+killall spot_api.py
 PW=`pwd`
 nohup ${PW}/spot_api.py &
 echo "Spot Started pid=$!"
