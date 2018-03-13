@@ -1,0 +1,21 @@
+Register new user:
+curl -i -H "Content-Type: application/json" -u testuser:XxXxXx  -X POST -d '{"id":"myself"}' http://spot.selfip.com:5000/spot/api/v1.0/register
+
+Get user info:
+curl -i -u testuser:XxXxXx http://spot.selfip.com:5000/spot/api/v1.0/users/myself
+
+Get all the users (EARLY DEBUG ONLY, will be removed in first ALPHA version):
+curl -i -u testuser:XxXxXx http://spot.selfip.com:5000/spot/api/v1.0/users
+
+Report parking spot as available:
+curl -i -H "Content-Type: application/json" -u testuser:XxXxXx  -X POST -d '{"uid":"b5","loc":{"lt":3.4,"lg":6.7,"al":5.9},"spot":[2,3,4],"deg":"123.45"}' http://spot.selfip.com:5000/spot/api/v1.0/spot
+
+List all currently available spots (EARLY DEBUG ONLY, will be removed in first ALPHA version) :
+curl -i -u testuser:XxXxXx  -X GET http://spot.selfip.com:5000/spot/api/v1.0/spots
+
+
+Locate a parking spot near given coordinates (in early debug version returns all of them) :
+curl -i -H "Content-Type: application/json" -u testuser:XxXxXx  -X POST -d '{"loc":{"lt":3.4,"lg":6.7,"al":5.9}}' http://spot.selfip.com:5000/spot/api/v1.0/locate
+
+Take (occupy) given parking spot and pay a tip (token) for it, in early debug version does not remove from available pool:
+curl -i -H "Content-Type: application/json" -u testuser:XxXxXx  -X POST -d '{"uid":"b5","loc":{"lt":3.4,"lg":6.7,"al":5.9},"spot":[2,4],"deg":"123.45"}' http://spot.selfip.com:5000/spot/api/v1.0/take
