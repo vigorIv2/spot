@@ -1,0 +1,8 @@
+cockroach start \
+--insecure \
+--store=node2 \
+--host=roachdbn2 \
+--port=26257 \
+--http-port=8080 \
+--join=roachdb:26257
+

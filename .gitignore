@@ -1,3 +1,4 @@
 flask
 nohup.out
 errors.log
+cockroach-data/
