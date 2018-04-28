@@ -14,7 +14,8 @@ def get_password(username):
 
 @auth.error_handler
 def unauthorized():
-    return make_response(jsonify( { 'error': 'Unauthorized access' } ), 403)
+#    return make_response(jsonify( { 'error': 'Unauthorized access' } ), 403)
+    return make_response(jsonify( { 'error': 'Unauthorized access' } ), 401)
     # return 403 instead of 401 to prevent browsers from displaying the default auth dialog
     
 @app.errorhandler(400)
@@ -44,29 +45,21 @@ users = [
 ]
 
 spots = [
-    {
-        'id': "blah",
-        'uid': "blh", 
-        'loc': {
-            "lt" : 125.12,
-            "lg" : 23.234,
-            "al" : 3434.12
-            },
-        'spot' : [1,2,3,4],
-        'deg' : 12.12,
-        'at': '2017-01-02 00:02:03', 
-    },
-    {
-        'id': "blah2",
-        'uid': "blh", 
-        'loc': {
-            "lt" : 145.12,
-            "lg" : 34.234,
-            "al" : 34.12
-            },
-        'spot' : [3,4],
-        'deg' : 1.2,
-        'at': '2017-01-02 00:02:03', 
+   {
+      "at": 1522890284.214637, 
+      "deg": 126, 
+      "loc": {
+        "al": 0, 
+        "lg": -117.7876202, 
+        "lt": 33.66965465
+      }, 
+      "spot": [
+        1, 
+        4, 
+        2
+      ], 
+      "uid": "daniel", 
+      "uri": "http://spot.selfip.com:65000/spot/api/v1.0/spot?id=h2"
     }
 ]
 
@@ -99,7 +92,8 @@ def get_users():
 @app.route('/spot/api/v1.0/spots', methods = ['GET'])
 @auth.login_required
 def get_spots():
-    return jsonify( { 'spots': map(make_public_spot, spots) } )
+    sorted_spots=sorted(spots, key=lambda k: k['at'], reverse=True)
+    return jsonify( { 'spots': map(make_public_spot, sorted_spots) } )
 
 @app.route('/spot/api/v1.0/users/<string:user_id>', methods = ['GET'])
 @auth.login_required
@@ -141,6 +135,7 @@ def create_spot():
         'spot' : request.json['spot'],
         'deg' : request.json['deg'],
         'at': time.time(),
+        'ct': request.json['ct'],
     }
     spots.append(spot)
     return jsonify( { 'spot': make_public_spot(spot) } ), 201
@@ -160,6 +155,7 @@ def take_spot():
         'loc': request.json['loc'],
         'spot' : request.json['spot'],
         'at': time.time(),
+        'ct': request.json['ct'],
     }
     spots.append(spot)
     return jsonify( { 'spot': make_public_spot(spot) } ), 201
@@ -167,9 +163,10 @@ def take_spot():
 @app.route('/spot/api/v1.0/locate', methods = ['POST'])
 @auth.login_required
 def get_locate():
+    sorted_spots=sorted(spots, key=lambda k: k['at'], reverse=True)
     if not request.json or not 'loc' in request.json:
         abort(400)
-    return jsonify( { 'spots': map(make_public_spot, spots) } )
+    return jsonify( { 'spots': map(make_public_spot, sorted_spots) } )
 
 if __name__ == '__main__':
 #    app.run(debug = True)
