@@ -1,1 +1,1 @@
-nohup ./bin/cockroach_node2 &
+nohup ./bin/cockroach_node2 > node2_nohup.out  &

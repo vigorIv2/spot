@@ -2,3 +2,8 @@ flask
 nohup.out
 errors.log
 cockroach-data/
+node0_nohup.out
+node3/
+node3_nohup.out
+node4/
+node4_nohup.out
