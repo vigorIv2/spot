@@ -1,5 +1,5 @@
 #!/bin/bash
-cd /home/debian/spot
+cd /home/ubuntu/spot
 killall spot_api.py
 PW=`pwd`
 nohup ${PW}/spot_api.py &
