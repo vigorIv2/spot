@@ -3,6 +3,28 @@ from flask import Flask, jsonify, abort, request, make_response, url_for
 import time
 from flask_httpauth import HTTPBasicAuth
 
+import json
+import psycopg2
+import requests
+import time
+
+def openConn() :
+    global conn
+    global cur
+    conn = psycopg2.connect(database="huhula", user="root", host="roachdb", port=26257)
+    conn.set_session(autocommit=True)
+    cur = conn.cursor()
+
+def getUserID(user) :
+    cur.execute("SELECT id FROM users WHERE userhash = '" + user + "'")
+    return cur.fetchone()[0]
+
+def insertSpot(informer,informed_at,azimuth,altitude,longitude,latitude,spots) :
+    informer_id=getUserID("strix")
+    cur.execute("INSERT INTO huhula.spots(informer_id,informed_at,azimuth,altitude,longitude,latitude,spots) values(%s,%s,%s,%s,%s,%s,%s)",
+            (informer_id,informed_at,azimuth,altitude,longitude,latitude,spots))
+
+
 app = Flask(__name__, static_url_path = "")
 auth = HTTPBasicAuth()
 
@@ -138,6 +160,12 @@ def create_spot():
         'ct': request.json['ct'],
     }
     spots.append(spot)
+    openConn()
+    insertSpot(request.json['uid'],time.time(),request.json['deg'],request.json['loc']['al'],
+            request.json['loc']['lg'],request.json['loc']['lt'],request.json['spot'])
+
+    cur.close()
+    conn.close()    
     return jsonify( { 'spot': make_public_spot(spot) } ), 201
 
 @app.route('/spot/api/v1.0/take', methods = ['POST'])

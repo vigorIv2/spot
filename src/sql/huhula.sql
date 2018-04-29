@@ -10,6 +10,13 @@ CREATE TABLE huhula.users(
 );  
 
 insert into huhula.users(userhash) values('patient zero');
+insert into huhula.users(userhash) values('strix');
+insert into huhula.users(userhash) values('owl');
+insert into huhula.users(userhash) values('olga');
+insert into huhula.users(userhash) values('daniel');
+insert into huhula.users(userhash) values('Ivan');
+insert into huhula.users(userhash) values('Igor');
+insert into huhula.users(userhash) values('Vladimir');
 -- drop TABLE huhula.spots;
 
 CREATE TABLE huhula.spots(
