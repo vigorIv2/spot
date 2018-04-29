@@ -1,4 +1,4 @@
-#!/Users/ivasilchikov/spot/flask/bin/python
+#!/home/ubuntu/spot/flask/bin/python
 
 import sys
 import getopt
