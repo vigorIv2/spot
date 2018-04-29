@@ -10,4 +10,8 @@ node_modules/
 scripts/
 truffle-config.js
 truffle.js
-
+node0_nohup.out
+node3/
+node3_nohup.out
+node4/
+node4_nohup.out

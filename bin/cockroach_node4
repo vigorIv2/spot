@@ -1,8 +1,8 @@
 cockroach start \
 --insecure \
---store=node3 \
+--store=node4 \
 --host=192.168.0.69 \
---port=26258 \
---http-port=8081 \
+--port=26259 \
+--http-port=8082 \
 --join=roachdb:26257
 
