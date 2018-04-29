@@ -2,3 +2,12 @@ flask
 nohup.out
 errors.log
 cockroach-data/
+.env
+build/
+flaskexit/
+flow-typed/
+node_modules/
+scripts/
+truffle-config.js
+truffle.js
+
