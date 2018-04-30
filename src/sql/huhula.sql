@@ -34,6 +34,8 @@ CREATE TABLE huhula.spots(
   compaint string null
 );
 
+alter table huhula.spots add column client_at int default 0;
+
 insert into huhula.spots(informer_id,informed_at,azimuth,altitude,longitude,latitude,spot) values('e732e330-ad88-4e28-bd94-70e0cedb9952',12345,123.45678,1.23,3.45,6.78,2);
 
 -- drop view huhula.recentspots;
@@ -41,9 +43,9 @@ insert into huhula.spots(informer_id,informed_at,azimuth,altitude,longitude,lati
 CREATE VIEW huhula.recentspots (id, azimuth, altitude, longitude, latitude, spot, age)
   AS SELECT sp.id, sp.azimuth, sp.altitude, sp.longitude, sp.latitude, sp.spot, age(sp.inserted_at) as age
   FROM huhula.spots as sp 
-  where taker_id is null and age(sp.inserted_at) < INTERVAL '1h2m3s4ms5us6ns'
-  order by age(sp.inserted_at)
-  limit 10;
+  where taker_id is null and age(sp.inserted_at) < INTERVAL '2h1m1s1ms1us6ns'
+  order by age(sp.inserted_at) 
+  limit 30;
 
 
     
