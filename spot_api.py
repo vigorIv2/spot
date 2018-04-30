@@ -18,10 +18,10 @@ def getUserID(user) :
 	cur.execute("SELECT id FROM users WHERE userhash = '" + user + "'")
 	return cur.fetchone()[0]
 
-def insertSpot(informer,informed_at,azimuth,altitude,longitude,latitude,spot) :
+def insertSpot(informer,informed_at,azimuth,altitude,longitude,latitude,spot,client_at) :
 	informer_id=getUserID("strix")
-	cur.execute("INSERT INTO huhula.spots(informer_id,informed_at,azimuth,altitude,longitude,latitude,spot) values(%s,%s,%s,%s,%s,%s,%s)",
-            (informer_id,informed_at,azimuth,altitude,longitude,latitude,spot))
+	cur.execute("INSERT INTO huhula.spots(informer_id,informed_at,azimuth,altitude,longitude,latitude,spot,client_at) values(%s,%s,%s,%s,%s,%s,%s,%s)",
+            (informer_id,informed_at,azimuth,altitude,longitude,latitude,spot,client_at))
 
 
 app = Flask(__name__, static_url_path = "")
@@ -162,7 +162,7 @@ def create_spot():
     openConn()
     for spt in request.json['spot']:
     	insertSpot(request.json['uid'],int(round(time.time() * 1000)),request.json['deg'],request.json['loc']['al'],
-            request.json['loc']['lg'],request.json['loc']['lt'],spt)
+            request.json['loc']['lg'],request.json['loc']['lt'],spt,request.json['ct'])
 
     cur.close()
     conn.close()    
