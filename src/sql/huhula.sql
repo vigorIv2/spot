@@ -40,12 +40,23 @@ insert into huhula.spots(informer_id,informed_at,azimuth,altitude,longitude,lati
 
 -- drop view huhula.recentspots;
 
-CREATE VIEW huhula.recentspots (id, azimuth, altitude, longitude, latitude, spot, age)
-  AS SELECT sp.id, sp.azimuth, sp.altitude, sp.longitude, sp.latitude, sp.spot, age(sp.inserted_at) as age
-  FROM huhula.spots as sp 
-  where taker_id is null and age(sp.inserted_at) < INTERVAL '2h1m1s1ms1us6ns'
-  order by age(sp.inserted_at) 
-  limit 30;
+CREATE VIEW huhula.recentspots (id, spot, age, dist, latitude, longitude) AS 
+	select id, spot, age, sqrt(df*df + dl*dl) * 6371e3 as dist, latitude, longitude from (
+		select sp.id, sp.spot, age(sp.inserted_at) as age, (cast(longitude as float)*pi()/180 - -117.72369671*pi()/180) * cos((cast(latitude as float)*pi()/180 + 33.57830762*pi()/180)/2) as dl,
+		(cast(latitude as float)*pi()/180 - 33.57830762*pi()/180) as df, latitude, longitude from huhula.spots as sp   
+		where taker_id is null -- and age(sp.inserted_at) < INTERVAL '2d2h1m1s1ms1us6ns'
+		order by age(sp.inserted_at) 
+  		) order by  sqrt(df*df + dl*dl) * 6371e3 
+  		limit 10
 
+select * from huhula.recentspots;
 
+select sqrt(df*df + dl*dl) * 6371e3 as dm, latitude, longitude  from (
+select (cast(longitude as float)*pi()/180 - -117.72369671*pi()/180) * cos((cast(latitude as float)*pi()/180 + 33.57830762*pi()/180)/2) as dl,
+
+(cast(latitude as float)*pi()/180 - 33.57830762*pi()/180) as df, latitude, longitude from spots
+
+) 
+-- where round(latitude,4) = 33.5783 and round(longitude,4)=-117.7237
+order by  sqrt(df*df + dl*dl) * 6371e3 
     
