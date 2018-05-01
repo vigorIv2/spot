@@ -4,7 +4,7 @@ from flask import Flask, jsonify, abort, request, make_response, url_for
 import time
 from flask_httpauth import HTTPBasicAuth
 
-import json
+# import json
 import psycopg2
 
 def openConn():
@@ -16,10 +16,22 @@ def openConn():
 
 def getUserID(user) :
 	cur.execute("SELECT id FROM users WHERE userhash = '" + user + "'")
-	return cur.fetchone()[0]
+	row=cur.fetchone()
+	if row:
+		return row[0]
+	else:
+		return None
+
+def newUser(user) :
+	cur.execute("INSERT INTO huhula.users(userhash) values(%s)",(user,))
+
 
 def insertSpot(informer,informed_at,azimuth,altitude,longitude,latitude,spot,client_at) :
-	informer_id=getUserID("strix")
+	informer_id=getUserID(informer)
+	if ( informer_id is None ) :
+		newUser(informer)
+		informer_id=getUserID(informer)
+
 	cur.execute("INSERT INTO huhula.spots(informer_id,informed_at,azimuth,altitude,longitude,latitude,spot,client_at) values(%s,%s,%s,%s,%s,%s,%s,%s)",
             (informer_id,informed_at,azimuth,altitude,longitude,latitude,spot,client_at))
 
