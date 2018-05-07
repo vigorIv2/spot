@@ -1,0 +1,30 @@
+apt-get install cc    
+apt-get install gcc    
+apt-get install git    
+apt-get install htop    
+apt-get install iperf    
+apt-get install libpq-dev    
+apt-get install pip    
+apt-get install python-dev    
+apt-get install python-pip    
+apt-get install vim git curl  
+
+sudo apt-get install autoconf   
+sudo apt-get install cmake   
+sudo apt-get install golang   
+sudo apt-get install libncurses-dev   
+sudo apt-get install python-yaml   
+flask/bin/pip install flask    
+flask/bin/pip install flask-httpauth    
+flask/bin/pip install flask-yaml    
+flask/bin/pip install psycopg2    
+flask/bin/pip install python-yaml    
+flask/bin/pip install pyyaml    
+flask/bin/pip install yaml    
+flask/bin/pip install yaml-1.3    
+flask/bin/pip install ycl    
+flask/bin/pip pip search yaml   
+flask/bin/pip search yaml    
+pip install flask_httpauth    
+sudo pip install flask_httpauth   
+sudo pip install virtualenv   

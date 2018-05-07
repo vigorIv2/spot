@@ -1,6 +1,5 @@
 import json
 import psycopg2
-import requests
 import time
 
 def openConn() :
@@ -18,12 +17,19 @@ def getUserID(user) :
 
 print getUserID("strix")
 
-def insertSpot(informer,informed_at,azimuth,altitude,longitude,latitude,spots) :
-    informer_id=getUserID("strix")
-    cur.execute("INSERT INTO huhula.spots(informer_id,informed_at,azimuth,altitude,longitude,latitude,spots) values(%s,%s,%s,%s,%s,%s,%s)",
-            (informer_id,informed_at,azimuth,altitude,longitude,latitude,spots))
+def newUser(user) :
+        cur.execute("INSERT INTO huhula.users(userhash) values(%s)",(user,))
 
-insertSpot("strix",45,3.456,5.23,3.45,6.78,'[0,2,3]')
+def insertSpot(informer,informed_at,azimuth,altitude,longitude,latitude,spot,client_at) :
+        informer_id=getUserID(informer)
+        if ( informer_id is None ) :
+                newUser(informer)
+                informer_id=getUserID(informer)
+
+        cur.execute("INSERT INTO huhula.spots(informer_id,informed_at,azimuth,altitude,longitude,latitude,spot,client_at) values(%s,%s,%s,%s,%s,%s,%s,%s)",
+            (informer_id,informed_at,azimuth,altitude,longitude,latitude,spot,client_at))
+
+insertSpot("strix",45,3.456,5.23,3.45,6.78,0,12345689)
 
 cur.close()
 conn.close()

@@ -7,6 +7,13 @@ from flask_httpauth import HTTPBasicAuth
 # import json
 import psycopg2
 
+import logging, logging.config, yaml
+logging.config.dictConfig(yaml.load(open('logging.conf')))
+logfile    = logging.getLogger('file')
+logconsole = logging.getLogger('console')
+logfile.debug("Debug FILE")
+logconsole.debug("Debug CONSOLE")
+
 def openConn():
 	global conn
 	global cur
@@ -21,6 +28,21 @@ def getUserID(user) :
 		return row[0]
 	else:
 		return None
+
+def locateSpot(latitude0,longitude0) :
+        cur.execute("""select id, spot, age, sqrt(df*df + dl*dl) * 6371e3 as dist, latitude, longitude from (
+		select sp.id, sp.spot, age(sp.inserted_at) as age, 
+			(longitude*pi()/180 - %s*pi()/180) * cos((latitude*pi()/180 + %s*pi()/180)/2) as dl,
+			(latitude*pi()/180 - %s*pi()/180) as df, latitude, longitude from huhula.spots as sp   
+		where taker_id is null -- and age(sp.inserted_at) < INTERVAL '2d2h1m1s1ms1us6ns'
+		order by age(sp.inserted_at) 
+  		) order by sqrt(df*df + dl*dl) * 6371e3, age
+  		limit 1""",(longitude0,latitude0,latitude0,))
+        row=cur.fetchone()
+        if row:
+                return row
+        else:
+                return None
 
 def newUser(user) :
 	cur.execute("INSERT INTO huhula.users(userhash) values(%s)",(user,))
@@ -178,6 +200,7 @@ def create_spot():
 
     cur.close()
     conn.close()    
+    logfile.debug("Spot called with "+str(request.json))
     return jsonify( { 'spot': make_public_spot(spot) } ), 201
 
 @app.route('/spot/api/v1.0/take', methods = ['POST'])
@@ -198,6 +221,7 @@ def take_spot():
         'ct': request.json['ct'],
     }
     spots.append(spot)
+    logfile.debug("Take called with "+str(request.json))
     return jsonify( { 'spot': make_public_spot(spot) } ), 201
 
 @app.route('/spot/api/v1.0/locate', methods = ['POST'])
@@ -206,15 +230,38 @@ def get_locate():
     sorted_spots=sorted(spots, key=lambda k: k['at'], reverse=True)
     if not request.json or not 'loc' in request.json:
         abort(400)
-    return jsonify( { 'spots': map(make_public_spot, sorted_spots) } )
+    logfile.debug("Locate called with "+str(request.json))
+    openConn()
+
+    res=locateSpot(request.json['loc']['lt'],request.json['loc']['lg'])
+    logfile.debug("Locate found in db "+str(res))
+# Locate called with {u'loc': {u'lg': -117.71802732, u'lt': 33.58032164, u'al': 73}}
+# Locate found in db ('c1a1defc-0d93-427c-b0d7-601e08d1637d', 0L, datetime.timedelta(660), 4.63180451482997, 33.58035109, -117.71799196)
+
+    cur.close()
+    conn.close()	
+    gspots = [
+       {
+         "at": 1,
+         "deg": 1,
+	 "sid": res[0],
+         "loc": {
+           "al": 0,
+           "lg": res[5],
+           "lt": res[4]
+         },
+         "spot": [
+           res[1],
+         ],
+        "uid": "igor",
+        "uri": "http://spot.selfip.com:65000/spot/api/v1.0/spot?id=h2"
+       }
+    ]
+    logfile.debug("Locate constructed json response "+str(gspots))
+
+    return jsonify( { 'spots': map(make_public_spot, gspots) } )
 
 if __name__ == '__main__':
 #    app.run(debug = True)
-    import logging, logging.config, yaml
-    logging.config.dictConfig(yaml.load(open('logging.conf')))
-    logfile    = logging.getLogger('file')
-    logconsole = logging.getLogger('console')
-    logfile.debug("Debug FILE")
-    logconsole.debug("Debug CONSOLE")
 
     app.run(host="0.0.0.0")
