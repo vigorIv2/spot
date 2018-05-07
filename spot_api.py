@@ -30,14 +30,16 @@ def getUserID(user) :
 		return None
 
 def locateSpot(latitude0,longitude0) :
-        cur.execute("""select id, spot, age, sqrt(df*df + dl*dl) * 6371e3 as dist, latitude, longitude from (
+        selsql = """select id, spot, age, sqrt(df*df + dl*dl) * 6371e3 as dist, latitude, longitude from (
 		select sp.id, sp.spot, age(sp.inserted_at) as age, 
 			(longitude*pi()/180 - %s*pi()/180) * cos((latitude*pi()/180 + %s*pi()/180)/2) as dl,
 			(latitude*pi()/180 - %s*pi()/180) as df, latitude, longitude from huhula.spots as sp   
 		where taker_id is null -- and age(sp.inserted_at) < INTERVAL '2d2h1m1s1ms1us6ns'
 		order by age(sp.inserted_at) 
   		) order by sqrt(df*df + dl*dl) * 6371e3, age
-  		limit 1""",(longitude0,latitude0,latitude0,))
+  		limit 1""" % (longitude0,latitude0,latitude0,)
+        logfile.debug("SQL:" + selsql)
+	cur.execute(selsql)
         row=cur.fetchone()
         if row:
                 return row
@@ -53,7 +55,6 @@ def insertSpot(informer,informed_at,azimuth,altitude,longitude,latitude,spot,cli
 	if ( informer_id is None ) :
 		newUser(informer)
 		informer_id=getUserID(informer)
-
 	cur.execute("INSERT INTO huhula.spots(informer_id,informed_at,azimuth,altitude,longitude,latitude,spot,client_at) values(%s,%s,%s,%s,%s,%s,%s,%s)",
             (informer_id,informed_at,azimuth,altitude,longitude,latitude,spot,client_at))
 
