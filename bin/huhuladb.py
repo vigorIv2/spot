@@ -1,7 +1,12 @@
 import json
 import psycopg2
 import time
+from random import choice
+from string import ascii_uppercase, ascii_lowercase, digits
 
+def randomString() : 
+    return "test"+''.join(choice(ascii_uppercase+ascii_lowercase+digits) for i in range(25))
+ 
 def openConn() :
     global conn
     global cur
@@ -17,7 +22,10 @@ def getUserID(user) :
 
 print getUserID("strix")
 
+print randomString()
+
 def newUser(user) :
+	print("creating user "+user) 
         cur.execute("INSERT INTO huhula.users(userhash) values(%s)",(user,))
 
 def insertSpot(informer,informed_at,azimuth,altitude,longitude,latitude,spot,client_at) :
@@ -30,6 +38,9 @@ def insertSpot(informer,informed_at,azimuth,altitude,longitude,latitude,spot,cli
             (informer_id,informed_at,azimuth,altitude,longitude,latitude,spot,client_at))
 
 insertSpot("strix",45,3.456,5.23,3.45,6.78,0,12345689)
+
+for j in range(1000): 
+	newUser(randomString())
 
 cur.close()
 conn.close()

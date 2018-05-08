@@ -46,6 +46,7 @@ def locateSpot(latitude0,longitude0) :
         else:
                 return None
 
+
 def newUser(user) :
 	cur.execute("INSERT INTO huhula.users(userhash) values(%s)",(user,))
 
@@ -58,6 +59,14 @@ def insertSpot(informer,informed_at,azimuth,altitude,longitude,latitude,spot,cli
 	cur.execute("INSERT INTO huhula.spots(informer_id,informed_at,azimuth,altitude,longitude,latitude,spot,client_at) values(%s,%s,%s,%s,%s,%s,%s,%s)",
             (informer_id,informed_at,azimuth,altitude,longitude,latitude,spot,client_at))
 
+
+def updateSpot(taker,sid,taken_at,client_at) :
+	taker_id=getUserID(taker)
+	if ( taker_id is None ) :
+		abort(404)
+		
+	cur.execute("update huhula.spots set taken_at=now(), taker_id=%s where id=%s",
+            (taker_id,sid))
 
 app = Flask(__name__, static_url_path = "")
 auth = HTTPBasicAuth()
@@ -209,20 +218,26 @@ def create_spot():
 def take_spot():
     if not request.json or not 'uid' in request.json:
         abort(400)
+    if not request.json or not 'ct' in request.json:
+        abort(400)
+    if not request.json or not 'sid' in request.json:
+        abort(400)
     if not request.json or not 'loc' in request.json:
         abort(400)
-    if not request.json or not 'spot' in request.json:
-        abort(400)
     spot = {
-        'id': "h2",
         'uid': request.json['uid'], 
+        'sid': request.json['sid'], 
         'loc': request.json['loc'],
-        'spot' : request.json['spot'],
         'at': time.time(),
         'ct': request.json['ct'],
     }
     spots.append(spot)
+# 2018-05-08 02:57:27,299 - file - DEBUG - Take called with {u'loc': {u'lg': 6.7, u'lt': 3.4, u'al': 5.9}, u'ct': u'12121212121212', u'uid': u'igor', u'sid': u'jhgjhgjhgjhgjhgjhgjhg'}
     logfile.debug("Take called with "+str(request.json))
+    openConn()
+    updateSpot(request.json['uid'],request.json['sid'],int(round(time.time() * 1000)),request.json['ct'])
+    cur.close()
+    conn.close()	
     return jsonify( { 'spot': make_public_spot(spot) } ), 201
 
 @app.route('/spot/api/v1.0/locate', methods = ['POST'])
