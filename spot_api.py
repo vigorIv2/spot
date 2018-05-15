@@ -29,6 +29,23 @@ def getUserID(user) :
 	else:
 		return None
 
+def checkSameSpot(informer_id,spot,lat,lon) :
+	selsql = """select count(*) as cnt 
+		from huhula.spots 
+		where taker_id is null 
+			and informer_id = '%s' 
+			and spot = %s
+			and round(longitude,4) = round(%s,4) 
+			and round(latitude,4) = round(%s,4) 
+		""" % (informer_id, spot, lon, lat,)
+        logfile.debug("SQL:" + selsql)
+ 	cur.execute(selsql)
+	row=cur.fetchone()
+	if row:
+		return row[0]
+	else:
+		return None
+
 def locateSpot(latitude0,longitude0) :
         selsql = """select id, spot, age, sqrt(df*df + dl*dl) * 6371e3 as dist, latitude, longitude from (
 		select sp.id, sp.spot, age(sp.inserted_at) as age, 
@@ -36,7 +53,8 @@ def locateSpot(latitude0,longitude0) :
 			(latitude*pi()/180 - %s*pi()/180) as df, latitude, longitude from huhula.spots as sp   
 		where taker_id is null -- and age(sp.inserted_at) < INTERVAL '2d2h1m1s1ms1us6ns'
 		order by age(sp.inserted_at) 
-  		) order by sqrt(df*df + dl*dl) * 6371e3, age
+  		) where sqrt(df*df + dl*dl) * 6371e3 < 2000000 
+		  order by sqrt(df*df + dl*dl) * 6371e3, age
   		limit 1""" % (longitude0,latitude0,latitude0,)
         logfile.debug("SQL:" + selsql)
 	cur.execute(selsql)
@@ -56,9 +74,12 @@ def insertSpot(informer,informed_at,azimuth,altitude,longitude,latitude,spot,cli
 	if ( informer_id is None ) :
 		newUser(informer)
 		informer_id=getUserID(informer)
-	cur.execute("INSERT INTO huhula.spots(informer_id,informed_at,azimuth,altitude,longitude,latitude,spot,client_at) values(%s,%s,%s,%s,%s,%s,%s,%s)",
+	sameSpot = checkSameSpot(informer_id,spot,latitude,longitude)
+	if (sameSpot is None) or (sameSpot == 0) : 
+		cur.execute("INSERT INTO huhula.spots(informer_id,informed_at,azimuth,altitude,longitude,latitude,spot,client_at) values(%s,%s,%s,%s,%s,%s,%s,%s)",
             (informer_id,informed_at,azimuth,altitude,longitude,latitude,spot,client_at))
-
+	else :
+		abort(409)
 
 def updateSpot(taker,sid,taken_at,client_at) :
 	taker_id=getUserID(taker)
@@ -185,6 +206,7 @@ def create_user():
 @app.route('/spot/api/v1.0/spot', methods = ['POST'])
 @auth.login_required
 def create_spot():
+    logfile.debug("create_spot called with "+str(request.json))
     if not request.json or not 'uid' in request.json:
         abort(400)
     if not request.json or not 'loc' in request.json:
@@ -210,12 +232,12 @@ def create_spot():
 
     cur.close()
     conn.close()    
-    logfile.debug("Spot called with "+str(request.json))
     return jsonify( { 'spot': make_public_spot(spot) } ), 201
 
 @app.route('/spot/api/v1.0/take', methods = ['POST'])
 @auth.login_required
 def take_spot():
+    logfile.debug("take_spot called with "+str(request.json))
     if not request.json or not 'uid' in request.json:
         abort(400)
     if not request.json or not 'ct' in request.json:
@@ -233,7 +255,6 @@ def take_spot():
     }
     spots.append(spot)
 # 2018-05-08 02:57:27,299 - file - DEBUG - Take called with {u'loc': {u'lg': 6.7, u'lt': 3.4, u'al': 5.9}, u'ct': u'12121212121212', u'uid': u'igor', u'sid': u'jhgjhgjhgjhgjhgjhgjhg'}
-    logfile.debug("Take called with "+str(request.json))
     openConn()
     updateSpot(request.json['uid'],request.json['sid'],int(round(time.time() * 1000)),request.json['ct'])
     cur.close()
@@ -244,6 +265,8 @@ def take_spot():
 @auth.login_required
 def get_locate():
     sorted_spots=sorted(spots, key=lambda k: k['at'], reverse=True)
+    logfile.debug("locate called with "+str(request.json))
+
     if not request.json or not 'loc' in request.json:
         abort(400)
     logfile.debug("Locate called with "+str(request.json))
