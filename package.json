@@ -7,19 +7,21 @@
     "test": "test"
   },
   "dependencies": {
-    "babel-eslint": "^8.2.2",
+    "babel-eslint": "^8.2.3",
     "bip39": "^2.5.0",
     "eslint-config-defaults": "^9.0.0",
-    "eslint-plugin-react": "^7.7.0",
-    "ethereumjs-util": "^5.1.5",
+    "eslint-plugin-react": "^7.8.2",
+    "ethereumjs-util": "^5.2.0",
+    "nan": "^2.10.0",
+    "openzeppelin-solidity": "^1.9.0",
+    "scrypt": "^6.0.3",
     "web3": "^0.18.4",
-    "web3-provider-engine": "^13.6.6",
-    "zeppelin": "0.0.3",
-    "zeppelin-solidity": "^1.7.0"
+    "web3-provider-engine": "^13.8.0",
+    "zeppelin": "0.0.3"
   },
   "devDependencies": {
     "babel-polyfill": "^6.26.0",
-    "babel-preset-env": "^1.6.1",
+    "babel-preset-env": "^1.7.0",
     "babel-preset-flow": "^6.23.0",
     "babel-register": "^6.26.0",
     "chai": "^4.1.2",

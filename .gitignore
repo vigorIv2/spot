@@ -1,4 +1,5 @@
 flask
+testusers.txt
 nohup.out
 errors.log
 cockroach-data/
