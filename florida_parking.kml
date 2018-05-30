@@ -1,0 +1,80 @@
+<?xml version="1.0" ?>
+<kml>
+  <Document>
+    <Placemark>
+      <name>CDATA example1</name>
+            <description>
+                      <![CDATA[
+                                <h1>CDATA Tags are useful!</h1>
+                                          <p><font color="red">Text is <i>more readable</i> and 
+                                                        <b>easier to write</b> when you can avoid using entity 
+                                                                  references.</font></p>
+                                                                      ]]>
+                                                                            </description>
+                                                                            <Point><coordinates>-82.8359906,27.9426132</coordinates></Point></Placemark>
+    <Placemark><Point><coordinates>-82.8359938,27.9426033</coordinates></Point></Placemark>
+    <Placemark><Point><coordinates>-82.8359946,27.9426502</coordinates></Point></Placemark>
+    <Placemark><Point><coordinates>-82.8359906,27.9426132</coordinates></Point></Placemark>
+    <Placemark><Point><coordinates>-82.8359906,27.9426132</coordinates></Point></Placemark>
+    <Placemark><Point><coordinates>-82.835976,27.9425968</coordinates></Point></Placemark>
+    <Placemark><Point><coordinates>-77.3276716,38.9488021</coordinates></Point></Placemark>
+    <Placemark><Point><coordinates>-82.8360009,27.9426436</coordinates></Point></Placemark>
+    <Placemark><Point><coordinates>-82.83575801,27.94262754</coordinates></Point></Placemark>
+    <Placemark><Point><coordinates>-82.8359906,27.9426132</coordinates></Point></Placemark>
+    <Placemark><Point><coordinates>-82.8360009,27.9426436</coordinates></Point></Placemark>
+    <Placemark><Point><coordinates>-84.4216384,33.7784322</coordinates></Point></Placemark>
+    <Placemark><Point><coordinates>-77.327688,38.9487992</coordinates></Point></Placemark>
+    <Placemark><Point><coordinates>-82.835976,27.9425968</coordinates></Point></Placemark>
+    <Placemark><Point><coordinates>-82.83605138,27.94253973</coordinates></Point></Placemark>
+    <Placemark><Point><coordinates>-82.83575801,27.94262754</coordinates></Point></Placemark>
+    <Placemark><Point><coordinates>-77.327688,38.9487992</coordinates></Point></Placemark>
+    <Placemark><Point><coordinates>-82.8359946,27.9426502</coordinates></Point></Placemark>
+    <Placemark><Point><coordinates>-82.83575801,27.94262754</coordinates></Point></Placemark>
+    <Placemark><Point><coordinates>-84.4216384,33.7784322</coordinates></Point></Placemark>
+    <Placemark><Point><coordinates>-82.8360076,27.9426306</coordinates></Point></Placemark>
+    <Placemark><Point><coordinates>-82.83605138,27.94253973</coordinates></Point></Placemark>
+    <Placemark><Point><coordinates>-84.4216474,33.7784476</coordinates></Point></Placemark>
+    <Placemark><Point><coordinates>-82.83574159,27.94263333</coordinates></Point></Placemark>
+    <Placemark><Point><coordinates>-84.4123296,33.7787495</coordinates></Point></Placemark>
+    <Placemark><Point><coordinates>-82.83605138,27.94253973</coordinates></Point></Placemark>
+    <Placemark><Point><coordinates>-77.3276716,38.9488021</coordinates></Point></Placemark>
+    <Placemark><Point><coordinates>-84.4216474,33.7784476</coordinates></Point></Placemark>
+    <Placemark><Point><coordinates>-77.3275818,38.948734</coordinates></Point></Placemark>
+    <Placemark><Point><coordinates>-82.83605138,27.94253973</coordinates></Point></Placemark>
+    <Placemark><Point><coordinates>-77.3274602,38.948945</coordinates></Point></Placemark>
+    <Placemark><Point><coordinates>-84.4123296,33.7787495</coordinates></Point></Placemark>
+    <Placemark><Point><coordinates>-82.835744,27.94263235</coordinates></Point></Placemark>
+    <Placemark><Point><coordinates>-82.83574159,27.94263333</coordinates></Point></Placemark>
+    <Placemark><Point><coordinates>-82.8359794,27.9425833</coordinates></Point></Placemark>
+    <Placemark><Point><coordinates>-77.327688,38.9487992</coordinates></Point></Placemark>
+    <Placemark><Point><coordinates>-82.83575801,27.94262754</coordinates></Point></Placemark>
+    <Placemark><Point><coordinates>-82.8360009,27.9426436</coordinates></Point></Placemark>
+    <Placemark><Point><coordinates>-82.8359965,27.942639</coordinates></Point></Placemark>
+    <Placemark>
+      <name>CDATA example2</name>
+            <description>
+                      <![CDATA[
+                                <h1>CDATA Tags are useful!</h1>
+                                          <p><font color="red">Text is <i>more readable</i> and 
+                                                        <b>easier to write</b> when you can avoid using entity 
+                                                                  references.</font></p>
+                                                                      ]]>
+                                                                            </description>
+      <Point><coordinates>-77.3276716,38.9488021</coordinates></Point></Placemark>
+    <Placemark><Point><coordinates>-82.83575801,27.94262754</coordinates></Point></Placemark>
+    <Placemark><Point><coordinates>-82.83605138,27.94253973</coordinates></Point></Placemark>
+    <Placemark><Point><coordinates>-82.8359794,27.9425833</coordinates></Point></Placemark>
+    <Placemark><Point><coordinates>-82.835744,27.94263235</coordinates></Point></Placemark>
+    <Placemark><Point><coordinates>-82.83605138,27.94253973</coordinates></Point></Placemark>
+    <Placemark><Point><coordinates>-84.4216474,33.7784476</coordinates></Point></Placemark>
+    <Placemark><Point><coordinates>-84.4123296,33.7787495</coordinates></Point></Placemark>
+    <Placemark><Point><coordinates>-82.8359906,27.9426132</coordinates></Point></Placemark>
+    <Placemark><Point><coordinates>-82.8360076,27.9426306</coordinates></Point></Placemark>
+    <Placemark><Point><coordinates>-77.3275818,38.948734</coordinates></Point></Placemark>
+    <Placemark><Point><coordinates>-82.8359938,27.9426033</coordinates></Point></Placemark>
+    <Placemark><Point><coordinates>-82.83566683,27.94290086</coordinates></Point></Placemark>
+    <Placemark><Point><coordinates>-84.4216384,33.7784322</coordinates></Point></Placemark>
+    <Placemark><Point><coordinates>-82.8359832,27.9425997</coordinates></Point></Placemark>
+
+ </Document>
+</kml>

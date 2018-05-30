@@ -1,0 +1,32 @@
+<?xml version="1.0" ?>
+<kml>
+ <Document>
+   <Placemark><Point><coordinates>30.29442659,59.93346393</coordinates></Point></Placemark>
+   <Placemark><Point><coordinates>30.29442659,59.93346393</coordinates></Point></Placemark>
+   <Placemark><Point><coordinates>30.29440507,59.93344937</coordinates></Point></Placemark>
+   <Placemark><Point><coordinates>30.29440507,59.93344937</coordinates></Point></Placemark>
+   <Placemark><Point><coordinates>30.28244243,59.93946617</coordinates></Point></Placemark>
+   <Placemark><Point><coordinates>30.28244243,59.93946617</coordinates></Point></Placemark>
+   <Placemark><Point><coordinates>30.28242438,59.93945756</coordinates></Point></Placemark>
+   <Placemark><Point><coordinates>30.28242438,59.93945756</coordinates></Point></Placemark>
+   <Placemark><Point><coordinates>30.2824097,59.93945093</coordinates></Point></Placemark>
+   <Placemark><Point><coordinates>30.2824097,59.93945093</coordinates></Point></Placemark>
+   <Placemark><Point><coordinates>30.28239173,59.93944636</coordinates></Point></Placemark>
+   <Placemark><Point><coordinates>30.28239173,59.93944636</coordinates></Point></Placemark>
+   <Placemark><Point><coordinates>30.282384455810636,59.93908383780302</coordinates></Point></Placemark>
+   <Placemark><Point><coordinates>30.282377146708797,59.939085880400015</coordinates></Point></Placemark>
+   <Placemark><Point><coordinates>30.28237498,59.93944037</coordinates></Point></Placemark>
+   <Placemark><Point><coordinates>30.28237498,59.93944037</coordinates></Point></Placemark>
+   <Placemark><Point><coordinates>30.28236866,59.93943619</coordinates></Point></Placemark>
+   <Placemark><Point><coordinates>30.28236866,59.93943619</coordinates></Point></Placemark>
+   <Placemark><Point><coordinates>30.28236495,59.93943246</coordinates></Point></Placemark>
+   <Placemark><Point><coordinates>30.28236495,59.93943246</coordinates></Point></Placemark>
+   <Placemark><Point><coordinates>30.282361623629246,59.93909820044411</coordinates></Point></Placemark>
+   <Placemark><Point><coordinates>30.282361623629246,59.93909820044411</coordinates></Point></Placemark>
+   <Placemark><Point><coordinates>30.282361623629246,59.93909820044411</coordinates></Point></Placemark>
+   <Placemark><Point><coordinates>30.28203971,59.93934188</coordinates></Point></Placemark>
+   <Placemark><Point><coordinates>30.28203971,59.93934188</coordinates></Point></Placemark>
+   <Placemark><Point><coordinates>30.281803107943244,59.93938820218737</coordinates></Point></Placemark>
+
+ </Document>
+</kml>

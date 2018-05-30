@@ -5,32 +5,23 @@ import "openzeppelin-solidity/contracts/math/SafeMath.sol";
 
 import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
 import "openzeppelin-solidity/contracts/crowdsale/validation/TimedCrowdsale.sol";
+import "openzeppelin-solidity/contracts/lifecycle/Pausable.sol";
 
 /**
   Huhula crowdsale
 */
                                                                                      
-contract HuhulaSale is Ownable, TimedCrowdsale(now + 1, now + 1 + HuhulaSale.SALE_DURATION) {
+contract HuhulaSale is Ownable, TimedCrowdsale(block.timestamp + 1, block.timestamp + 1 + 10368000), Pausable {
   using SafeMath for uint256;
 
 //**********************************************************************************************
 // ------------------------------ Customize Smart Contract ------------------------------------- 
-//**********************************************************************************************
-  uint256 constant _rate = 71396; // in USD cents per Ethereum
-  address private constant _fundsWallet    = 0xa4aA1C90f02265d189a96207Be92597fFEaD54D2;
-  string  public constant huhuTokenName = "Huhula Parking";
-  string  public constant huhuTokenSymbol = "HUHU";
-  uint256 public tokensGoal = 40000000000000; // goal 40 Mil tokens 
-//**********************************************************************************************
   uint32 public buyBackRate = 1034; // in ETH with 6 decimal places per token, initially 0.001034
 //**********************************************************************************************
-  uint256 public constant SALE_DURATION = 5184000; 
+  uint256 public minLotSize = 5 ether; 
 
-  function HuhulaSale() public 
-    Crowdsale(_rate, _fundsWallet, new HuhulaToken(huhuTokenName,huhuTokenSymbol) ) {
-    require(_rate > 0);
-    require(tokensGoal > 0);
-    require(tokensGoal <= HuhulaToken(token).cap());
+  constructor() public 
+    Crowdsale(71396, 0xa4aA1C90f02265d189a96207Be92597fFEaD54D2, new HuhulaToken("Huhula spot","HUHU") ) {
   }
 
   function calcTokens(uint256 weiAmount) internal constant returns(uint256) {
@@ -45,17 +36,24 @@ contract HuhulaSale is Ownable, TimedCrowdsale(now + 1, now + 1 + HuhulaSale.SAL
 
   // Events
   event SpenderApproved(address indexed to, uint256 tokens);
+  event GrantTokens(address indexed to, uint256 tokens);
+  event RewardTokens(address indexed to, uint256 tokens);
   event RateChange(uint256 rate);
 
   /**
-  * @dev Sets SHACK to Ether rate. Will be called multiple times durign the crowdsale to adjsut the rate
-  * since SHACK cost is fixed in USD, but USD/ETH rate is changing
-  * @param paramRate defines SHK/ETH rate: 1 ETH = paramRate SHKs
+  * @dev Sets HUHU to Ether rate. Will be called multiple times durign the crowdsale to adjsut the rate
+  * since HUHU cost is fixed in USD, but USD/ETH rate is changing
+  * @param paramRate defines HUHU/ETH rate: 1 ETH = paramRate HUHUs
   */
   function setRate(uint256 paramRate) public onlyOwner {
     require(paramRate >= 1);
     rate = paramRate;
     emit RateChange(paramRate);
+  }
+
+  function setMinLotSize(uint256 paramLot) public onlyOwner {
+    require(paramLot >= 1 finney);
+    minLotSize = paramLot;
   }
 
   // fallback function can be used to buy tokens
@@ -64,11 +62,13 @@ contract HuhulaSale is Ownable, TimedCrowdsale(now + 1, now + 1 + HuhulaSale.SAL
   }
 
   // low level token purchase function
-  function buyTokens(address beneficiary) public payable {
+  function buyTokens(address beneficiary) public whenNotPaused payable {
     require(beneficiary != address(0));
-    require(now <= closingTime);                               // Crowdsale (without startTime check)
+    require(block.timestamp <= closingTime);       
 
     uint256 weiAmount = msg.value;
+    require(weiAmount >= minLotSize);
+
     // calculate token amount to be created
     uint256 tokens = calcTokens(weiAmount);
 
@@ -77,6 +77,18 @@ contract HuhulaSale is Ownable, TimedCrowdsale(now + 1, now + 1 + HuhulaSale.SAL
     if ( HuhulaToken(token).mint(beneficiary, tokens) ) {
       emit TokenPurchase(address(0x0), beneficiary, weiAmount, tokens);
       forwardFunds();
+    }
+  }
+
+  /**
+    Function to grant some tokens to early testers before or during crowdsale
+  */
+  function grantTokens(address beneficiary,uint256 tokens) public onlyOwner {
+    require(beneficiary != address(0));
+    require(block.timestamp <= closingTime);                         
+
+    if ( HuhulaToken(token).mint(beneficiary, tokens) ) {
+      emit GrantTokens(beneficiary, tokens);
     }
   }
 
@@ -92,31 +104,11 @@ contract HuhulaSale is Ownable, TimedCrowdsale(now + 1, now + 1 + HuhulaSale.SAL
   function resume(uint256 _hours) public onlyOwner {
     require(_hours <= 744); // shorter than longest month, i.e. max one month
     require(_hours > 0);
-    closingTime = closingTime.add(_hours.mul(3600)); // convert to seconds and add to closingTime
-
-    if ( HuhulaToken(token).paused() ) {
-      HuhulaToken(token).unpause();
-    }
+    closingTime = closingTime.add(_hours.mul(3600)); // convert to seconds and add to closingTimea
+    if ( paused ) 
+      unpause();
   }
 
-  /**
-  * @dev Allows to pause crowdsale of these tokens
-  */
-  function pause() public onlyOwner {
-    if ( ! HuhulaToken(token).paused() ) {
-      HuhulaToken(token).pause();
-    }
-  }
-  
-   /**
-  * @dev Allows to unpause crowdsale of these tokens
-  */
-  function unpause() public onlyOwner {
-    if ( HuhulaToken(token).paused() ) {
-      HuhulaToken(token).unpause();
-    }
-  }
-  
   /**
   * @dev Sets the wallet to forward ETH collected funds
   */
@@ -145,7 +137,7 @@ contract HuhulaSale is Ownable, TimedCrowdsale(now + 1, now + 1 + HuhulaSale.SAL
     }
     HuhulaToken(token).finishMinting();
 
-    // take onwership over ShacToken contract
+    // take onwership over HuhuToken contract
     HuhulaToken(token).transferOwnership(owner);
     
   }
@@ -171,7 +163,7 @@ contract HuhulaSale is Ownable, TimedCrowdsale(now + 1, now + 1 + HuhulaSale.SAL
   * during buyBack tokens returned from given address and corresponding USD converted to ETH transferred back to holder
   */
   function buyBack(address _tokenHolder, uint256 _tokens) public onlyOwner {
-    HuhulaToken(token).huhulaReturnFromCurrentHolder(_tokenHolder, _tokens);
+    HuhulaToken(token).huhulaReturnToOwner(_tokenHolder, _tokens);
     uint256 buyBackWei = _tokens.mul(buyBackRate).mul(10**6);
     if ( _tokenHolder.send(buyBackWei) ) {
       emit BuyBackTransfer(address(this), _tokenHolder, buyBackWei);
@@ -180,14 +172,6 @@ contract HuhulaSale is Ownable, TimedCrowdsale(now + 1, now + 1 + HuhulaSale.SAL
     }
   }
  
-  function getRemainingTokenWallet() public view returns(address) {
-    return HuhulaToken(token).getRemainingWallet();
-  }
-
-  function isPaused() public view returns(bool) {
-    return HuhulaToken(token).paused();
-  }
-  
   /**
   * during buyBack return funds from smart contract account to funds account
   */
