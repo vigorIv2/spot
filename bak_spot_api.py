@@ -6,7 +6,6 @@ from flask_httpauth import HTTPBasicAuth
 
 # import json
 import psycopg2
-import spot_db
 
 import logging, logging.config, yaml
 logging.config.dictConfig(yaml.load(open('logging.conf')))
@@ -14,6 +13,81 @@ logfile    = logging.getLogger('file')
 logconsole = logging.getLogger('console')
 logfile.debug("Debug FILE")
 logconsole.debug("Debug CONSOLE")
+
+def openConn():
+	global conn
+	global cur
+	conn = psycopg2.connect(database="huhula", user="root", host="roachdb", port=26257)
+	conn.set_session(autocommit=True)
+	cur = conn.cursor()
+
+def getUserID(user) :
+	cur.execute("SELECT id FROM users WHERE userhash = '" + user + "'")
+	row=cur.fetchone()
+	if row:
+		return row[0]
+	else:
+		return None
+
+def checkSameSpot(informer_id,spot,lat,lon) :
+	selsql = """select count(*) as cnt 
+		from huhula.spots 
+		where taker_id is null 
+			and informer_id = '%s' 
+			and spot = %s
+			and round(longitude,4) = round(%s,4) 
+			and round(latitude,4) = round(%s,4) 
+		""" % (informer_id, spot, lon, lat,)
+        logfile.debug("SQL:" + selsql)
+ 	cur.execute(selsql)
+	row=cur.fetchone()
+	if row:
+		return row[0]
+	else:
+		return None
+
+def locateSpot(latitude0,longitude0) :
+        selsql = """select id, spot, age, sqrt(df*df + dl*dl) * 6371e3 as dist, latitude, longitude from (
+		select sp.id, sp.spot, age(sp.inserted_at) as age, 
+			(longitude*pi()/180 - %s*pi()/180) * cos((latitude*pi()/180 + %s*pi()/180)/2) as dl,
+			(latitude*pi()/180 - %s*pi()/180) as df, latitude, longitude from huhula.spots as sp   
+		where taker_id is null -- and age(sp.inserted_at) < INTERVAL '2d2h1m1s1ms1us6ns'
+		order by age(sp.inserted_at) 
+  		) where sqrt(df*df + dl*dl) * 6371e3 < 2000000 
+		  order by sqrt(df*df + dl*dl) * 6371e3, age
+  		limit 1""" % (longitude0,latitude0,latitude0,)
+        logfile.debug("SQL:" + selsql)
+	cur.execute(selsql)
+        row=cur.fetchone()
+        if row:
+                return row
+        else:
+                return None
+
+
+def newUser(user) :
+	cur.execute("INSERT INTO huhula.users(userhash) values(%s)",(user,))
+
+
+def insertSpot(informer,informed_at,azimuth,altitude,longitude,latitude,spot,client_at) :
+	informer_id=getUserID(informer)
+	if ( informer_id is None ) :
+		newUser(informer)
+		informer_id=getUserID(informer)
+	sameSpot = checkSameSpot(informer_id,spot,latitude,longitude)
+	if (sameSpot is None) or (sameSpot == 0) : 
+		cur.execute("INSERT INTO huhula.spots(informer_id,informed_at,azimuth,altitude,longitude,latitude,spot,client_at) values(%s,%s,%s,%s,%s,%s,%s,%s)",
+            (informer_id,informed_at,azimuth,altitude,longitude,latitude,spot,client_at))
+	else :
+		abort(409)
+
+def updateSpot(taker,sid,taken_at,client_at) :
+	taker_id=getUserID(taker)
+	if ( taker_id is None ) :
+		abort(404)
+		
+	cur.execute("update huhula.spots set taken_at=now(), taker_id=%s where id=%s",
+            (taker_id,sid))
 
 app = Flask(__name__, static_url_path = "")
 auth = HTTPBasicAuth()
@@ -118,7 +192,6 @@ def get_user(user_id):
 @app.route('/spot/api/v1.0/register', methods = ['POST'])
 @auth.login_required
 def create_user():
-    logfile.debug("register called with "+str(request.json))
     if not request.json or not 'id' in request.json:
         abort(400)
     user = {
@@ -128,15 +201,6 @@ def create_user():
         'tokens': 20
     }
     users.append(user)
-    spot_db.openConn()
-    informer_id=spot_db.getUserID(request.json['id'])
-    if ( informer_id is None ) :
-       spot_db.newUser(request.json['id'])
-       informer_id=spot_db.getUserID(request.json['id'])
-
-    spot_db.cur.close()
-    spot_db.conn.close()    
-    logfile.debug("registered user "+request.json['id']+" db key ="+informer_id)
     return jsonify( { 'user': make_public_user(user) } ), 201
 
 @app.route('/spot/api/v1.0/spot', methods = ['POST'])
@@ -161,15 +225,13 @@ def create_spot():
         'ct': request.json['ct'],
     }
     spots.append(spot)
-    spot_db.openConn()
+    openConn()
     for spt in request.json['spot']:
-    	rc = spot_db.insertSpot(request.json['uid'],int(round(time.time() * 1000)),request.json['deg'],request.json['loc']['al'],
+    	insertSpot(request.json['uid'],int(round(time.time() * 1000)),request.json['deg'],request.json['loc']['al'],
             request.json['loc']['lg'],request.json['loc']['lt'],spt,request.json['ct'])
-	if ( rc != 0 ):
-		abort(rc) 
 
-    spot_db.cur.close()
-    spot_db.conn.close()    
+    cur.close()
+    conn.close()    
     return jsonify( { 'spot': make_public_spot(spot) } ), 201
 
 @app.route('/spot/api/v1.0/take', methods = ['POST'])
@@ -193,12 +255,10 @@ def take_spot():
     }
     spots.append(spot)
 # 2018-05-08 02:57:27,299 - file - DEBUG - Take called with {u'loc': {u'lg': 6.7, u'lt': 3.4, u'al': 5.9}, u'ct': u'12121212121212', u'uid': u'igor', u'sid': u'jhgjhgjhgjhgjhgjhgjhg'}
-    spot_db.openConn()
-    rc = spot_db.updateSpot(request.json['uid'],request.json['sid'],int(round(time.time() * 1000)),request.json['ct'])
-    if ( rc != 0 ):
-        abort(rc)
-    spot_db.cur.close()
-    spot_db.conn.close()	
+    openConn()
+    updateSpot(request.json['uid'],request.json['sid'],int(round(time.time() * 1000)),request.json['ct'])
+    cur.close()
+    conn.close()	
     return jsonify( { 'spot': make_public_spot(spot) } ), 201
 
 @app.route('/spot/api/v1.0/locate', methods = ['POST'])
@@ -210,15 +270,15 @@ def get_locate():
     if not request.json or not 'loc' in request.json:
         abort(400)
     logfile.debug("Locate called with "+str(request.json))
-    spot_db.openConn()
+    openConn()
 
-    res=spot_db.locateSpot(request.json['loc']['lt'],request.json['loc']['lg'])
+    res=locateSpot(request.json['loc']['lt'],request.json['loc']['lg'])
     logfile.debug("Locate found in db "+str(res))
 # Locate called with {u'loc': {u'lg': -117.71802732, u'lt': 33.58032164, u'al': 73}}
 # Locate found in db ('c1a1defc-0d93-427c-b0d7-601e08d1637d', 0L, datetime.timedelta(660), 4.63180451482997, 33.58035109, -117.71799196)
 
-    spot_db.cur.close()
-    spot_db.conn.close()	
+    cur.close()
+    conn.close()	
     gspots = [
        {
          "at": 1,
