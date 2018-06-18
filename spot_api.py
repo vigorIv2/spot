@@ -201,6 +201,24 @@ def take_spot():
     spot_db.conn.close()	
     return jsonify( { 'spot': make_public_spot(spot) } ), 201
 
+@app.route('/spot/api/v1.0/park', methods = ['POST'])
+@auth.login_required
+def park_spot():
+    logfile.debug("park_spot called with "+str(request.json))
+    if not request.json or not 'uid' in request.json:
+        abort(400)
+    if not request.json or not 'ct' in request.json:
+        abort(400)
+    if not request.json or not 'loc' in request.json:
+        abort(400)
+    spot = {
+        'uid': request.json['uid'], 
+        'loc': request.json['loc'],
+        'at': time.time(),
+        'ct': request.json['ct'],
+    }
+    return jsonify( { 'spot': make_public_spot(spot) } ), 201
+
 @app.route('/spot/api/v1.0/locate', methods = ['POST'])
 @auth.login_required
 def get_locate():
