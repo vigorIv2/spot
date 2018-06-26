@@ -3,6 +3,8 @@ testusers.txt
 nohup.out
 errors.log
 cockroach-data/
+debug.log
+spot_db.pyc
 .env
 build/
 flaskexit/

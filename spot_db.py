@@ -67,6 +67,14 @@ def newUser(user) :
 	cur.execute("INSERT INTO huhula.users(userhash) values(%s)",(user,))
 
 
+def insertParked(informer,informed_at,azimuth,altitude,longitude,latitude,client_at) :
+	informer_id=getUserID(informer)
+	if ( informer_id is None ) :
+		return 404
+	cur.execute("INSERT INTO huhula.parked(informer_id,informed_at,azimuth,altitude,longitude,latitude,client_at) values(%s,%s,%s,%s,%s,%s,%s)",
+            (informer_id,informed_at,azimuth,altitude,longitude,latitude,client_at))
+	return 0
+
 def insertSpot(informer,informed_at,azimuth,altitude,longitude,latitude,spot,client_at) :
 	informer_id=getUserID(informer)
 	if ( informer_id is None ) :

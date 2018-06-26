@@ -203,13 +203,15 @@ def take_spot():
 
 @app.route('/spot/api/v1.0/park', methods = ['POST'])
 @auth.login_required
-def park_spot():
-    logfile.debug("park_spot called with "+str(request.json))
+def park_parked():
+    logfile.debug("park_parked called with "+str(request.json))
     if not request.json or not 'uid' in request.json:
         abort(400)
     if not request.json or not 'ct' in request.json:
         abort(400)
     if not request.json or not 'loc' in request.json:
+        abort(400)
+    if not request.json or not 'deg' in request.json:
         abort(400)
     spot = {
         'uid': request.json['uid'], 
@@ -217,6 +219,15 @@ def park_spot():
         'at': time.time(),
         'ct': request.json['ct'],
     }
+    spots.append(spot)
+    spot_db.openConn()
+    rc = spot_db.insertParked(request.json['uid'],int(round(time.time() * 1000)),request.json['deg'],request.json['loc']['al'],
+       request.json['loc']['lg'],request.json['loc']['lt'],request.json['ct'])
+    if ( rc != 0 ):
+       abort(rc)
+
+    spot_db.cur.close()
+    spot_db.conn.close()
     return jsonify( { 'spot': make_public_spot(spot) } ), 201
 
 @app.route('/spot/api/v1.0/locate', methods = ['POST'])
