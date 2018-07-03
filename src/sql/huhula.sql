@@ -65,6 +65,24 @@ CREATE TABLE huhula.spots(
 
 
 alter table huhula.spots add column client_at int default 0;
+
+
+-- drop TABLE huhula.parked;
+
+CREATE TABLE huhula.parked(
+  id UUID PRIMARY KEY default gen_random_uuid(),
+  informer_id UUID references users not null,
+  inserted_at TIMESTAMPTZ not null DEFAULT now(),
+  informed_at int not null,
+  azimuth float not null,
+  altitude float not null,
+  longitude float not null,
+  latitude float not null,
+  client_at int not null
+);
+
+select * from huhula.parked;
+
 select * from huhula.spots_decimal;
 
 insert into huhula.spots

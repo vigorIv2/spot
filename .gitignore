@@ -6,6 +6,7 @@ cockroach-data/
 debug.log
 spot_db.pyc
 .env
+test_web2py/
 build/
 flaskexit/
 flow-typed/

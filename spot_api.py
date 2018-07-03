@@ -7,6 +7,7 @@ from flask_httpauth import HTTPBasicAuth
 # import json
 import psycopg2
 import spot_db
+import spot_kml
 
 import logging, logging.config, yaml
 logging.config.dictConfig(yaml.load(open('logging.conf')))
@@ -100,6 +101,12 @@ def make_public_spot(spot):
 @auth.login_required
 def get_users():
     return jsonify( { 'users': map(make_public_user, users) } )
+
+@app.route('/spot/api/v1.0/map', methods = ['GET'])
+@auth.login_required
+def get_map():
+    map=spot_kml.gen_html(-19.257753, 146.823688)
+    return map
 
 @app.route('/spot/api/v1.0/spots', methods = ['GET'])
 @auth.login_required

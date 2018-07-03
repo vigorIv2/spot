@@ -1,7 +1,26 @@
-select concat('<Placemark><Point><coordinates>',cast(longitude as string),',',cast(latitude as string),'</coordinates></Point></Placemark>') from huhula.spots where longitude >0  ;
+select * 
+from huhula.spots order by inserted_at desc limit 90;
+
+
+where longitude = -122.08400000000002 ;
+
+select * from users where id = 'c8a5d00f-b76d-4c97-a45e-5d6404c1d229';
+
+
+select concat('<Placemark><Point><coordinates>',cast(longitude as string),',',cast(latitude as string),'</coordinates></Point></Placemark>') 
+from huhula.spots where longitude = -122.08400000000002 ;
+
+// -122.08400000000002,37.421998333333335
+// 37.422000, -122.084090
 
 delete from huhula.spots where longitude = 3.45;
 
+select * from users where userhash not like 'test%' 
+order by inserted_at desc;
+
+
+select * from parked 
+order by inserted_at desc;
 
 select id, spot, age, sqrt(df*df + dl*dl) * 6371e3 as dist, latitude, longitude from (
                 select sp.id, sp.spot, age(sp.inserted_at) as age, 
