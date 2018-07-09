@@ -1,8 +1,34 @@
 #!flask/bin/python
 
-def gen_html(nlat,nlon):
+def gen_kml(nlat,nlon):
+	return """<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+  <Document>
+    <name>KmlFile</name>
+    <Placemark>
+      <name>Google West Campus 1</name>
+      <Point>
+        <coordinates>-122.0914977709329,37.42390182131783,0</coordinates>
+      </Point>
+    </Placemark>
+    <Placemark>
+      <name>Google West Campus 2</name>
+      <Point>
+        <coordinates>-122.0926995893311,37.42419403634421,0</coordinates>
+      </Point>
+    </Placemark>
+    <Placemark>
+      <name>Google West Campus 3</name>
+      <Point>
+        <coordinates>-122.0922532985281,37.42301710721216,0</coordinates>
+      </Point>
+    </Placemark>
+  </Document>
+</kml>
+"""
 
-  result="""
+def gen_html(nlat,nlon):
+	result="""
 <!DOCTYPE html>
 <html>
   <head>
@@ -11,20 +37,20 @@ def gen_html(nlat,nlon):
     <title>KML Click Capture Sample</title>
     <style>
       html, body {
-        height: 370px;
+        height: 470px;
         padding: 0;
         margin: 0;
         }
       #map {
-       height: 360px;
+       height: 460px;
        width: 300px;
        overflow: hidden;
        float: left;
        border: thin solid #333;
        }
       #capture {
-       height: 360px;
-       width: 480px;
+       height: 460px;
+       width: 580px;
        overflow: hidden;
        float: left;
        background-color: #ECECFB;
@@ -38,7 +64,10 @@ def gen_html(nlat,nlon):
     <div id="capture"></div>
     <script>
       var map;
-      var src = 'https://developers.google.com/maps/documentation/javascript/examples/kml/westcampus.kml';
+//      var src = 'https://drive.google.com/open?id=1yaYxBXMb3lF06clxBcfjNdjwbbmfBr8a';
+//      var src = 'http://192.168.0.210:5000/spot/api/v1.0/map.kml';
+      var src = 'https://github.com/shramov/leaflet-plugins/blob/master/examples/KML_Samples.kml';
+//      var src = 'https://developers.google.com/maps/documentation/javascript/examples/kml/westcampus.kml'; 
 
       function initMap() {
         map = new google.maps.Map(document.getElementById('map'), {
@@ -47,11 +76,13 @@ def gen_html(nlat,nlon):
           mapTypeId: 'terrain'
         });
 
-        var kmlLayer = new google.maps.KmlLayer(src, {
+        var kmlLayer = new google.maps.KmlLayer({
+	  url: src,
           suppressInfoWindows: true,
           preserveViewport: false,
           map: map
         });
+	kmlLayer.setMap(map);
         kmlLayer.addListener('click', function(event) {
           var content = event.featureData.infoWindowHtml;
           var testimonial = document.getElementById('capture');
@@ -64,6 +95,6 @@ def gen_html(nlat,nlon):
     </script>
   </body>
 </html>"""
-    return result
+	return result
 
 

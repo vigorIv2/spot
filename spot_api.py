@@ -1,6 +1,6 @@
 #!flask/bin/python
 
-from flask import Flask, jsonify, abort, request, make_response, url_for
+from flask import Flask, jsonify, abort, request, make_response, url_for, Response
 import time
 from flask_httpauth import HTTPBasicAuth
 
@@ -102,11 +102,22 @@ def make_public_spot(spot):
 def get_users():
     return jsonify( { 'users': map(make_public_user, users) } )
 
+@app.route('/spot/api/v1.0/map.kml', methods = ['GET'])
+def get_kml():
+    logfile.debug("running kml")
+    kml=spot_kml.gen_kml(-19.257753, 146.823688)
+    resp = make_response(kml, 200)
+    resp.headers['Content-type'] = 'application/vnd.google-earth.kml+xml'
+    resp.headers['Content-Disposition'] = 'inline; filename=\"bubblemap.kml\"' 
+    return resp
+
 @app.route('/spot/api/v1.0/map', methods = ['GET'])
-@auth.login_required
 def get_map():
-    map=spot_kml.gen_html(-19.257753, 146.823688)
-    return map
+    logfile.debug("running map")
+    html=spot_kml.gen_html(37.422926, -122.084024)
+    resp = make_response(html, 200)
+    resp.headers['Content-type'] = 'text/html'
+    return resp
 
 @app.route('/spot/api/v1.0/spots', methods = ['GET'])
 @auth.login_required
