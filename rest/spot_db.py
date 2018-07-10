@@ -67,7 +67,7 @@ def getReportedSpots(rid) :
 		informer_id=getUserID(rid)
 	else:
 		informer_id=rid
-        selsql = "select longitude, latitude from huhula.spots where informer_id = '%s'" % (informer_id,)
+        selsql = "select longitude, latitude from huhula.spots as sp where sp.informer_id = '%s' and age(sp.inserted_at) < INTERVAL '1d0h0m0s0ms0us6ns'" % (informer_id,)
         logconsole.debug("SQL:" + selsql)
         cur.execute(selsql)
         rows=cur.fetchall()
@@ -76,6 +76,19 @@ def getReportedSpots(rid) :
         else:
                 return None
 
+def getParkedSpots(rid) :
+	if rid.isnumeric():
+		informer_id=getUserID(rid)
+	else:
+		informer_id=rid
+        selsql = "select longitude, latitude from huhula.parked as sp where sp.informer_id = '%s' and age(sp.inserted_at) < INTERVAL '1d0h0m0s0ms0us6ns'" % (informer_id,)
+        logconsole.debug("SQL:" + selsql)
+        cur.execute(selsql)
+        rows=cur.fetchall()
+        if rows:
+                return rows
+        else:
+                return None
 
 def getNearSpots(lt,lg) :
         selsql = """select longitude, latitude from (

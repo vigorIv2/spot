@@ -107,20 +107,29 @@ def get_users():
 @auth.login_required
 def get_map():
     mid = request.args.get('mid', None)
+    pid = request.args.get('pid', None)
     lt = request.args.get('lt', None)
     lg = request.args.get('lg', None)
-    logconsole.debug("running map with "+str(request.args)+" lt="+str(lt)+" lg="+str(lg)+" mid="+str(mid))
-    if lt == None and lg == None and mid == None :
+    logconsole.debug("running map with "+str(request.args)+" lt="+str(lt)+" lg="+str(lg)+" mid="+str(mid)+" pid="+str(pid))
+    if lt == None and lg == None and mid == None and pid == None :
         abort(400)
     spot_db.openConn()
     coord_array = []	
-    if mid != None: 
-       coord_array=spot_db.getReportedSpots(mid)
-       lg=coord_array.pop(0)[0]	
-       lt=coord_array.pop(0)[1]	
-       logconsole.debug("determined lt="+str(lt)+" lg="+str(lg)+" for mid="+str(mid))
+    if pid != None: 
+       coord_array=spot_db.getParkedSpots(pid)
+       if coord_array != None and len(coord_array) > 0:
+       	  lg=coord_array[0][0]	
+       	  lt=coord_array[0][1]	
+       logconsole.debug("determined parked lt="+str(lt)+" lg="+str(lg)+" for mid="+str(mid))
     else:
-       coord_array=spot_db.getNearSpots(lt,lg)
+    	if mid != None: 
+      	  coord_array=spot_db.getReportedSpots(mid)
+       	  if coord_array != None and len(coord_array) > 0:
+	    lg=coord_array[0][0]          
+            lt=coord_array[0][1]  
+      	  logconsole.debug("determined reported lt="+str(lt)+" lg="+str(lg)+" for mid="+str(mid))
+    	else:
+       	  coord_array=spot_db.getNearSpots(lt,lg)
     logconsole.debug("coords returned "+str(coord_array))
     ufilename = "maps/ag_"+uuid.uuid4().hex+".kml"
     spot_kml.gen_kml(coord_array, ufilename)
