@@ -1,0 +1,10 @@
+sudo service nginx restart
+sleep 5s
+sudo service nginx status
+sleep 5s
+sudo supervisorctl reread
+sleep 5s
+sudo service supervisor restart
+sleep 5s
+sudo supervisorctl status
+

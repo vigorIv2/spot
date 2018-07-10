@@ -5,6 +5,7 @@ errors.log
 cockroach-data/
 debug.log
 spot_db.pyc
+rest/maps/ag_*
 .env
 test_web2py/
 build/
