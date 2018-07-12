@@ -1,3 +1,9 @@
+my-safe-directory
+nohup_huhuladb*.out
+huhuladb00/
+huhuladb01/
+huhuladb02/
+certs
 flask
 testusers.txt
 nohup.out
