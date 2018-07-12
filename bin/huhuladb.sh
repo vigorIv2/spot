@@ -7,5 +7,5 @@ else
 	echo "Starting slave $hn to connect to $master"
 	eo="--join=$master:26257"
 fi
-nohup cockroach start --certs-dir=certs --host=$hn --http-host=$hn --store=$hn --port=26258 --http-port=8081 $eo > nohup_$hn.out &
+nohup cockroach start --certs-dir=certs --host=$hn --http-host=$hn --store=$hn --port=26257 --http-port=8080 $eo > nohup_$hn.out &
 
