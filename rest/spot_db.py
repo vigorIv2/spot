@@ -62,12 +62,12 @@ def locateSpot(latitude0,longitude0) :
         else:
                 return None
 
-def getReportedSpots(rid) :
+def getReportedSpots(rid,hd) :
 	if rid.isnumeric():
 		informer_id=getUserID(rid)
 	else:
 		informer_id=rid
-        selsql = "select longitude, latitude from huhula.spots as sp where sp.informer_id = '%s' and age(sp.inserted_at) < INTERVAL '1d0h0m0s0ms0us6ns'" % (informer_id,)
+        selsql = "select longitude, latitude from huhula.spots as sp where sp.informer_id = '%s' and age(sp.inserted_at) < INTERVAL '%sh'" % (informer_id,hd,)
         logconsole.debug("SQL:" + selsql)
         cur.execute(selsql)
         rows=cur.fetchall()
@@ -76,12 +76,12 @@ def getReportedSpots(rid) :
         else:
                 return None
 
-def getParkedSpots(rid) :
+def getParkedSpots(rid,hd) :
 	if rid.isnumeric():
 		informer_id=getUserID(rid)
 	else:
 		informer_id=rid
-        selsql = "select longitude, latitude from huhula.parked as sp where sp.informer_id = '%s' and age(sp.inserted_at) < INTERVAL '1d0h0m0s0ms0us6ns'" % (informer_id,)
+        selsql = "select longitude, latitude from huhula.parked as sp where sp.informer_id = '%s' and age(sp.inserted_at) < INTERVAL '%sh'" % (informer_id,hd,)
         logconsole.debug("SQL:" + selsql)
         cur.execute(selsql)
         rows=cur.fetchall()
@@ -90,16 +90,16 @@ def getParkedSpots(rid) :
         else:
                 return None
 
-def getNearSpots(lt,lg) :
+def getNearSpots(lt,lg,hd) :
         selsql = """select longitude, latitude from (
                 select sp.id, sp.spot, age(sp.inserted_at) as age, 
                         (longitude*pi()/180 - %s*pi()/180) * cos((latitude*pi()/180 + %s*pi()/180)/2) as dl,
                         (latitude*pi()/180 - %s*pi()/180) as df, latitude, longitude from huhula.spots as sp   
-                where taker_id is null -- and age(sp.inserted_at) < INTERVAL '2d2h1m1s1ms1us6ns'
+                where taker_id is null and age(sp.inserted_at) < INTERVAL '%sh'
                 order by age(sp.inserted_at) 
                 ) where sqrt(df*df + dl*dl) * 6371e3 < 2000 
                   order by sqrt(df*df + dl*dl) * 6371e3, age
-                limit 1000""" % (lg,lt,lt,)
+                limit 1000""" % (lg,lt,lt,hd,)
         logconsole.debug("SQL:" + selsql)
         cur.execute(selsql)
         rows=cur.fetchall()

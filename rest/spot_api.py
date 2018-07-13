@@ -103,37 +103,53 @@ def make_public_spot(spot):
 def get_users():
     return jsonify( { 'users': map(make_public_user, users) } )
 
+def data_points(arr):
+    mn = min(arr)
+    mx = max(arr)
+    av = (mx - mn) / len(arr)
+    return mn,mx,av+mn
+	
 @app.route('/spot/api/v1.0/map', methods = ['GET'])
 @auth.login_required
 def get_map():
     mid = request.args.get('mid', None)
     pid = request.args.get('pid', None)
+    hd = request.args.get('hd', "24")
+    if not hd.isdigit():
+      hd = "24"
     lt = request.args.get('lt', None)
     lg = request.args.get('lg', None)
-    logconsole.debug("running map with "+str(request.args)+" lt="+str(lt)+" lg="+str(lg)+" mid="+str(mid)+" pid="+str(pid))
+    logconsole.debug("running map with "+str(request.args)+" lt="+str(lt)+" lg="+str(lg)+" mid="+str(mid)+" pid="+str(pid)+" hd="+str(hd))
     if lt == None and lg == None and mid == None and pid == None :
         abort(400)
     spot_db.openConn()
     coord_array = []	
     if pid != None: 
-       coord_array=spot_db.getParkedSpots(pid)
+       coord_array=spot_db.getParkedSpots(pid,hd)
        if coord_array != None and len(coord_array) > 0:
-       	  lg=coord_array[0][0]	
-       	  lt=coord_array[0][1]	
-       logconsole.debug("determined parked lt="+str(lt)+" lg="+str(lg)+" for mid="+str(mid))
+          mn0,mx0,lg=data_points(list(map(lambda x: x[0], coord_array)))
+          mn1,mx1,lt=data_points(list(map(lambda x: x[1], coord_array)))
+          logconsole.debug("determined parked mn0="+str(mn0)+" mx0="+str(mx0))
+          logconsole.debug("determined parked mn1="+str(mn1)+" mx1="+str(mx1))
+       logconsole.debug("determined parked lt="+str(lt)+" lg="+str(lg)+" for mid="+str(pid))
     else:
-    	if mid != None: 
-      	  coord_array=spot_db.getReportedSpots(mid)
+       if mid != None: 
+      	  coord_array=spot_db.getReportedSpots(mid,hd)
        	  if coord_array != None and len(coord_array) > 0:
-	    lg=coord_array[0][0]          
-            lt=coord_array[0][1]  
-      	  logconsole.debug("determined reported lt="+str(lt)+" lg="+str(lg)+" for mid="+str(mid))
-    	else:
-       	  coord_array=spot_db.getNearSpots(lt,lg)
+             mn0,mx0,lg=data_points(list(map(lambda x: x[0], coord_array)))
+             mn1,mx1,lt=data_points(list(map(lambda x: x[1], coord_array)))
+             logconsole.debug("determined reported mn0="+str(mn0)+" mx0="+str(mx0))
+             logconsole.debug("determined reported mn1="+str(mn1)+" mx1="+str(mx1))
+          logconsole.debug("determined reported lt="+str(lt)+" lg="+str(lg)+" for mid="+str(mid))
+       else:
+       	  coord_array=spot_db.getNearSpots(lt,lg,hd)
     logconsole.debug("coords returned "+str(coord_array))
     ufilename = "maps/ag_"+uuid.uuid4().hex+".kml"
-    spot_kml.gen_kml(coord_array, ufilename)
-    html=spot_kml.gen_html(lt, lg, ufilename)
+    if coord_array != None and len(coord_array) > 0: 
+       spot_kml.gen_kml(coord_array, ufilename)
+       html=spot_kml.gen_html(lt, lg, ufilename)
+    else:
+       html=spot_kml.gen_empty_html()
     resp = make_response(html, 200)
     spot_db.cur.close()
     spot_db.conn.close()

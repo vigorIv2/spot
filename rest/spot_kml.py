@@ -37,4 +37,15 @@ def gen_html(nlat,nlon,ufn):
 </html>"""
 	return result
 
+def gen_empty_html():
+	result="""<html>
+<head>
+        <title>No data points</title>
+</head>
+<body>
+        <h3>Empty data set</h3>
+</body>
+</html>"""
+	return result
+
 
