@@ -1,0 +1,22 @@
+---
+- hosts: db
+  name: Install the cockroachdb prerequisites  
+  become: yes
+  gather_facts: false
+  tasks:
+      - name: install cockroachdb
+        yum:
+          name: cockroachdb
+          state: present
+
+      - name: start cockroachdb
+        service:
+          name: cockroachdb
+          state: started
+
+      - name: uninstall cockroachdb
+        service:
+          name: cockroachdb
+          state: absent
+
+

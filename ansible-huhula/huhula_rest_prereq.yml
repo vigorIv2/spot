@@ -1,0 +1,14 @@
+---
+- hosts: huhula_rest
+  become: true
+  remote_user: ubuntu
+  tasks:
+  - name: install packages
+    apt: name={{item}} state=latest update_cache=yes
+    with_items:
+    - ntp
+    - htop
+    - supervisor
+    - python-virtualenv
+    - python-pip
+

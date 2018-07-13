@@ -1,0 +1,6 @@
+---
+- hosts: huhula_rest
+  become: true
+  remote_user: ubuntu
+  roles:
+    - nginxinc.nginx
