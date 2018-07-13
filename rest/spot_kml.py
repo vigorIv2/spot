@@ -23,13 +23,14 @@ def gen_html(nlat,nlon,ufn):
 <body>
         <div style="width:100%; height:100%" id="map"></div>
         <script type='text/javascript'>
-                var map = new L.Map('map', {center: new L.LatLng("""+str(nlat)+","+str(nlon)+"""), zoom: 7});
+                var map = new L.Map('map', {center: new L.LatLng("""+str(nlat)+","+str(nlon)+"""), zoom: 17, dragging: !L.Browser.mobile });
                 var osm = new L.TileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
                 var track = new L.KML("/"""+ufn+"""", {async: true});
                 track.on("loaded", function(e) {
                         map.fitBounds(e.target.getBounds());
                 });
                 map.addLayer(track);
+		map.locate({setView: true, maxZoom: 16});
                 map.addLayer(osm);
                 map.addControl(new L.Control.Layers({}, {'parking':track}));
         </script>
