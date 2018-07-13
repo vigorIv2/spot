@@ -10,8 +10,24 @@ select * from users where id = 'c8a5d00f-b76d-4c97-a45e-5d6404c1d229';
 select concat('<Placemark><Point><coordinates>',cast(longitude as string),',',cast(latitude as string),'</coordinates></Point></Placemark>') 
 from huhula.spots where longitude = -122.08400000000002 ;
 
-// -122.08400000000002,37.421998333333335
-// 37.422000, -122.084090
+
+select longitude, latitude from huhula.spots as sp where sp.informer_id = 'a94aa802-0e8e-41fe-a305-a6a3ee4ecebb' and age(sp.inserted_at) < INTERVAL '1d21h0m0s1ms1us6ns'
+
+select longitude, latitude, age(sp.inserted_at) from huhula.spots as sp where sp.informer_id = 'a94aa802-0e8e-41fe-a305-a6a3ee4ecebb' and age(sp.inserted_at) < INTERVAL '2d'
+
+select longitude, latitude, sp.inserted_at from huhula.spots as sp where sp.informer_id = '0414cae0-0492-4e2e-bd58-230938eb06a9' and age(sp.inserted_at) < INTERVAL '1d'
+
+select longitude, latitude from huhula.spots as sp where sp.informer_id = '0414cae0-0492-4e2e-bd58-230938eb06a9' and age(sp.inserted_at) < INTERVAL '1d0h0m0s0ms0us6ns'
+
+select * from huhula.spots sp where sp.informer_id = 'a94aa802-0e8e-41fe-a305-a6a3ee4ecebb' and age(sp.inserted_at) < INTERVAL '1d0h0m0s0ms0us6ns'
+
+
+select longitude, latitude from huhula.spots as sp where age(sp.inserted_at) < INTERVAL '3h'
+
+select * from huhula.spots order by inserted_at desc limit 30;
+
+
+select * from huhula.spots limit 100;
 
 delete from huhula.spots where longitude = 3.45;
 
@@ -19,7 +35,7 @@ select * from users where userhash not like 'test%'
 order by inserted_at desc;
 
 
-select * from parked 
+select * from parked where informer_id = '0414cae0-0492-4e2e-bd58-230938eb06a9'
 order by inserted_at desc;
 
 select id, spot, age, sqrt(df*df + dl*dl) * 6371e3 as dist, latitude, longitude from (
