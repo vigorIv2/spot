@@ -110,7 +110,7 @@ def data_points(arr):
     return mn,mx,av+mn
 	
 @app.route('/spot/api/v1.0/map', methods = ['GET'])
-@auth.login_required
+#@auth.login_required
 def get_map():
     mid = request.args.get('mid', None)
     pid = request.args.get('pid', None)
