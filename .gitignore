@@ -1,4 +1,5 @@
 my-safe-directory
+flask/lib/python2.7/*
 nohup_huhuladb*.out
 spot_api.pyc
 spot_db.pyc

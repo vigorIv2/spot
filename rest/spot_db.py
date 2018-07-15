@@ -141,5 +141,8 @@ def occupySpot(taker,sid,taken_at,client_at) :
 		return 404
 		
 	cur.execute("update huhula.spots set quantity=quantity-1 where id=%s and quantity > 0", (sid,))
-	cur.execute("INSERT INTO huhula.occupy(spot_id, taken_at, taker_id, client_at) values(%s,now(),%s,%s)", (sid, taker_id, client_at))	
+	if cur.rowcount > 0:
+	  cur.execute("INSERT INTO huhula.occupy(spot_id, taken_at, taker_id, client_at) values(%s,now(),%s,%s)", (sid, taker_id, client_at))	
+	else:
+	  return 404	  
 	return 0	
