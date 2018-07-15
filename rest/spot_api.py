@@ -217,11 +217,10 @@ def create_spot():
     }
     spots.append(spot)
     spot_db.openConn()
-    for spt in request.json['spot']:
-    	rc = spot_db.insertSpot(request.json['uid'],int(round(time.time() * 1000)),request.json['deg'],request.json['loc']['al'],
-            request.json['loc']['lg'],request.json['loc']['lt'],spt,request.json['ct'])
-	if ( rc != 0 ):
-		abort(rc) 
+    rc = spot_db.insertSpot(request.json['uid'],int(round(time.time() * 1000)),request.json['deg'],request.json['loc']['al'],
+            request.json['loc']['lg'],request.json['loc']['lt'],request.json['spot'],request.json['ct'])
+    if ( rc != 0 ):
+	abort(rc) 
 
     spot_db.cur.close()
     spot_db.conn.close()    
@@ -249,7 +248,7 @@ def take_spot():
     spots.append(spot)
 # 2018-05-08 02:57:27,299 - file - DEBUG - Take called with {u'loc': {u'lg': 6.7, u'lt': 3.4, u'al': 5.9}, u'ct': u'12121212121212', u'uid': u'igor', u'sid': u'jhgjhgjhgjhgjhgjhgjhg'}
     spot_db.openConn()
-    rc = spot_db.updateSpot(request.json['uid'],request.json['sid'],int(round(time.time() * 1000)),request.json['ct'])
+    rc = spot_db.occupySpot(request.json['uid'],request.json['sid'],int(round(time.time() * 1000)),request.json['ct'])
     if ( rc != 0 ):
         abort(rc)
     spot_db.cur.close()
