@@ -1,5 +1,7 @@
 hn=$(hostname)
 master=huhuladb00
+rte=/mnt/vol1
+cd $rte
 eo=""
 if [ "$hn" == "$master" ]; then
 	echo "Starting master $hn"
