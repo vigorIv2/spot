@@ -1,5 +1,11 @@
 my-safe-directory
+flask/lib/python2.7/*
 nohup_huhuladb*.out
+spot_api.pyc
+spot_db.pyc
+rest/spot_api.pyc
+rest/spot_db.pyc
+rest/spot_kml.pyc
 huhuladb00/
 huhuladb01/
 huhuladb02/
@@ -10,7 +16,6 @@ nohup.out
 errors.log
 cockroach-data/
 debug.log
-spot_db.pyc
 rest/maps/ag_*
 .env
 test_web2py/
