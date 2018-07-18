@@ -73,7 +73,7 @@ spots = [
         2
       ], 
       "uid": "daniel", 
-      "uri": "http://spot.selfip.com:65000/spot/api/v1.0/spot?id=h2"
+      "uri": "http://addr/spot/api/v1.0/spot?id=h2"
     }
 ]
 
@@ -206,6 +206,8 @@ def create_spot():
         abort(400)
     if not request.json or not 'deg' in request.json:
         abort(400)
+    mode=1 if request.json.get('m', 0) == 'a' else 0 # by default treat as manually reported - aka 0
+    qty=request.json.get('q', len(request.json['spot'])) # by default fill up quantity as number of elements in location array
     spot = {
         'id': "h2",
         'uid': request.json['uid'], 
@@ -214,11 +216,13 @@ def create_spot():
         'deg' : request.json['deg'],
         'at': time.time(),
         'ct': request.json['ct'],
+        'm': mode,
+        'q': qty,
     }
     spots.append(spot)
     spot_db.openConn()
     rc = spot_db.insertSpot(request.json['uid'],int(round(time.time() * 1000)),request.json['deg'],request.json['loc']['al'],
-            request.json['loc']['lg'],request.json['loc']['lt'],request.json['spot'],request.json['ct'])
+            request.json['loc']['lg'],request.json['loc']['lt'],request.json['spot'],request.json['ct'],mode,qty)
     if ( rc != 0 ):
 	abort(rc) 
 

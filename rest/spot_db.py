@@ -67,6 +67,8 @@ def getReportedSpots(rid,hd) :
 		informer_id=getUserID(rid)
 	else:
 		informer_id=rid
+	if informer_id == None: 
+		return 404
         selsql = "select longitude, latitude from huhula.spots as sp where sp.informer_id = '%s' and age(sp.inserted_at) < INTERVAL '%sh'" % (informer_id,hd,)
         logconsole.debug("SQL:" + selsql)
         cur.execute(selsql)
@@ -81,6 +83,8 @@ def getParkedSpots(rid,hd) :
 		informer_id=getUserID(rid)
 	else:
 		informer_id=rid
+	if informer_id == None: 
+		return 404
         selsql = "select longitude, latitude from huhula.parked as sp where sp.informer_id = '%s' and age(sp.inserted_at) < INTERVAL '%sh'" % (informer_id,hd,)
         logconsole.debug("SQL:" + selsql)
         cur.execute(selsql)
@@ -121,7 +125,7 @@ def insertParked(informer,informed_at,azimuth,altitude,longitude,latitude,client
             (informer_id,informed_at,azimuth,altitude,longitude,latitude,client_at))
 	return 0
 
-def insertSpot(informer,informed_at,azimuth,altitude,longitude,latitude,spots,client_at) :
+def insertSpot(informer,informed_at,azimuth,altitude,longitude,latitude,spots,client_at,mode,qty) :
 	informer_id=getUserID(informer)
 	if ( informer_id is None ) :
 		return 404
@@ -129,8 +133,8 @@ def insertSpot(informer,informed_at,azimuth,altitude,longitude,latitude,spots,cl
 #		informer_id=getUserID(informer)
 	sameSpot = checkSameSpot(informer_id,spots[0],latitude,longitude)
 	if (sameSpot is None) or (sameSpot == 0) : 
-		cur.execute("INSERT INTO huhula.spots(informer_id,informed_at,azimuth,altitude,longitude,latitude,direction,quantity,client_at) values(%s,%s,%s,%s,%s,%s,%s,%s,%s)",
-            (informer_id,informed_at,azimuth,altitude,longitude,latitude,spots,len(spots),client_at))
+		cur.execute("INSERT INTO huhula.spots(informer_id,informed_at,azimuth,altitude,longitude,latitude,direction,quantity,client_at,mode) values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",
+            (informer_id,informed_at,azimuth,altitude,longitude,latitude,spots,qty,client_at,mode))
 	        return 0		
 	else :
 		return 409
