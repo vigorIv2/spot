@@ -188,10 +188,12 @@ def create_user():
     if ( informer_id is None ) :
        spot_db.newUser(request.json['id'])
        informer_id=spot_db.getUserID(request.json['id'])
-
+    props = spot_db.getUserProperties(informer_id)
+    logconsole.debug("registering user "+request.json['id']+" db key ="+informer_id+" props="+str(props))
     spot_db.cur.close()
-    spot_db.conn.close()    
-    logconsole.debug("registered user "+request.json['id']+" db key ="+informer_id)
+    spot_db.conn.close() 
+    user['roles']=props[0]
+    logconsole.debug("registered user "+request.json['id']+" db key ="+informer_id+" props="+str(props))
     return jsonify( { 'user': make_public_user(user) } ), 201
 
 @app.route('/spot/api/v1.0/spot', methods = ['POST'])

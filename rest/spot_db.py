@@ -19,8 +19,16 @@ def openConn():
 	conn.set_session(autocommit=True)
 	cur = conn.cursor()
 
+def getUserProperties(uid) :
+	cur.execute("SELECT roles FROM users WHERE id = '%s'" % (uid,))
+	row=cur.fetchone()
+	if row:
+		return row
+	else:
+		return None
+
 def getUserID(user) :
-	cur.execute("SELECT id FROM users WHERE userhash = '" + user + "'")
+	cur.execute("SELECT id FROM users WHERE userhash = '%s'" % (user,))
 	row=cur.fetchone()
 	if row:
 		return row[0]
