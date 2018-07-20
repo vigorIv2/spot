@@ -26,10 +26,9 @@ select longitude, latitude from huhula.spots as sp where age(sp.inserted_at) < I
 
 select * from huhula.spots order by inserted_at desc limit 30;
 
+select * from huhula.occupy order by inserted_at desc limit 30;
 
-select * from huhula.spots limit 100;
-
-delete from huhula.spots where longitude = 3.45;
+select * from huhula.spots where id in ('500d55bd-3d73-405b-9bcc-deadfedde5df','f200db8f-2a2f-404b-b3e4-8379c7ebe785','d5ff5338-5b88-4330-acc7-f5712340e1a3');
 
 select * from users where userhash not like 'test%' 
 order by inserted_at desc;
