@@ -12,7 +12,7 @@ def openConn() :
     global cur
 #    conn = psycopg2.connect(database="huhula", user="root", host="roachdb", port=26257)
 #    cs="postgresql://huhuladb00:26257/mydb?user=root&sslcert=/Users/ivasilchikov/spot/certs/client.root.crt&sslkey=/Users/ivasilchikov/spot/certs/client.root.key&sslmode=require&ssl=true"
-    cs="postgresql://huhuladb00:26257/huhula?user=huhulaman&password=sEBx9gjgzfo&sslcert=/Users/ivasilchikov/spot/certs/client.huhulaman.crt&sslkey=/Users/ivasilchikov/spot/certs/client.huhulaman.key&sslmode=require&ssl=true"
+    cs="postgresql://huhuladb00:26257/huhula?user=huhulaman&password=sEBx9gjgzfo&sslcert=/home/ubuntu/spot/certs/client.huhulaman.crt&sslkey=/home/ubuntu/spot/certs/client.huhulaman.key&sslmode=require&ssl=true"
     conn = psycopg2.connect(cs)
     conn.set_session(autocommit=True)
     cur = conn.cursor()

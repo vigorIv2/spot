@@ -15,7 +15,10 @@ logconsole.debug("Debug CONSOLE")
 def openConn():
 	global conn
 	global cur
-	conn = psycopg2.connect(database="huhula", user="root", host="roachdb", port=26257)
+#	conn = psycopg2.connect(database="huhula", user="root", host="roachdb", port=26257)
+        cs = "postgresql://huhuladb00:26257/huhula?user=huhulaman&password=sEBx9gjgzfo&sslcert=/home/ubuntu/spot/certs/client.huhulaman.crt&sslkey=/home/ubuntu/spot/certs/client.huhulaman.key&sslmode=require&ssl=true"
+        conn = psycopg2.connect(cs)
+
 	conn.set_session(autocommit=True)
 	cur = conn.cursor()
 
