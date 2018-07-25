@@ -250,10 +250,10 @@ def insertSpot(informer,informed_at,azimuth,altitude,longitude,latitude,spots,cl
 	    if (sameSpot is None) or (sameSpot == 0) : 
 		cur.execute("INSERT INTO huhula.spots(informer_id,informed_at,azimuth,altitude,longitude,latitude,direction,quantity,client_at,mode) values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",
                 (informer_id,informed_at,azimuth,altitude,longitude,latitude,spots,qty,client_at,mode))
+                lconn.commit()
 	        return 0		
 	    else :
 		return 409
-            lconn.commit()
         except:
             lconn.rollback()
         finally:
@@ -271,9 +271,9 @@ def occupySpot(taker,sid,taken_at,client_at) :
 	    cur.execute("update huhula.spots set quantity=quantity-1 where id=%s and quantity > 0", (sid,))
 	    if cur.rowcount > 0:
 	        cur.execute("INSERT INTO huhula.occupy(spot_id, taken_at, taker_id, client_at) values(%s,now(),%s,%s)", (sid, taker_id, client_at))	
+                lconn.commit()
 	    else:
 	        return 404	  
-            lconn.commit()
         except:
             lconn.rollback()
         finally:
