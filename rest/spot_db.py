@@ -46,6 +46,7 @@ def getUserProperties(uid) :
 		return None
         finally:
 	    cur.close()		
+            lconn.commit()
             g_pool.putconn(lconn)
 
 def cleanUp(users) :
@@ -62,6 +63,7 @@ def cleanUp(users) :
 	        	cur.execute("delete FROM users WHERE userhash = '%s'" % (u,))
 		finally:
 			cur.close()		
+                        lconn.commit()
         		g_pool.putconn(lconn)
 
 def getUserID(user) :
@@ -76,6 +78,7 @@ def getUserID(user) :
 			return None
 	finally:
 		cur.close()
+                lconn.commit()
         	g_pool.putconn(lconn)
 
 
@@ -100,6 +103,7 @@ def checkSameSpot(informer_id,spot,lat,lon) :
                     return None
         finally:
 	    cur.close()
+            lconn.commit()
             g_pool.putconn(lconn)
 
 
@@ -125,6 +129,7 @@ def locateSpot(latitude0,longitude0) :
                 return None
         finally:
 	    cur.close()
+            lconn.commit()
             g_pool.putconn(lconn)
 
 
@@ -148,6 +153,7 @@ def getReportedSpots(rid,hd) :
                 return None
         finally:
 	    cur.close()
+            lconn.commit()
             g_pool.putconn(lconn)
 
 def getParkedSpots(rid,hd) :
@@ -170,6 +176,7 @@ def getParkedSpots(rid,hd) :
                 return None
         finally:
 	    cur.close()
+            lconn.commit()
             g_pool.putconn(lconn)
 
 def getNearSpots(lt,lg,hd) :
@@ -194,6 +201,7 @@ def getNearSpots(lt,lg,hd) :
                 return None
         finally:
 	    cur.close()
+            lconn.commit()
             g_pool.putconn(lconn)
 
 
