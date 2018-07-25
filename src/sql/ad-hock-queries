@@ -30,11 +30,14 @@ select * from huhula.occupy order by inserted_at desc limit 30;
 
 select * from huhula.spots where id in ('500d55bd-3d73-405b-9bcc-deadfedde5df','f200db8f-2a2f-404b-b3e4-8379c7ebe785','d5ff5338-5b88-4330-acc7-f5712340e1a3');
 
-select * from users where userhash not like 'test%' 
+select * from huhula.users where userhash not like 'test%' 
 order by inserted_at desc;
 
+select * from huhula.spots where informer_id = '1eb9e61b-27d4-4c64-900a-ab0d8d70ffaf'
 
-select * from parked where informer_id = '0414cae0-0492-4e2e-bd58-230938eb06a9'
+-- delete from huhula.spots where informer_id = '1eb9e61b-27d4-4c64-900a-ab0d8d70ffaf'
+
+select * from huhula.parked where informer_id = '0414cae0-0492-4e2e-bd58-230938eb06a9'
 order by inserted_at desc;
 
 select id, spot, age, sqrt(df*df + dl*dl) * 6371e3 as dist, latitude, longitude from (

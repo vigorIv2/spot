@@ -2,7 +2,7 @@ CREATE DATABASE if not exists huhula;
 
 CREATE USER huhulaman WITH PASSWORD 'sEBx9gjgzfo';
 
-GRANT select, insert, update ON TABLE huhula.users, huhula.spots, huhula.occupy, huhula.parked TO huhulaman;
+GRANT select, insert, update, delete ON TABLE huhula.users, huhula.spots, huhula.occupy, huhula.parked TO huhulaman;
 
 select  userhash from huhula.users limit 2000;
 
