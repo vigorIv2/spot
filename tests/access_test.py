@@ -36,10 +36,7 @@ class TestAccess(unittest.TestCase):
         self._started_at = time.time()
         test_users = ['unittest', 'unittest01', 'unittest02', 'unittest03']
         logging.info('executing setUpClass')
-        con = spot_db.openConn()
         spot_db.cleanUp(test_users)
-        spot_db.cur.close()
-        spot_db.conn.close()
         logging.info("URLs to check "+str(urls))
 
     def postit(self,url,payload):
@@ -82,10 +79,7 @@ class TestAccess(unittest.TestCase):
     def tearDownClass(self):
         logging.info('executing tearDownClass')
         self._step_started_at = time.time()
-        con = spot_db.openConn()
         spot_db.cleanUp(test_users)
-        spot_db.cur.close()
-        spot_db.conn.close()
         elapsed = time.time() - self._started_at
         elapsed_step = time.time() - self._step_started_at
         logging.info("total_elapsed=" + str(round(elapsed, 2)) + " step_elapsed=" + str(round(elapsed_step, 2)))

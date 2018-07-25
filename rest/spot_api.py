@@ -99,7 +99,6 @@ def get_map():
     logconsole.info("running map with "+str(request.args)+" lt="+str(lt)+" lg="+str(lg)+" mid="+str(mid)+" pid="+str(pid)+" hd="+str(hd))
     if lt == None and lg == None and mid == None and pid == None :
         abort(400)
-    spot_db.openConn()
     coord_array = []	
     if pid != None: 
        coord_array=spot_db.getParkedSpots(pid,hd)
@@ -128,8 +127,6 @@ def get_map():
     else:
        html=spot_kml.gen_empty_html()
     resp = make_response(html, 200)
-    spot_db.cur.close()
-    spot_db.conn.close()
     resp.headers['Content-type'] = 'text/html'
     return resp
 
@@ -151,14 +148,11 @@ def get_register():
         'created_at': time.time(),
         'tokens': 20
     }
-    spot_db.openConn()
     informer_id=spot_db.getUserID(request.json['id'])
     if ( informer_id is None ) :
        spot_db.newUser(request.json['id'])
        informer_id=spot_db.getUserID(request.json['id'])
     props = spot_db.getUserProperties(informer_id)
-    spot_db.cur.close()
-    spot_db.conn.close() 
     user['roles']=props[0]
     logconsole.info("registered user "+request.json['id']+" db key ="+informer_id+" props="+str(props))
     return jsonify( { 'user': make_public_user(user) } ), 201
@@ -189,14 +183,11 @@ def get_spot():
         'q': qty,
     }
     spots.append(spot)
-    spot_db.openConn()
     rc = spot_db.insertSpot(request.json['uid'],int(round(time.time() * 1000)),request.json['deg'],request.json['loc']['al'],
             request.json['loc']['lg'],request.json['loc']['lt'],request.json['spot'],request.json['ct'],mode,qty)
     if ( rc != 0 ):
 	abort(rc) 
 
-    spot_db.cur.close()
-    spot_db.conn.close()    
     return jsonify( { 'spot': make_public_spot(spot) } ), 201
 
 @app.route('/spot/api/v1.0/take', methods = ['POST'])
@@ -220,12 +211,9 @@ def get_take():
     }
     spots.append(spot)
 # 2018-05-08 02:57:27,299 - file - DEBUG - Take called with {u'loc': {u'lg': 6.7, u'lt': 3.4, u'al': 5.9}, u'ct': u'12121212121212', u'uid': u'igor', u'sid': u'jhgjhgjhgjhgjhgjhgjhg'}
-    spot_db.openConn()
     rc = spot_db.occupySpot(request.json['uid'],request.json['sid'],int(round(time.time() * 1000)),request.json['ct'])
     if ( rc != 0 ):
         abort(rc)
-    spot_db.cur.close()
-    spot_db.conn.close()	
     return jsonify( { 'spot': make_public_spot(spot) } ), 201
 
 @app.route('/spot/api/v1.0/park', methods = ['POST'])
@@ -247,14 +235,11 @@ def get_park():
         'ct': request.json['ct'],
     }
     spots.append(spot)
-    spot_db.openConn()
     rc = spot_db.insertParked(request.json['uid'],int(round(time.time() * 1000)),request.json['deg'],request.json['loc']['al'],
        request.json['loc']['lg'],request.json['loc']['lt'],request.json['ct'])
     if ( rc != 0 ):
        abort(rc)
 
-    spot_db.cur.close()
-    spot_db.conn.close()
     return jsonify( { 'spot': make_public_spot(spot) } ), 201
 
 @app.route('/spot/api/v1.0/locate', methods = ['POST'])
@@ -265,15 +250,12 @@ def get_locate():
 
     if not request.json or not 'loc' in request.json:
         abort(400)
-    spot_db.openConn()
 
     res=spot_db.locateSpot(request.json['loc']['lt'],request.json['loc']['lg'])
     logconsole.debug("Locate found in db "+str(res))
 # Locate called with {u'loc': {u'lg': -117.71802732, u'lt': 33.58032164, u'al': 73}}
 # Locate found in db ('c1a1defc-0d93-427c-b0d7-601e08d1637d', 0L, datetime.timedelta(660), 4.63180451482997, 33.58035109, -117.71799196)
 
-    spot_db.cur.close()
-    spot_db.conn.close()	
     gspots = [
        {
          "at": 1,

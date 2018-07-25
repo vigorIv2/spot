@@ -4,6 +4,7 @@ import time
 
 # import json
 import psycopg2
+from psycopg2.pool import SimpleConnectionPool
 
 import logging, logging.config, yaml
 logging.config.dictConfig(yaml.load(open('logging.conf')))
@@ -12,7 +13,27 @@ logconsole = logging.getLogger('console')
 logfl.debug("Debug FILE")
 logconsole.debug("Debug CONSOLE")
 
-def openConn():
+def initPool():
+    global g_pool
+    cs = "postgresql://huhuladb00:26257/huhula?user=huhulaman&sslcert=/home/ubuntu/spot/certs/client.huhulaman.crt&sslkey=/home/ubuntu/spot/certs/client.huhulaman.key&sslmode=require&ssl=true"
+    g_pool = SimpleConnectionPool(1, 7, cs)
+
+    con = g_pool.getconn()
+    con.set_session(autocommit=True)
+    g_pool.putconn(con)
+
+initPool()
+
+def getconn():
+    global g_pool
+    lconn = g_pool.getconn()
+    try:
+        yield lconn
+    finally:
+        g_pool.putconn(lconn)
+
+
+def openConnUndo():
 	global conn
 	global cur
 #	conn = psycopg2.connect(database="huhula", user="root", host="roachdb", port=26257)
@@ -23,30 +44,49 @@ def openConn():
 	cur = conn.cursor()
 
 def getUserProperties(uid) :
-	cur.execute("SELECT roles FROM users WHERE id = '%s'" % (uid,))
-	row=cur.fetchone()
-	if row:
+       	lconn = g_pool.getconn()
+	cur = lconn.cursor() 
+        try:
+	    cur.execute("SELECT roles FROM users WHERE id = '%s'" % (uid,))
+	    row=cur.fetchone()
+	    if row:
 		return row
-	else:
+	    else:
 		return None
+        finally:
+	    cur.close()		
+            g_pool.putconn(lconn)
 
 def cleanUp(users) :
         for u in users:
 	    informer_id=getUserID(u)
             if informer_id != None:
                 logconsole.info("Cleaning up for user "+str(u)+" uid="+str(informer_id))
-	        cur.execute("delete FROM occupy WHERE taker_id = '%s'" % (informer_id,))
-	        cur.execute("delete FROM parked WHERE informer_id = '%s'" % (informer_id,))
-	        cur.execute("delete FROM spots WHERE informer_id = '%s'" % (informer_id,))
-	        cur.execute("delete FROM users WHERE userhash = '%s'" % (u,))
+        	lconn = g_pool.getconn()
+		cur = lconn.cursor() 
+		try:
+	        	cur.execute("delete FROM occupy WHERE taker_id = '%s'" % (informer_id,))
+	        	cur.execute("delete FROM parked WHERE informer_id = '%s'" % (informer_id,))
+	        	cur.execute("delete FROM spots WHERE informer_id = '%s'" % (informer_id,))
+	        	cur.execute("delete FROM users WHERE userhash = '%s'" % (u,))
+		finally:
+			cur.close()		
+        		g_pool.putconn(lconn)
 
 def getUserID(user) :
+        lconn = g_pool.getconn()
+	cur = lconn.cursor() 
 	cur.execute("SELECT id FROM users WHERE userhash = '%s'" % (user,))
-	row=cur.fetchone()
-	if row:
-		return row[0]
-	else:
-		return None
+	row = cur.fetchone()
+	try: 
+		if row:
+			return row[0]
+		else:
+			return None
+	finally:
+		cur.close()
+        	g_pool.putconn(lconn)
+
 
 def checkSameSpot(informer_id,spot,lat,lon) :
 	selsql = """select count(*) as cnt 
@@ -58,12 +98,19 @@ def checkSameSpot(informer_id,spot,lat,lon) :
 			and round(latitude,4) = round(%s,4) 
 		""" % (informer_id, spot, lon, lat,)
         logconsole.debug("SQL:" + selsql)
- 	cur.execute(selsql)
-	row=cur.fetchone()
-	if row:
-		return row[0]
-	else:
-		return None
+       	lconn = g_pool.getconn()
+	cur = lconn.cursor() 
+        try:
+            cur.execute(selsql)
+            row=cur.fetchone()
+            if row:
+                    return row[0]
+            else:
+                    return None
+        finally:
+	    cur.close()
+            g_pool.putconn(lconn)
+
 
 def locateSpot(latitude0,longitude0) :
         selsql = """select id, spot, age, sqrt(df*df + dl*dl) * 6371e3 as dist, latitude, longitude from (
@@ -76,12 +123,19 @@ def locateSpot(latitude0,longitude0) :
 		  order by sqrt(df*df + dl*dl) * 6371e3, age
   		limit 1""" % (longitude0,latitude0,latitude0,)
         logconsole.debug("SQL:" + selsql)
-	cur.execute(selsql)
-        row=cur.fetchone()
-        if row:
+       	lconn = g_pool.getconn()
+	cur = lconn.cursor() 
+        try:
+	    cur.execute(selsql)
+            row=cur.fetchone()
+            if row:
                 return row
-        else:
+            else:
                 return None
+        finally:
+	    cur.close()
+            g_pool.putconn(lconn)
+
 
 def getReportedSpots(rid,hd) :
 	if rid.isnumeric():
@@ -92,12 +146,18 @@ def getReportedSpots(rid,hd) :
 		return 404
         selsql = "select longitude, latitude from huhula.spots as sp where sp.informer_id = '%s' and age(sp.inserted_at) < INTERVAL '%sh'" % (informer_id,hd,)
         logconsole.debug("SQL:" + selsql)
-        cur.execute(selsql)
-        rows=cur.fetchall()
-        if rows:
+       	lconn = g_pool.getconn()
+	cur = lconn.cursor() 
+        try:
+            cur.execute(selsql)
+            rows=cur.fetchall()
+            if rows:
                 return rows
-        else:
+            else:
                 return None
+        finally:
+	    cur.close()
+            g_pool.putconn(lconn)
 
 def getParkedSpots(rid,hd) :
 	if rid.isnumeric():
@@ -108,12 +168,18 @@ def getParkedSpots(rid,hd) :
 		return 404
         selsql = "select longitude, latitude from huhula.parked as sp where sp.informer_id = '%s' and age(sp.inserted_at) < INTERVAL '%sh'" % (informer_id,hd,)
         logconsole.debug("SQL:" + selsql)
-        cur.execute(selsql)
-        rows=cur.fetchall()
-        if rows:
+       	lconn = g_pool.getconn()
+	cur = lconn.cursor() 
+        try:
+            cur.execute(selsql)
+            rows=cur.fetchall()
+            if rows:
                 return rows
-        else:
+            else:
                 return None
+        finally:
+	    cur.close()
+            g_pool.putconn(lconn)
 
 def getNearSpots(lt,lg,hd) :
         selsql = """select longitude, latitude from (
@@ -126,24 +192,42 @@ def getNearSpots(lt,lg,hd) :
                   order by sqrt(df*df + dl*dl) * 6371e3, age
                 limit 1000""" % (lg,lt,lt,hd,)
         logconsole.debug("SQL:" + selsql)
-        cur.execute(selsql)
-        rows=cur.fetchall()
-        if rows:
+       	lconn = g_pool.getconn()
+	cur = lconn.cursor() 
+        try:
+            cur.execute(selsql)
+            rows=cur.fetchall()
+            if rows:
                 return rows
-        else:
+            else:
                 return None
+        finally:
+	    cur.close()
+            g_pool.putconn(lconn)
 
 
 def newUser(user) :
-	cur.execute("INSERT INTO huhula.users(userhash) values(%s)",(user,))
+       	lconn = g_pool.getconn()
+	cur = lconn.cursor() 
+        try:
+	    cur.execute("INSERT INTO huhula.users(userhash) values(%s)",(user,))
+        finally:
+	    cur.close()
+            g_pool.putconn(lconn)
 
 
 def insertParked(informer,informed_at,azimuth,altitude,longitude,latitude,client_at) :
 	informer_id=getUserID(informer)
 	if ( informer_id is None ) :
 		return 404
-	cur.execute("INSERT INTO huhula.parked(informer_id,informed_at,azimuth,altitude,longitude,latitude,client_at) values(%s,%s,%s,%s,%s,%s,%s)",
-            (informer_id,informed_at,azimuth,altitude,longitude,latitude,client_at))
+       	lconn = g_pool.getconn()
+	cur = lconn.cursor() 
+        try:
+	    cur.execute("INSERT INTO huhula.parked(informer_id,informed_at,azimuth,altitude,longitude,latitude,client_at) values(%s,%s,%s,%s,%s,%s,%s)",
+                (informer_id,informed_at,azimuth,altitude,longitude,latitude,client_at))
+        finally:
+	    cur.close()
+            g_pool.putconn(lconn)
 	return 0
 
 def insertSpot(informer,informed_at,azimuth,altitude,longitude,latitude,spots,client_at,mode,qty) :
@@ -153,21 +237,33 @@ def insertSpot(informer,informed_at,azimuth,altitude,longitude,latitude,spots,cl
 #		newUser(informer)
 #		informer_id=getUserID(informer)
 	sameSpot = checkSameSpot(informer_id,spots[0],latitude,longitude)
-	if (sameSpot is None) or (sameSpot == 0) : 
+       	lconn = g_pool.getconn()
+	cur = lconn.cursor() 
+        try:
+	    if (sameSpot is None) or (sameSpot == 0) : 
 		cur.execute("INSERT INTO huhula.spots(informer_id,informed_at,azimuth,altitude,longitude,latitude,direction,quantity,client_at,mode) values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",
-            (informer_id,informed_at,azimuth,altitude,longitude,latitude,spots,qty,client_at,mode))
+                (informer_id,informed_at,azimuth,altitude,longitude,latitude,spots,qty,client_at,mode))
 	        return 0		
-	else :
+	    else :
 		return 409
+        finally:
+	    cur.close()
+            g_pool.putconn(lconn)
 
 def occupySpot(taker,sid,taken_at,client_at) :
 	taker_id=getUserID(taker)
 	if ( taker_id is None ) :
 		return 404
 		
-	cur.execute("update huhula.spots set quantity=quantity-1 where id=%s and quantity > 0", (sid,))
-	if cur.rowcount > 0:
-	  cur.execute("INSERT INTO huhula.occupy(spot_id, taken_at, taker_id, client_at) values(%s,now(),%s,%s)", (sid, taker_id, client_at))	
-	else:
-	  return 404	  
+       	lconn = g_pool.getconn()
+	cur = lconn.cursor() 
+        try:
+	    cur.execute("update huhula.spots set quantity=quantity-1 where id=%s and quantity > 0", (sid,))
+	    if cur.rowcount > 0:
+	        cur.execute("INSERT INTO huhula.occupy(spot_id, taken_at, taker_id, client_at) values(%s,now(),%s,%s)", (sid, taker_id, client_at))	
+	    else:
+	        return 404	  
+        finally:
+	    cur.close()
+            g_pool.putconn(lconn)
 	return 0	
