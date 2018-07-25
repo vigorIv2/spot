@@ -40,25 +40,6 @@ def not_found(error):
 def not_found(error):
     return make_response(jsonify( { 'error': 'Not found' } ), 404)
 
-spots = [
-   {
-      "at": 1522890284.214637, 
-      "deg": 126, 
-      "loc": {
-        "al": 0, 
-        "lg": -117.7876202, 
-        "lt": 33.66965465
-      }, 
-      "spot": [
-        1, 
-        4, 
-        2
-      ], 
-      "uid": "daniel", 
-      "uri": "http://addr/spot/api/v1.0/spot?id=h2"
-    }
-]
-
 def make_public_user(user):
     new_user = {}
     for field in user:
@@ -130,12 +111,6 @@ def get_map():
     resp.headers['Content-type'] = 'text/html'
     return resp
 
-@app.route('/spot/api/v1.0/spots', methods = ['GET'])
-@auth.login_required
-def get_spots():
-    sorted_spots=sorted(spots, key=lambda k: k['at'], reverse=True)
-    return jsonify( { 'spots': map(make_public_spot, sorted_spots) } )
-
 @app.route('/spot/api/v1.0/register', methods = ['POST'])
 @auth.login_required
 def get_register():
@@ -182,7 +157,6 @@ def get_spot():
         'm': mode,
         'q': qty,
     }
-    spots.append(spot)
     rc = spot_db.insertSpot(request.json['uid'],int(round(time.time() * 1000)),request.json['deg'],request.json['loc']['al'],
             request.json['loc']['lg'],request.json['loc']['lt'],request.json['spot'],request.json['ct'],mode,qty)
     if ( rc != 0 ):
@@ -209,7 +183,6 @@ def get_take():
         'at': time.time(),
         'ct': request.json['ct'],
     }
-    spots.append(spot)
 # 2018-05-08 02:57:27,299 - file - DEBUG - Take called with {u'loc': {u'lg': 6.7, u'lt': 3.4, u'al': 5.9}, u'ct': u'12121212121212', u'uid': u'igor', u'sid': u'jhgjhgjhgjhgjhgjhgjhg'}
     rc = spot_db.occupySpot(request.json['uid'],request.json['sid'],int(round(time.time() * 1000)),request.json['ct'])
     if ( rc != 0 ):
@@ -234,7 +207,6 @@ def get_park():
         'at': time.time(),
         'ct': request.json['ct'],
     }
-    spots.append(spot)
     rc = spot_db.insertParked(request.json['uid'],int(round(time.time() * 1000)),request.json['deg'],request.json['loc']['al'],
        request.json['loc']['lg'],request.json['loc']['lt'],request.json['ct'])
     if ( rc != 0 ):
@@ -245,7 +217,6 @@ def get_park():
 @app.route('/spot/api/v1.0/locate', methods = ['POST'])
 @auth.login_required
 def get_locate():
-    sorted_spots=sorted(spots, key=lambda k: k['at'], reverse=True)
     logconsole.info("locate called with "+str(request.json))
 
     if not request.json or not 'loc' in request.json:

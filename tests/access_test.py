@@ -82,16 +82,22 @@ class TestAccess(unittest.TestCase):
             payload = {"uid":"unittest01","ct":"12345", "deg":"10", "spot":[0,1], "loc":{"lt":sp[0],"lg":sp[1],"al":0}}
             ur = urls[-1]
             r = self.postit( ur + "/spot/api/v1.0/spot", payload )
-            self.assertTrue( r.status_code == 201 ) 
+            self.assertTrue( r.status_code == 201 )
             payload2 = {"uid":"unittest03","loc":{"lt":sp[0],"lg":sp[1],"al":-1}}
             r2 = self.postit( ur + "/spot/api/v1.0/locate", payload2 )
             self.assertTrue( r2.status_code == 200 )
-
+            jsid = json.loads(r2.text)
+            sid = jsid["spots"][0]["sid"]
+            logging.info("occupying sid="+str(sid))
+            payload3 = {"uid":"unittest03","ct":"4321","sid":sid,"loc":{"lt":sp[0],"lg":sp[1]}}
+            r3 = self.postit( ur + "/spot/api/v1.0/take", payload3 )
+            self.assertTrue( r3.status_code == 201 )
+ 
     @classmethod
     def tearDownClass(self):
         logging.info('executing tearDownClass')
         self._step_started_at = time.time()
-#        spot_db.cleanUp(test_users)
+        spot_db.cleanUp(test_users)
         elapsed = time.time() - self._started_at
         elapsed_step = time.time() - self._step_started_at
         logging.info("total_elapsed=" + str(round(elapsed, 2)) + " step_elapsed=" + str(round(elapsed_step, 2)))

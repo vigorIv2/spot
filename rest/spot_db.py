@@ -53,17 +53,28 @@ def cleanUp(users) :
         for u in users:
 	    informer_id=getUserID(u)
             if informer_id != None:
-                logconsole.info("Cleaning up for user "+str(u)+" uid="+str(informer_id))
+                logconsole.info("Cleaning up derivatives for user "+str(u)+" uid="+str(informer_id))
         	lconn = g_pool.getconn()
+                lconn.set_session(autocommit=True)
+
 		cur = lconn.cursor() 
 		try:
 	        	cur.execute("delete FROM occupy WHERE taker_id = '%s'" % (informer_id,))
 	        	cur.execute("delete FROM parked WHERE informer_id = '%s'" % (informer_id,))
+		finally:
+			cur.close()		
+        		g_pool.putconn(lconn)
+        for u in users:
+	    informer_id=getUserID(u)
+            if informer_id != None:
+                logconsole.info("Cleaning up root recs for user "+str(u)+" uid="+str(informer_id))
+        	lconn = g_pool.getconn()
+                lconn.set_session(autocommit=True)
+
+		cur = lconn.cursor() 
+		try:
 	        	cur.execute("delete FROM spots WHERE informer_id = '%s'" % (informer_id,))
 	        	cur.execute("delete FROM users WHERE userhash = '%s'" % (u,))
-                        lconn.commit()
-                except:
-                        lconn.rollback()
 		finally:
 			cur.close()		
         		g_pool.putconn(lconn)
