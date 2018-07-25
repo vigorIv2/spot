@@ -243,8 +243,7 @@ def get_locate():
          "spot": [
            res[1],
          ],
-        "uid": "igor",
-        "uri": "http://spot.selfip.com:65000/spot/api/v1.0/spot?id=h2"
+        "uid": "hz",
        }
     ]
     logconsole.info("Locate constructed json response "+str(gspots))
