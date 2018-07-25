@@ -61,9 +61,11 @@ def cleanUp(users) :
 	        	cur.execute("delete FROM parked WHERE informer_id = '%s'" % (informer_id,))
 	        	cur.execute("delete FROM spots WHERE informer_id = '%s'" % (informer_id,))
 	        	cur.execute("delete FROM users WHERE userhash = '%s'" % (u,))
+                        lconn.commit()
+                except:
+                        lconn.rollback()
 		finally:
 			cur.close()		
-                        lconn.commit()
         		g_pool.putconn(lconn)
 
 def getUserID(user) :
@@ -210,9 +212,11 @@ def newUser(user) :
 	cur = lconn.cursor() 
         try:
 	    cur.execute("INSERT INTO huhula.users(userhash) values(%s)",(user,))
+            lconn.commit()
+        except:
+            lconn.rollback()
         finally:
 	    cur.close()
-            lconn.commit()
             g_pool.putconn(lconn)
 
 
@@ -225,9 +229,11 @@ def insertParked(informer,informed_at,azimuth,altitude,longitude,latitude,client
         try:
 	    cur.execute("INSERT INTO huhula.parked(informer_id,informed_at,azimuth,altitude,longitude,latitude,client_at) values(%s,%s,%s,%s,%s,%s,%s)",
                 (informer_id,informed_at,azimuth,altitude,longitude,latitude,client_at))
+            lconn.commit()
+        except:
+            lconn.rollback()
         finally:
 	    cur.close()
-            lconn.commit()
             g_pool.putconn(lconn)
 	return 0
 
@@ -247,9 +253,11 @@ def insertSpot(informer,informed_at,azimuth,altitude,longitude,latitude,spots,cl
 	        return 0		
 	    else :
 		return 409
+            lconn.commit()
+        except:
+            lconn.rollback()
         finally:
 	    cur.close()
-            lconn.commit()
             g_pool.putconn(lconn)
 
 def occupySpot(taker,sid,taken_at,client_at) :
@@ -265,8 +273,10 @@ def occupySpot(taker,sid,taken_at,client_at) :
 	        cur.execute("INSERT INTO huhula.occupy(spot_id, taken_at, taker_id, client_at) values(%s,now(),%s,%s)", (sid, taker_id, client_at))	
 	    else:
 	        return 404	  
+            lconn.commit()
+        except:
+            lconn.rollback()
         finally:
 	    cur.close()
-            lconn.commit()
             g_pool.putconn(lconn)
 	return 0	
