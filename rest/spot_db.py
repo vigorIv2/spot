@@ -18,22 +18,13 @@ def initPool():
     cs = "postgresql://huhuladb00:26257/huhula?user=huhulaman&sslcert=/home/ubuntu/spot/certs/client.huhulaman.crt&sslkey=/home/ubuntu/spot/certs/client.huhulaman.key&sslmode=require&ssl=true"
     g_pool = SimpleConnectionPool(1, 7, cs)
 
-    con = g_pool.getconn()
-    con.set_session(autocommit=True)
-    g_pool.putconn(con)
+#    con = g_pool.getconn()
+#    con.set_session(autocommit=True)
+#    g_pool.putconn(con)
 
 initPool()
 
-def getconn():
-    global g_pool
-    lconn = g_pool.getconn()
-    try:
-        yield lconn
-    finally:
-        g_pool.putconn(lconn)
-
-
-def openConnUndo():
+def openConnoldStyle():
 	global conn
 	global cur
 #	conn = psycopg2.connect(database="huhula", user="root", host="roachdb", port=26257)
@@ -213,6 +204,7 @@ def newUser(user) :
 	    cur.execute("INSERT INTO huhula.users(userhash) values(%s)",(user,))
         finally:
 	    cur.close()
+            lconn.commit()
             g_pool.putconn(lconn)
 
 
@@ -227,6 +219,7 @@ def insertParked(informer,informed_at,azimuth,altitude,longitude,latitude,client
                 (informer_id,informed_at,azimuth,altitude,longitude,latitude,client_at))
         finally:
 	    cur.close()
+            lconn.commit()
             g_pool.putconn(lconn)
 	return 0
 
@@ -248,6 +241,7 @@ def insertSpot(informer,informed_at,azimuth,altitude,longitude,latitude,spots,cl
 		return 409
         finally:
 	    cur.close()
+            lconn.commit()
             g_pool.putconn(lconn)
 
 def occupySpot(taker,sid,taken_at,client_at) :
@@ -265,5 +259,6 @@ def occupySpot(taker,sid,taken_at,client_at) :
 	        return 404	  
         finally:
 	    cur.close()
+            lconn.commit()
             g_pool.putconn(lconn)
 	return 0	
