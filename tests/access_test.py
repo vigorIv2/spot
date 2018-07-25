@@ -36,6 +36,10 @@ class TestAccess(unittest.TestCase):
         self._started_at = time.time()
         test_users = ['unittest', 'unittest01', 'unittest02', 'unittest03']
         logging.info('executing setUpClass')
+        con = spot_db.openConn()
+        spot_db.cleanUp(test_users)
+        spot_db.cur.close()
+        spot_db.conn.close()
         logging.info("URLs to check "+str(urls))
 
     def postit(self,url,payload):
@@ -62,10 +66,17 @@ class TestAccess(unittest.TestCase):
 
     def test_02_park(self):
         self._step_started_at = time.time()
-        payload = {"uid":"unittest01","ct":"12345", "deg":"10", "loc":{"lt":33.637871,"lg":-117.739564,"al":-1}}
+        payload = {"uid":"unittest01","ct":"12345", "deg":"10", "loc":{"lt":59.572485,"lg":150.810362,"al":-1}}
         for ur in urls:
             r = self.postit( ur + "/spot/api/v1.0/park", payload )
             self.assertTrue( r.status_code == 201 )
+
+    def test_03_spot(self):
+        self._step_started_at = time.time()
+        payload = {"uid":"unittest03","ct":"12345", "deg":"10", "spot":[0,1], "loc":{"lt":59.572485,"lg":150.810362,"al":-1}}
+        ur = urls[-1]
+        r = self.postit( ur + "/spot/api/v1.0/spot", payload )
+        self.assertTrue( r.status_code == 201 ) 
 
     @classmethod
     def tearDownClass(self):

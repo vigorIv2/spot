@@ -231,7 +231,7 @@ def get_take():
 @app.route('/spot/api/v1.0/park', methods = ['POST'])
 @auth.login_required
 def get_park():
-    logconsole.info("park_parked called with "+str(request.json))
+    logconsole.info("get_park called with "+str(request.json))
     if not request.json or not 'uid' in request.json:
         abort(400)
     if not request.json or not 'ct' in request.json:

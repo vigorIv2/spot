@@ -16,7 +16,8 @@ def openConn():
 	global conn
 	global cur
 #	conn = psycopg2.connect(database="huhula", user="root", host="roachdb", port=26257)
-        cs = "postgresql://huhuladb00:26257/huhula?user=huhulaman&password=sEBx9gjgzfo&sslcert=/home/ubuntu/spot/certs/client.huhulaman.crt&sslkey=/home/ubuntu/spot/certs/client.huhulaman.key&sslmode=require&ssl=true"
+#        cs = "postgresql://huhuladb00:26257/huhula?user=huhulaman&password=sEBx9gjgzfo&sslcert=/home/ubuntu/spot/certs/client.huhulaman.crt&sslkey=/home/ubuntu/spot/certs/client.huhulaman.key&sslmode=require&ssl=true"
+        cs = "postgresql://huhuladb00:26257/huhula?user=huhulaman&sslcert=/home/ubuntu/spot/certs/client.huhulaman.crt&sslkey=/home/ubuntu/spot/certs/client.huhulaman.key&sslmode=require&ssl=true"
         conn = psycopg2.connect(cs)
 
 	conn.set_session(autocommit=True)
@@ -33,11 +34,12 @@ def getUserProperties(uid) :
 def cleanUp(users) :
         for u in users:
 	    informer_id=getUserID(u)
-            logconsole.info("Cleaning up for user "+str(u)+" uid="+str(informer_id))
-	    cur.execute("delete FROM occupy WHERE taker_id = '%s'" % (informer_id,))
-	    cur.execute("delete FROM parked WHERE informer_id = '%s'" % (informer_id,))
-	    cur.execute("delete FROM spots WHERE informer_id = '%s'" % (informer_id,))
-	    cur.execute("delete FROM users WHERE userhash = '%s'" % (u,))
+            if informer_id != None:
+                logconsole.info("Cleaning up for user "+str(u)+" uid="+str(informer_id))
+	        cur.execute("delete FROM occupy WHERE taker_id = '%s'" % (informer_id,))
+	        cur.execute("delete FROM parked WHERE informer_id = '%s'" % (informer_id,))
+	        cur.execute("delete FROM spots WHERE informer_id = '%s'" % (informer_id,))
+	        cur.execute("delete FROM users WHERE userhash = '%s'" % (u,))
 
 def getUserID(user) :
 	cur.execute("SELECT id FROM users WHERE userhash = '%s'" % (user,))
