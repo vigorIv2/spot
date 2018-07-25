@@ -33,7 +33,7 @@ def getUserProperties(uid) :
 def cleanUp(users) :
         for u in users:
 	    informer_id=getUserID(u)
-            logconsole.info("Cleqning up for user "+str(u)+" uid="+str(informer_id))
+            logconsole.info("Cleaning up for user "+str(u)+" uid="+str(informer_id))
 	    cur.execute("delete FROM occupy WHERE taker_id = '%s'" % (informer_id,))
 	    cur.execute("delete FROM parked WHERE informer_id = '%s'" % (informer_id,))
 	    cur.execute("delete FROM spots WHERE informer_id = '%s'" % (informer_id,))

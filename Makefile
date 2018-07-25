@@ -19,6 +19,10 @@ test_intranet_access:
 	@echo starting test access to site via intranet
 	PYTHONPATH=rest python2 ./tests/access_test.py "http://192.168.0.210" "http://192.168.0.211"
 
+test_intranet0_access:
+	@echo starting test access to site via intranet
+	PYTHONPATH=rest python2 ./tests/access_test.py "http://192.168.0.210" 
+
 test_all: | test_intranet_access test_internet_access
 
 test:

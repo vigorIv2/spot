@@ -63,7 +63,7 @@ def make_public_user(user):
     new_user = {}
     for field in user:
         if field == 'id':
-            new_user['uri'] = url_for('create_user', id = user['id'], _external = True)
+            new_user['uri'] = url_for('get_register', id = user['id'], _external = True)
         else:
             if field == 'wallet':
                 new_user['wallet'] = "hidden"
@@ -75,7 +75,7 @@ def make_public_spot(spot):
     new_spot = {}
     for field in spot:
         if field == 'id':
-            new_spot['uri'] = url_for('create_spot', id = spot['id'], _external = True)
+            new_spot['uri'] = url_for('get_spot', id = spot['id'], _external = True)
         else:
             new_spot[field] = spot[field]
     return new_spot
@@ -166,7 +166,7 @@ def get_register():
 @app.route('/spot/api/v1.0/spot', methods = ['POST'])
 @auth.login_required
 def get_spot():
-    logconsole.info("create_spot called with "+str(request.json))
+    logconsole.info("get_spot called with "+str(request.json))
     if not request.json or not 'uid' in request.json:
         abort(400)
     if not request.json or not 'loc' in request.json:
