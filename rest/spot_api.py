@@ -253,6 +253,9 @@ def get_locate():
 
     res=spot_db.locateSpot(request.json['loc']['lt'],request.json['loc']['lg'])
     logconsole.debug("Locate found in db "+str(res))
+    if res == None:
+        abort(404)
+
 # Locate called with {u'loc': {u'lg': -117.71802732, u'lt': 33.58032164, u'al': 73}}
 # Locate found in db ('c1a1defc-0d93-427c-b0d7-601e08d1637d', 0L, datetime.timedelta(660), 4.63180451482997, 33.58035109, -117.71799196)
 

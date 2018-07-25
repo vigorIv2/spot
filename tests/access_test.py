@@ -29,8 +29,8 @@ class TestAccess(unittest.TestCase):
         global test_coord  
         test_coord = [ 
                        [ 59.572485, 150.810362 ],
-                       [ 59.572485, 150.810362 ],
-                       [ 59.572485, 150.810362 ]
+                       [ 59.582485, 150.710362 ],
+                       [ 59.592485, 150.610362 ]
                      ]   
                               
         self._started_at = time.time()
@@ -75,11 +75,23 @@ class TestAccess(unittest.TestCase):
         r = self.postit( ur + "/spot/api/v1.0/spot", payload )
         self.assertTrue( r.status_code == 201 ) 
 
+    def test_04_take(self):
+        self._step_started_at = time.time()
+        for sp in test_coord:
+            logging.info("sp="+str(sp))
+            payload = {"uid":"unittest01","ct":"12345", "deg":"10", "spot":[0,1], "loc":{"lt":sp[0],"lg":sp[1],"al":0}}
+            ur = urls[-1]
+            r = self.postit( ur + "/spot/api/v1.0/spot", payload )
+            self.assertTrue( r.status_code == 201 ) 
+            payload2 = {"uid":"unittest03","loc":{"lt":sp[0],"lg":sp[1],"al":-1}}
+            r2 = self.postit( ur + "/spot/api/v1.0/locate", payload2 )
+            self.assertTrue( r2.status_code == 200 )
+
     @classmethod
     def tearDownClass(self):
         logging.info('executing tearDownClass')
         self._step_started_at = time.time()
-        spot_db.cleanUp(test_users)
+#        spot_db.cleanUp(test_users)
         elapsed = time.time() - self._started_at
         elapsed_step = time.time() - self._step_started_at
         logging.info("total_elapsed=" + str(round(elapsed, 2)) + " step_elapsed=" + str(round(elapsed_step, 2)))
