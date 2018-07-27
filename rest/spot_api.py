@@ -4,8 +4,6 @@ from flask import Flask, jsonify, abort, request, make_response, url_for, Respon
 import time
 from flask_httpauth import HTTPBasicAuth
 
-# import json
-import psycopg2
 import spot_db
 import spot_kml
 import uuid
@@ -167,7 +165,7 @@ def get_spot():
 @app.route('/spot/api/v1.0/take', methods = ['POST'])
 @auth.login_required
 def get_take():
-    logconsole.info("take_spot called with "+str(request.json))
+    logconsole.info("get_take called with "+str(request.json))
     if not request.json or not 'uid' in request.json:
         abort(400)
     if not request.json or not 'ct' in request.json:

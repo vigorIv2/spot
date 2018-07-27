@@ -25,6 +25,22 @@ CREATE TABLE huhula.users(
   unique INDEX (userhash)
 );  
 
+CREATE TABLE huhula.bill(
+  id UUID PRIMARY KEY default gen_random_uuid(),
+  inserted_at TIMESTAMP not null DEFAULT now(),
+  user_id UUID references huhula.users not null,
+  date_from TIMESTAMP,
+  date_to TIMESTAMP not null,
+  informed_qty int default 0,
+  occupied_qty int default 0,
+  debit DOUBLE PRECISION not null default 0,
+  credit DOUBLE PRECISION not null default 0,  
+  chain_sync bool not null default false,
+  chain_date TIMESTAMP 
+);  
+
+select * from huhula.bill;
+
 alter table huhula.users add column roles string[] default array[];  
 
 -- alter table huhula.users drop column roles;  
@@ -74,9 +90,13 @@ CREATE TABLE huhula.spots(
   latitude float not null,
   client_at int not null,
   quantity int default 0,
+  orig_quantity default 0,
   mode int default 0  -- 0 for manual 1 for auto reporting 
   direction int[] default null  (-1 - for multiplcae spot with undefined directions
 );
+
+alter table huhula.spots add column orig_quantity int default 0;
+update huhula.spots set orig_quantity = array_length(direction,1) ;
 
 update huhula.spots set quantity = 9 where id='68635939-de9e-42c7-8092-a7405b91e5f4'
 

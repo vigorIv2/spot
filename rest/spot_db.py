@@ -34,6 +34,42 @@ def openConnoldStyle():
 	conn.set_session(autocommit=True)
 	cur = conn.cursor()
 
+def getInformedSpots(uid,dfrom,dto) :
+       	lconn = g_pool.getconn()
+	cur = lconn.cursor() 
+        try:
+	    cur.execute("""select sum(orig_quantity) as qty, informer_id as uid, min(inserted_at) as mnat, max(inserted_at) as mxat, count(*) as cnt
+                            from spots 
+                            where informer_id = '%s' and inserted_at between '%s' and '%s'
+                            group by informer_id;""" % (uid,dfrom,dto))
+	    row=cur.fetchone()
+	    if row:
+		return row
+	    else:
+		return None
+        finally:
+	    cur.close()		
+            lconn.commit()
+            g_pool.putconn(lconn)
+
+def getOccupiedSpots(uid,dfrom,dto) :
+       	lconn = g_pool.getconn()
+	cur = lconn.cursor() 
+        try:
+	    cur.execute("""select count(*) as qty, taker_id as uid, min(inserted_at) as mnat, max(inserted_at) as mxat 
+                            from occupy
+                            where taker_id = '%s' and inserted_at between '%s' and '%s'
+                            group by taker_id;""" % (uid,dfrom,dto))
+	    row=cur.fetchone()
+	    if row:
+		return row
+	    else:
+		return None
+        finally:
+	    cur.close()		
+            lconn.commit()
+            g_pool.putconn(lconn)
+
 def getUserProperties(uid) :
        	lconn = g_pool.getconn()
 	cur = lconn.cursor() 
@@ -61,6 +97,7 @@ def cleanUp(users) :
 		try:
 	        	cur.execute("delete FROM occupy WHERE taker_id = '%s'" % (informer_id,))
 	        	cur.execute("delete FROM parked WHERE informer_id = '%s'" % (informer_id,))
+	        	cur.execute("delete FROM bill WHERE user_id = '%s'" % (informer_id,))
 		finally:
 			cur.close()		
         		g_pool.putconn(lconn)
@@ -259,8 +296,8 @@ def insertSpot(informer,informed_at,azimuth,altitude,longitude,latitude,spots,cl
 	cur = lconn.cursor() 
         try:
 	    if (sameSpot is None) or (sameSpot == 0) : 
-		cur.execute("INSERT INTO huhula.spots(informer_id,informed_at,azimuth,altitude,longitude,latitude,direction,quantity,client_at,mode) values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",
-                (informer_id,informed_at,azimuth,altitude,longitude,latitude,spots,qty,client_at,mode))
+		cur.execute("INSERT INTO huhula.spots(informer_id,informed_at,azimuth,altitude,longitude,latitude,direction,quantity,orig_quantity,client_at,mode) values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",
+                (informer_id,informed_at,azimuth,altitude,longitude,latitude,spots,qty,qty,client_at,mode))
                 lconn.commit()
 	        return 0		
 	    else :

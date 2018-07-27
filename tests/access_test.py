@@ -3,6 +3,7 @@ import sys
 import time
 import unittest
 import spot_db
+import spot_billing
 import json, requests
 
 import logging, logging.config, yaml
@@ -92,6 +93,12 @@ class TestAccess(unittest.TestCase):
             payload3 = {"uid":"unittest03","ct":"4321","sid":sid,"loc":{"lt":sp[0],"lg":sp[1]}}
             r3 = self.postit( ur + "/spot/api/v1.0/take", payload3 )
             self.assertTrue( r3.status_code == 201 )
+
+    def test_05_bill(self):
+        for u in test_users:
+            self._step_started_at = time.time()
+            spot_billing.calc_balance(u,'2018-01-01 00:00:00','2018-12-31 00:00:00')
+
  
     @classmethod
     def tearDownClass(self):

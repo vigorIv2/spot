@@ -11,15 +11,15 @@ TEST_PATH=./
 init:
 	pip2 install -r requirements.txt 
 
-test_internet_access:
+test_internet:
 	@echo starting test access to site via internet 
 	PYTHONPATH=rest python2 ./tests/access_test.py "http://spot.selfip.com:65000" "https://spot.selfip.com"
 
-test_intranet_access:
+test_intranet:
 	@echo starting test access to site via intranet
 	PYTHONPATH=rest python2 ./tests/access_test.py "http://192.168.0.210" "http://192.168.0.211"
 
-test_intranet0_access:
+test_intranet0:
 	@echo starting test access to site via intranet
 	PYTHONPATH=rest python2 ./tests/access_test.py "http://192.168.0.210" 
 
