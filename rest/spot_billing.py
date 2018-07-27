@@ -28,7 +28,15 @@ def calc_balance(user,dfrom,dto):
         occupied_qty = 0
     else:
         occupied_qty = occupied[0]
-    logconsole.info("user="+user+"; dfrom="+str(dfrom)+"; dto="+str(dto)+" informed_qty="+str(informed_qty)+" occupied_qty="+str(occupied_qty))
+    logconsole.info("user="+user+"; mnat="+str(mnat)+"; mxat="+str(mxat)+" informed_qty="+str(informed_qty)+" occupied_qty="+str(occupied_qty))
     logconsole.info("end calc balance for "+user+" dfrom="+str(dfrom)+" dto="+str(dto))
     return (user,uid,mnat,mxat,informed_qty,occupied_qty)
+
+def do_billing(user,dfrom,dto):
+    logconsole.info("start do_billing for "+user+" dfrom="+str(dfrom)+" dto="+str(dto))
+    (user,uid,mnat,mxat,informed_qty,occupied_qty) = calc_balance(user,dfrom,dto)
+    debit=0
+    credit=0
+    spot_db.insertBill(uid, mnat, mxat, informed_qty, occupied_qty, debit, credit)
+    logconsole.info("end do_billing for "+user+" dfrom="+str(dfrom)+" dto="+str(dto))
 

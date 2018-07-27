@@ -3,6 +3,8 @@ from huhula.spots order by inserted_at desc limit 90;
 
 use huhula;
 
+select * from huhula.bill;
+
 select sum(orig_quantity) as qty, count(*) as cnt, informer_id, min(inserted_at) as mnat, max(inserted_at) as mxat
 from huhula.spots 
 where inserted_at between '2018-07-01 16:38:37.544312' and '2018-07-25 08:39:05.838153'

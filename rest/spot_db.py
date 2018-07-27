@@ -1,6 +1,7 @@
 #!flask/bin/python
 
 import time
+import traceback
 
 # import json
 import psycopg2
@@ -261,7 +262,9 @@ def newUser(user) :
         try:
 	    cur.execute("INSERT INTO huhula.users(userhash) values(%s)",(user,))
             lconn.commit()
-        except:
+        except Exception as error:
+            jts = traceback.format_exc()
+            logconsole.error(jts)
             lconn.rollback()
         finally:
 	    cur.close()
@@ -278,12 +281,31 @@ def insertParked(informer,informed_at,azimuth,altitude,longitude,latitude,client
 	    cur.execute("INSERT INTO huhula.parked(informer_id,informed_at,azimuth,altitude,longitude,latitude,client_at) values(%s,%s,%s,%s,%s,%s,%s)",
                 (informer_id,informed_at,azimuth,altitude,longitude,latitude,client_at))
             lconn.commit()
-        except:
+        except Exception as error:
+            jts = traceback.format_exc()
+            logconsole.error(jts)
             lconn.rollback()
         finally:
 	    cur.close()
             g_pool.putconn(lconn)
 	return 0
+
+def insertBill(user_id, date_from, date_to, informed_qty, occupied_qty, debit, credit) :
+       	lconn = g_pool.getconn()
+	cur = lconn.cursor() 
+        try:
+	    isql = "INSERT INTO huhula.bill(user_id, date_from, date_to, informed_qty, occupied_qty, debit, credit) values('%s','%s','%s',%s,%s,%s,%s)" % (user_id, date_from, date_to, informed_qty, occupied_qty, debit, credit)
+            logconsole.debug("isql:" + isql)
+	    cur.execute(isql)
+            lconn.commit()
+        except Exception as error:
+            jts = traceback.format_exc()
+            logconsole.error(jts)
+            lconn.rollback()
+        finally:
+	    cur.close()
+            g_pool.putconn(lconn)
+
 
 def insertSpot(informer,informed_at,azimuth,altitude,longitude,latitude,spots,client_at,mode,qty) :
 	informer_id=getUserID(informer)
@@ -302,7 +324,9 @@ def insertSpot(informer,informed_at,azimuth,altitude,longitude,latitude,spots,cl
 	        return 0		
 	    else :
 		return 409
-        except:
+        except Exception as error:
+            jts = traceback.format_exc()
+            logconsole.error(jts)
             lconn.rollback()
         finally:
 	    cur.close()
@@ -322,7 +346,9 @@ def occupySpot(taker,sid,taken_at,client_at) :
                 lconn.commit()
 	    else:
 	        return 404	  
-        except:
+        except Exception as error:
+            jts = traceback.format_exc()
+            logconsole.error(jts)
             lconn.rollback()
         finally:
 	    cur.close()
