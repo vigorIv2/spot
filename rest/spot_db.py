@@ -301,11 +301,11 @@ def upsertBill(pconn, user_id, for_date, informed_qty_delta, occupied_qty_delta)
 	cur = pconn.cursor() 
         try:
             # first attempt to update, if it yeilds zero affected rows that meants it needs to be inserted
-	    usql = "update huhula.bill set updated_at=now(), informed_qty=informed_qty+%s, occupied_qty=occupied_qty+%s, credit=cast(informed_qty*0.1 as float), debit=cast(occupied_qty as float) where user_id='%s' and for_date=cast('%s' as date)" % (informed_qty_delta, occupied_qty_delta, user_id, for_date)
+	    usql = "update huhula.bill set updated_at=now(), informed_qty=informed_qty+%s, occupied_qty=occupied_qty+%s, credit=cast(informed_qty*0.1 as decimal(33,15)), debit=cast(occupied_qty as decimal(33,15)) where user_id='%s' and for_date=cast('%s' as date)" % (informed_qty_delta, occupied_qty_delta, user_id, for_date)
             logconsole.debug("update bill sql:" + usql)
 	    cur.execute(usql)
             if cur.rowcount == 0:
-                isql = "INSERT INTO huhula.bill(user_id, for_date, informed_qty, occupied_qty, credit, debit) values('%s',cast('%s' as date),%s,%s,cast(%s*0.1 as float),cast(%s as float))" % (user_id, for_date, informed_qty_delta, occupied_qty_delta, informed_qty_delta, occupied_qty_delta)
+                isql = "INSERT INTO huhula.bill(user_id, for_date, informed_qty, occupied_qty, credit, debit) values('%s',cast('%s' as date),%s,%s,cast(%s*0.1 as decimal(33,15) ),cast(%s as decimal(33,15) ))" % (user_id, for_date, informed_qty_delta, occupied_qty_delta, informed_qty_delta, occupied_qty_delta)
                 logconsole.debug("insert bill sql:" + isql)
 	        cur.execute(isql)
         except Exception as error:
