@@ -145,8 +145,8 @@ class TestAccess(unittest.TestCase):
     def tearDownClass(self):
         logging.info('executing tearDownClass')
         self._step_started_at = time.time()
-#        if self.isIntranet():
-#            spot_db.cleanUp(test_users)
+        if self.isIntranet():
+            spot_db.cleanUp(test_users)
         elapsed = time.time() - self._started_at
         elapsed_step = time.time() - self._step_started_at
         logging.info("total_elapsed=" + str(round(elapsed, 2)) + " step_elapsed=" + str(round(elapsed_step, 2)))
