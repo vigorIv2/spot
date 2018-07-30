@@ -328,7 +328,7 @@ def insertSpot(informer,informed_at,azimuth,altitude,longitude,latitude,spots,cl
 	    if (sameSpot is None) or (sameSpot == 0) : 
 		cur.execute("INSERT INTO huhula.spots(informer_id,informed_at,azimuth,altitude,longitude,latitude,direction,quantity,orig_quantity,client_at,mode) values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",
                 (informer_id,informed_at,azimuth,altitude,longitude,latitude,spots,qty,qty,client_at,mode))
-                upsertBill(lconn,informer_id, last_day_of_month(informed_at), qty, 0)
+                upsertBill(lconn,informer_id, last_day_of_month(datetime.datetime.fromtimestamp(informed_at/1000.0)), qty, 0)
                 lconn.commit()
 	        return 0		
 	    else :
@@ -370,8 +370,8 @@ def occupySpot(taker,sid,taken_at,client_at) :
 	    	cur.execute("update huhula.spots set quantity=quantity-1 where id=%s and quantity > 0", (sid,))
 	    	if cur.rowcount > 0:
 	        	cur.execute("INSERT INTO huhula.occupy(spot_id, taken_at, taker_id, client_at) values(%s,now(),%s,%s)", (sid, taker_id, client_at))	
-                	upsertBill(lconn,informer_id, last_day_of_month(taken_at), 1, 0) # transfer one token from taker to informer
-                	upsertBill(lconn,taker_id, last_day_of_month(taken_at), 0, 1)
+                	upsertBill(lconn,informer_id, last_day_of_month(datetime.datetime.fromtimestamp(taken_at/1000.0)), 1, 0) # transfer one token from taker to informer
+                	upsertBill(lconn,taker_id, last_day_of_month(datetime.datetime.fromtimestamp(taken_at/1000.0)), 0, 1)
                 	lconn.commit()
 	    	else:
 	        	return 404
