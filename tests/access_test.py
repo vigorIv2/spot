@@ -1,6 +1,7 @@
 import logging
 import sys
 import time
+import datetime
 import unittest
 import spot_db
 import spot_billing
@@ -105,31 +106,47 @@ class TestAccess(unittest.TestCase):
                 r3 = self.postit( ur + "/spot/api/v1.0/take", payload3 )
                 self.assertTrue( r3.status_code == 201 )
 
-    def test_05_bill(self):
-        if self.isIntranet():
-            self._step_started_at = time.time()
-            (user,uid,mnat,mxat,informed_qty,occupied_qty)=spot_billing.calc_balance('unittest','2018-01-01 00:00:00','2018-12-31 00:00:00')
-            self.assertTrue( informed_qty == 10 )
-            (user,uid,mnat,mxat,informed_qty,occupied_qty)=spot_billing.calc_balance('unittest01','2018-01-01 00:00:00','2018-12-31 00:00:00')
-            self.assertTrue( informed_qty == 10 )
-            (user,uid,mnat,mxat,informed_qty,occupied_qty)=spot_billing.calc_balance('unittest02','2018-01-01 00:00:00','2018-12-31 00:00:00')
-            self.assertTrue( informed_qty == 55 )
-            (user,uid,mnat,mxat,informed_qty,occupied_qty)=spot_billing.calc_balance('unittest03','2018-01-01 00:00:00','2018-12-31 00:00:00')
-            self.assertTrue( informed_qty == 10 )
-            self.assertTrue( occupied_qty == 4 )
+    def test_05_last_day(self):
+        self.assertTrue(spot_db.last_day_of_month(datetime.datetime.strptime("2018-01-22", "%Y-%m-%d").date()) == "2018-01-31")
+        self.assertTrue(spot_db.last_day_of_month(datetime.datetime.strptime("2018-02-02", "%Y-%m-%d").date()) == "2018-02-28")
+        self.assertTrue(spot_db.last_day_of_month(datetime.datetime.strptime("2018-03-29", "%Y-%m-%d").date()) == "2018-03-31")
+        self.assertTrue(spot_db.last_day_of_month(datetime.datetime.strptime("2018-04-01", "%Y-%m-%d").date()) == "2018-04-30")
+        self.assertTrue(spot_db.last_day_of_month(datetime.datetime.strptime("2018-05-11", "%Y-%m-%d").date()) == "2018-05-31")
+        self.assertTrue(spot_db.last_day_of_month(datetime.datetime.strptime("2018-06-21", "%Y-%m-%d").date()) == "2018-06-30")
+        self.assertTrue(spot_db.last_day_of_month(datetime.datetime.strptime("2018-07-21", "%Y-%m-%d").date()) == "2018-07-31")
+        self.assertTrue(spot_db.last_day_of_month(datetime.datetime.strptime("2018-08-21", "%Y-%m-%d").date()) == "2018-08-31")
+        self.assertTrue(spot_db.last_day_of_month(datetime.datetime.strptime("2018-09-21", "%Y-%m-%d").date()) == "2018-09-30")
+        self.assertTrue(spot_db.last_day_of_month(datetime.datetime.strptime("2018-10-21", "%Y-%m-%d").date()) == "2018-10-31")
+        self.assertTrue(spot_db.last_day_of_month(datetime.datetime.strptime("2018-11-21", "%Y-%m-%d").date()) == "2018-11-30")
+        self.assertTrue(spot_db.last_day_of_month(datetime.datetime.strptime("2018-12-21", "%Y-%m-%d").date()) == "2018-12-31")
 
-    def test_06_save_bill(self):
-        if self.isIntranet():
-            self._step_started_at = time.time()
-            for u in test_users:
-                spot_billing.do_billing(u,'2018-01-01 00:00:00','2018-12-31 00:00:00')
+# currently billing calculate on the fly 
+#    def test_15_bill(self):
+#        if self.isIntranet():
+#            self._step_started_at = time.time()
+#            (user,uid,mnat,mxat,informed_qty,occupied_qty)=spot_billing.calc_balance('unittest','2018-01-01 00:00:00','2018-12-31 00:00:00')
+#            self.assertTrue( informed_qty == 10 )
+#            (user,uid,mnat,mxat,informed_qty,occupied_qty)=spot_billing.calc_balance('unittest01','2018-01-01 00:00:00','2018-12-31 00:00:00')
+#            self.assertTrue( informed_qty == 10 )
+#            (user,uid,mnat,mxat,informed_qty,occupied_qty)=spot_billing.calc_balance('unittest02','2018-01-01 00:00:00','2018-12-31 00:00:00')
+#            self.assertTrue( informed_qty == 55 )
+#            (user,uid,mnat,mxat,informed_qty,occupied_qty)=spot_billing.calc_balance('unittest03','2018-01-01 00:00:00','2018-12-31 00:00:00')
+#            self.assertTrue( informed_qty == 10 )
+#            self.assertTrue( occupied_qty == 4 )
+#
+#    def test_16_save_bill(self):
+#        if self.isIntranet():
+#            self._step_started_at = time.time()
+#            for u in test_users:
+#                spot_billing.do_billing(u,'2018-01-01 00:00:00','2018-12-31 00:00:00')
+#
 
     @classmethod
     def tearDownClass(self):
         logging.info('executing tearDownClass')
         self._step_started_at = time.time()
-        if self.isIntranet():
-            spot_db.cleanUp(test_users)
+#        if self.isIntranet():
+#            spot_db.cleanUp(test_users)
         elapsed = time.time() - self._started_at
         elapsed_step = time.time() - self._step_started_at
         logging.info("total_elapsed=" + str(round(elapsed, 2)) + " step_elapsed=" + str(round(elapsed_step, 2)))

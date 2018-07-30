@@ -9,6 +9,8 @@ logconsole = logging.getLogger('console')
 logfl.debug("Debug FILE")
 logconsole.debug("Debug CONSOLE")
 
+# this is not in use for now, but let's keep for future
+# currently billing calculated on the fly
 def calc_balance(user,dfrom,dto):
     logconsole.info("start calc balance for "+user+" dfrom="+str(dfrom)+" dto="+str(dto))
     uid = spot_db.getUserID(user)

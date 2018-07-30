@@ -2,6 +2,7 @@
 
 import time
 import traceback
+import datetime
 
 # import json
 import psycopg2
@@ -290,22 +291,29 @@ def insertParked(informer,informed_at,azimuth,altitude,longitude,latitude,client
             g_pool.putconn(lconn)
 	return 0
 
-def insertBill(user_id, date_from, date_to, informed_qty, occupied_qty, debit, credit) :
-       	lconn = g_pool.getconn()
-	cur = lconn.cursor() 
+
+def last_day_of_month(any_day):
+        next_month = any_day.replace(day=28) + datetime.timedelta(days=4)  # this will never fail
+        result = next_month - datetime.timedelta(days=next_month.day)
+        return str(result)
+
+def upsertBill(pconn, user_id, for_date, informed_qty_delta, occupied_qty_delta) :
+	cur = pconn.cursor() 
         try:
-	    isql = "INSERT INTO huhula.bill(user_id, date_from, date_to, informed_qty, occupied_qty, debit, credit) values('%s','%s','%s',%s,%s,%s,%s)" % (user_id, date_from, date_to, informed_qty, occupied_qty, debit, credit)
-            logconsole.debug("isql:" + isql)
-	    cur.execute(isql)
-            lconn.commit()
+            # first attempt to update, if it yeilds zero affected rows that meants it needs to be inserted
+	    usql = "update huhula.bill set updated_at=now(), informed_qty=informed_qty+%s, occupied_qty=occupied_qty+%s, debit=informed_qty*0.1, credit=occupied_qty where user_id='$s' and for_date=cast('%s' as date)" % (informed_qty_delta, occupied_qty_delta, user_id, for_date)
+            logconsole.debug("update bill sql:" + usql)
+	    cur.execute(usql)
+            if cur.rowcount == 0:
+                isql = "INSERT INTO huhula.bill(user_id, for_date, informed_qty, occupied_qty, debit, credit) values('%s',cast('%s' as date),%s,%s,%s*0.1,%s)" % (user_id, for_date, informed_qty_delta, occupied_qty_delta, informed_qty_delta, occupied_qty_delta)
+                logconsole.debug("insert bill sql:" + isql)
+	        cur.execute(isql)
         except Exception as error:
             jts = traceback.format_exc()
             logconsole.error(jts)
-            lconn.rollback()
+	    raise Exception('Exception while update bill', 'Bill Update Error')
         finally:
 	    cur.close()
-            g_pool.putconn(lconn)
-
 
 def insertSpot(informer,informed_at,azimuth,altitude,longitude,latitude,spots,client_at,mode,qty) :
 	informer_id=getUserID(informer)
@@ -320,6 +328,7 @@ def insertSpot(informer,informed_at,azimuth,altitude,longitude,latitude,spots,cl
 	    if (sameSpot is None) or (sameSpot == 0) : 
 		cur.execute("INSERT INTO huhula.spots(informer_id,informed_at,azimuth,altitude,longitude,latitude,direction,quantity,orig_quantity,client_at,mode) values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",
                 (informer_id,informed_at,azimuth,altitude,longitude,latitude,spots,qty,qty,client_at,mode))
+                upsertBill(lconn,informer_id, last_date_of_month(informed_at), qty, 0)
                 lconn.commit()
 	        return 0		
 	    else :
@@ -332,6 +341,22 @@ def insertSpot(informer,informed_at,azimuth,altitude,longitude,latitude,spots,cl
 	    cur.close()
             g_pool.putconn(lconn)
 
+def getInformerID(sid) :
+        lconn = g_pool.getconn()
+        cur = lconn.cursor() 
+        cur.execute("SELECT informer_id FROM spots WHERE id = '%s' and quantity > 0" % (sid,))
+        row = cur.fetchone()
+        try: 
+                if row:
+                        return row[0]
+                else:
+                        return None
+        finally:
+                cur.close()
+                lconn.commit()
+                g_pool.putconn(lconn)
+
+
 def occupySpot(taker,sid,taken_at,client_at) :
 	taker_id=getUserID(taker)
 	if ( taker_id is None ) :
@@ -340,12 +365,18 @@ def occupySpot(taker,sid,taken_at,client_at) :
        	lconn = g_pool.getconn()
 	cur = lconn.cursor() 
         try:
-	    cur.execute("update huhula.spots set quantity=quantity-1 where id=%s and quantity > 0", (sid,))
-	    if cur.rowcount > 0:
-	        cur.execute("INSERT INTO huhula.occupy(spot_id, taken_at, taker_id, client_at) values(%s,now(),%s,%s)", (sid, taker_id, client_at))	
-                lconn.commit()
+	    informer_id = getInformerID(sid)
+	    if informer_id != None:
+	    	cur.execute("update huhula.spots set quantity=quantity-1 where id=%s and quantity > 0", (sid,))
+	    	if cur.rowcount > 0:
+	        	cur.execute("INSERT INTO huhula.occupy(spot_id, taken_at, taker_id, client_at) values(%s,now(),%s,%s)", (sid, taker_id, client_at))	
+                	upsertBill(lconn,informer_id, last_date_of_month(taken_at), 1, 0) # transfer one token from taker to informer
+                	upsertBill(lconn,taker_id, last_date_of_month(taken_at), 0, 1)
+                	lconn.commit()
+	    	else:
+	        	return 404
 	    else:
-	        return 404	  
+		return 404	  
         except Exception as error:
             jts = traceback.format_exc()
             logconsole.error(jts)

@@ -25,18 +25,20 @@ CREATE TABLE huhula.users(
   unique INDEX (userhash)
 );  
 
+drop table huhula.bill;
+
 CREATE TABLE huhula.bill(
   id UUID PRIMARY KEY default gen_random_uuid(),
   inserted_at TIMESTAMP not null DEFAULT now(),
+  updated_at TIMESTAMP not null DEFAULT now(),
   user_id UUID references huhula.users not null,
-  date_from TIMESTAMP,
-  date_to TIMESTAMP not null,
-  informed_qty int default 0,
-  occupied_qty int default 0,
+  for_date date not null,
+  informed_qty int not null default 0,
+  occupied_qty int not null default 0,
   debit DOUBLE PRECISION not null default 0,
   credit DOUBLE PRECISION not null default 0,  
-  chain_sync bool not null default false,
-  chain_date TIMESTAMP 
+  chain_date TIMESTAMP,
+  unique INDEX (user_id,for_date)
 );  
 
 select * from huhula.bill;
