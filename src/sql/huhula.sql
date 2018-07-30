@@ -35,13 +35,20 @@ CREATE TABLE huhula.bill(
   for_date date not null,
   informed_qty int not null default 0,
   occupied_qty int not null default 0,
-  debit DOUBLE PRECISION not null default 0,
-  credit DOUBLE PRECISION not null default 0,  
+  debit double precision not null default 0,
+  credit double precision not null default 0,  
+  gift double precision not null default 0,
+  penalty double precision not null default 0,
   chain_date TIMESTAMP,
   unique INDEX (user_id,for_date)
 );  
 
+alter table huhula.bill add column gift double precision not null default 0;
+alter table huhula.bill add column penalty double precision not null default 0;
+
 select * from huhula.bill;
+select * from huhula.occupy order by inserted_at desc limit 10;
+
 
 alter table huhula.users add column roles string[] default array[];  
 
