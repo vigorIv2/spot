@@ -22,7 +22,7 @@ def openConn() :
     global cur
 #    conn = psycopg2.connect(database="huhula", user="root", host="roachdb", port=26257)
 #    cs="postgresql://huhuladb00:26257/mydb?user=root&sslcert=/Users/ivasilchikov/spot/certs/client.root.crt&sslkey=/Users/ivasilchikov/spot/certs/client.root.key&sslmode=require&ssl=true"
-    cs="postgresql://huhuladb00:26257/huhula?user=huhulaman&sslcert=/home/ubuntu/spot/certs/client.huhulaman.crt&sslkey=/home/ubuntu/spot/certs/client.huhulaman.key&sslmode=require&ssl=true"
+    cs="postgresql://huhuladb00,huhuladb01,huhuladb02:26257/huhula?user=huhulaman&sslcert=/home/ubuntu/spot/certs/client.huhulaman.crt&sslkey=/home/ubuntu/spot/certs/client.huhulaman.key&sslmode=require&ssl=true"
 #    conn = psycopg2.connect(cs)
     global g_pool
     g_pool = SimpleConnectionPool(3, 7, cs)

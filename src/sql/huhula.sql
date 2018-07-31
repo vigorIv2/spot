@@ -35,16 +35,30 @@ CREATE TABLE huhula.bill(
   for_date date not null,
   informed_qty int not null default 0,
   occupied_qty int not null default 0,
-  debit double precision not null default 0,
-  credit double precision not null default 0,  
   gift double precision not null default 0,
   penalty double precision not null default 0,
   chain_date TIMESTAMP,
   unique INDEX (user_id,for_date)
 );  
 
+alter table huhula.bill drop column credit;
+
+update huhula.bill set updated_at=now(), informed_qty=informed_qty+2, occupied_qty=occupied_qty+0, credit=cast((cast((informed_qty+2)*0.1 as double precision)+gift) as double precision), debit=cast((cast((occupied_qty+0) as double precision)+penalty) as double precision) where user_id='d8437a22-14b0-4e72-9672-2c3eb6664c2e' and for_date=cast('2018-07-31 08:43:36.093000' as date)
+
+
 alter table huhula.bill add column gift double precision not null default 0;
 alter table huhula.bill add column penalty double precision not null default 0;
+
+update huhula.bill set gift = 20 where id = '1467a542-f6f6-4530-8876-1774e41149aa';
+
+CREATE VIEW huhula.bill_payable
+  AS 
+  select user_id, for_date, informed_qty, occupied_qty, gift, penalty, credit, debit, credit - debit as balance from
+  (SELECT user_id, for_date, informed_qty, occupied_qty, gift, penalty, cast(informed_qty*0.1 as double precision)+gift as credit, cast(occupied_qty as double precision)+penalty as debit 
+  FROM huhula.bill where chain_date is null);
+
+  select * from huhula.bill_payable;
+  
 
 select * from huhula.bill;
 select * from huhula.occupy order by inserted_at desc limit 10;
