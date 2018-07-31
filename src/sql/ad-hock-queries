@@ -1,8 +1,20 @@
 select * 
 from huhula.spots order by inserted_at desc limit 90;
 
+use huhula;
 
-where longitude = -122.08400000000002 ;
+select * from huhula.bill;
+
+select sum(orig_quantity) as qty, count(*) as cnt, informer_id, min(inserted_at) as mnat, max(inserted_at) as mxat
+from huhula.spots 
+where inserted_at between '2018-07-01 16:38:37.544312' and '2018-07-25 08:39:05.838153'
+group by informer_id;
+
+select count(*) as cnt, taker_id, min(inserted_at) as mnat, max(inserted_at) as mxat 
+from huhula.occupy 
+where inserted_at between '2018-07-01 16:38:37.544312' and '2018-07-25 08:39:05.838153'
+group by taker_id
+limit 10;
 
 select * from users where id = 'c8a5d00f-b76d-4c97-a45e-5d6404c1d229';
 
@@ -26,16 +38,20 @@ select longitude, latitude from huhula.spots as sp where age(sp.inserted_at) < I
 
 select * from huhula.spots order by inserted_at desc limit 30;
 
+select * from huhula.occupy order by inserted_at desc limit 30;
 
-select * from huhula.spots limit 100;
+delete from huhula.spots where informer_id = '56eb2ea5-0fd1-4d1b-8d67-6651412a1514';
 
-delete from huhula.spots where longitude = 3.45;
+select * from huhula.spots where id in ('500d55bd-3d73-405b-9bcc-deadfedde5df','f200db8f-2a2f-404b-b3e4-8379c7ebe785','d5ff5338-5b88-4330-acc7-f5712340e1a3');
 
-select * from users where userhash not like 'test%' 
+select * from huhula.users where userhash not like 'test%' 
 order by inserted_at desc;
 
+select * from huhula.spots where informer_id = '1eb9e61b-27d4-4c64-900a-ab0d8d70ffaf'
 
-select * from parked where informer_id = '0414cae0-0492-4e2e-bd58-230938eb06a9'
+-- delete from huhula.spots where informer_id = '1eb9e61b-27d4-4c64-900a-ab0d8d70ffaf'
+
+select * from huhula.parked where informer_id = '0414cae0-0492-4e2e-bd58-230938eb06a9'
 order by inserted_at desc;
 
 select id, spot, age, sqrt(df*df + dl*dl) * 6371e3 as dist, latitude, longitude from (

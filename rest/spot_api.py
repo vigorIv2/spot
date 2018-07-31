@@ -4,8 +4,6 @@ from flask import Flask, jsonify, abort, request, make_response, url_for, Respon
 import time
 from flask_httpauth import HTTPBasicAuth
 
-# import json
-import psycopg2
 import spot_db
 import spot_kml
 import uuid
@@ -40,48 +38,11 @@ def not_found(error):
 def not_found(error):
     return make_response(jsonify( { 'error': 'Not found' } ), 404)
 
-users = [
-    {
-        'id': "olga",
-        'wallet': '0x12341q42134khjsagdf2345235',
-        'created_at': '2017-01-02 00:02:03', 
-    },
-    {
-        'id': "igor",
-        'wallet': '0x12341q42134khjsagdf2345235',
-        'created_at': '2017-01-03 00:02:03', 
-    },
-    {
-        'id': "nastya",
-        'wallet': '0x12341412134khjsagdf2345235',
-        'created_at': '2017-11-04 00:02:03', 
-    }
-]
-
-spots = [
-   {
-      "at": 1522890284.214637, 
-      "deg": 126, 
-      "loc": {
-        "al": 0, 
-        "lg": -117.7876202, 
-        "lt": 33.66965465
-      }, 
-      "spot": [
-        1, 
-        4, 
-        2
-      ], 
-      "uid": "daniel", 
-      "uri": "http://spot.selfip.com:65000/spot/api/v1.0/spot?id=h2"
-    }
-]
-
 def make_public_user(user):
     new_user = {}
     for field in user:
         if field == 'id':
-            new_user['uri'] = url_for('create_user', id = user['id'], _external = True)
+            new_user['uri'] = url_for('get_register', id = user['id'], _external = True)
         else:
             if field == 'wallet':
                 new_user['wallet'] = "hidden"
@@ -93,15 +54,10 @@ def make_public_spot(spot):
     new_spot = {}
     for field in spot:
         if field == 'id':
-            new_spot['uri'] = url_for('create_spot', id = spot['id'], _external = True)
+            new_spot['uri'] = url_for('get_spot', id = spot['id'], _external = True)
         else:
             new_spot[field] = spot[field]
     return new_spot
-
-@app.route('/spot/api/v1.0/users', methods = ['GET'])
-@auth.login_required
-def get_users():
-    return jsonify( { 'users': map(make_public_user, users) } )
 
 def data_points(arr):
     mn = min(arr)
@@ -119,10 +75,9 @@ def get_map():
       hd = "24"
     lt = request.args.get('lt', None)
     lg = request.args.get('lg', None)
-    logconsole.debug("running map with "+str(request.args)+" lt="+str(lt)+" lg="+str(lg)+" mid="+str(mid)+" pid="+str(pid)+" hd="+str(hd))
+    logconsole.info("running map with "+str(request.args)+" lt="+str(lt)+" lg="+str(lg)+" mid="+str(mid)+" pid="+str(pid)+" hd="+str(hd))
     if lt == None and lg == None and mid == None and pid == None :
         abort(400)
-    spot_db.openConn()
     coord_array = []	
     if pid != None: 
        coord_array=spot_db.getParkedSpots(pid,hd)
@@ -143,7 +98,7 @@ def get_map():
           logconsole.debug("determined reported lt="+str(lt)+" lg="+str(lg)+" for mid="+str(mid))
        else:
        	  coord_array=spot_db.getNearSpots(lt,lg,hd)
-    logconsole.debug("coords returned "+str(coord_array))
+    logconsole.info("coords returned "+str(coord_array))
     ufilename = "maps/ag_"+uuid.uuid4().hex+".kml"
     if coord_array != None and len(coord_array) > 0: 
        spot_kml.gen_kml(coord_array, ufilename)
@@ -151,29 +106,13 @@ def get_map():
     else:
        html=spot_kml.gen_empty_html()
     resp = make_response(html, 200)
-    spot_db.cur.close()
-    spot_db.conn.close()
     resp.headers['Content-type'] = 'text/html'
     return resp
 
-@app.route('/spot/api/v1.0/spots', methods = ['GET'])
-@auth.login_required
-def get_spots():
-    sorted_spots=sorted(spots, key=lambda k: k['at'], reverse=True)
-    return jsonify( { 'spots': map(make_public_spot, sorted_spots) } )
-
-@app.route('/spot/api/v1.0/users/<string:user_id>', methods = ['GET'])
-@auth.login_required
-def get_user(user_id):
-    user = filter(lambda t: t['id'] == user_id, users)
-    if len(user) == 0:
-        abort(404)
-    return jsonify( { 'user': make_public_user(user[0]) } )
-
 @app.route('/spot/api/v1.0/register', methods = ['POST'])
 @auth.login_required
-def create_user():
-    logconsole.debug("register called with "+str(request.json))
+def get_register():
+    logconsole.info("register called with "+str(request.json))
     if not request.json or not 'id' in request.json:
         abort(400)
     user = {
@@ -182,22 +121,19 @@ def create_user():
         'created_at': time.time(),
         'tokens': 20
     }
-    users.append(user)
-    spot_db.openConn()
     informer_id=spot_db.getUserID(request.json['id'])
     if ( informer_id is None ) :
        spot_db.newUser(request.json['id'])
        informer_id=spot_db.getUserID(request.json['id'])
-
-    spot_db.cur.close()
-    spot_db.conn.close()    
-    logconsole.debug("registered user "+request.json['id']+" db key ="+informer_id)
+    props = spot_db.getUserProperties(informer_id)
+    user['roles']=props[0]
+    logconsole.info("registered user "+request.json['id']+" db key ="+informer_id+" props="+str(props))
     return jsonify( { 'user': make_public_user(user) } ), 201
 
 @app.route('/spot/api/v1.0/spot', methods = ['POST'])
 @auth.login_required
-def create_spot():
-    logconsole.debug("create_spot called with "+str(request.json))
+def get_spot():
+    logconsole.info("get_spot called with "+str(request.json))
     if not request.json or not 'uid' in request.json:
         abort(400)
     if not request.json or not 'loc' in request.json:
@@ -206,6 +142,8 @@ def create_spot():
         abort(400)
     if not request.json or not 'deg' in request.json:
         abort(400)
+    mode=1 if request.json.get('m', 0) == 'a' else 0 # by default treat as manually reported - aka 0
+    qty=request.json.get('q', len(request.json['spot'])) # by default fill up quantity as number of elements in location array
     spot = {
         'id': "h2",
         'uid': request.json['uid'], 
@@ -214,22 +152,20 @@ def create_spot():
         'deg' : request.json['deg'],
         'at': time.time(),
         'ct': request.json['ct'],
+        'm': mode,
+        'q': qty,
     }
-    spots.append(spot)
-    spot_db.openConn()
     rc = spot_db.insertSpot(request.json['uid'],int(round(time.time() * 1000)),request.json['deg'],request.json['loc']['al'],
-            request.json['loc']['lg'],request.json['loc']['lt'],request.json['spot'],request.json['ct'])
+            request.json['loc']['lg'],request.json['loc']['lt'],request.json['spot'],request.json['ct'],mode,qty)
     if ( rc != 0 ):
 	abort(rc) 
 
-    spot_db.cur.close()
-    spot_db.conn.close()    
     return jsonify( { 'spot': make_public_spot(spot) } ), 201
 
 @app.route('/spot/api/v1.0/take', methods = ['POST'])
 @auth.login_required
-def take_spot():
-    logconsole.debug("take_spot called with "+str(request.json))
+def get_take():
+    logconsole.info("get_take called with "+str(request.json))
     if not request.json or not 'uid' in request.json:
         abort(400)
     if not request.json or not 'ct' in request.json:
@@ -245,20 +181,16 @@ def take_spot():
         'at': time.time(),
         'ct': request.json['ct'],
     }
-    spots.append(spot)
 # 2018-05-08 02:57:27,299 - file - DEBUG - Take called with {u'loc': {u'lg': 6.7, u'lt': 3.4, u'al': 5.9}, u'ct': u'12121212121212', u'uid': u'igor', u'sid': u'jhgjhgjhgjhgjhgjhgjhg'}
-    spot_db.openConn()
     rc = spot_db.occupySpot(request.json['uid'],request.json['sid'],int(round(time.time() * 1000)),request.json['ct'])
     if ( rc != 0 ):
         abort(rc)
-    spot_db.cur.close()
-    spot_db.conn.close()	
     return jsonify( { 'spot': make_public_spot(spot) } ), 201
 
 @app.route('/spot/api/v1.0/park', methods = ['POST'])
 @auth.login_required
-def park_parked():
-    logconsole.debug("park_parked called with "+str(request.json))
+def get_park():
+    logconsole.info("get_park called with "+str(request.json))
     if not request.json or not 'uid' in request.json:
         abort(400)
     if not request.json or not 'ct' in request.json:
@@ -273,35 +205,29 @@ def park_parked():
         'at': time.time(),
         'ct': request.json['ct'],
     }
-    spots.append(spot)
-    spot_db.openConn()
     rc = spot_db.insertParked(request.json['uid'],int(round(time.time() * 1000)),request.json['deg'],request.json['loc']['al'],
        request.json['loc']['lg'],request.json['loc']['lt'],request.json['ct'])
     if ( rc != 0 ):
        abort(rc)
 
-    spot_db.cur.close()
-    spot_db.conn.close()
     return jsonify( { 'spot': make_public_spot(spot) } ), 201
 
 @app.route('/spot/api/v1.0/locate', methods = ['POST'])
 @auth.login_required
 def get_locate():
-    sorted_spots=sorted(spots, key=lambda k: k['at'], reverse=True)
-    logconsole.debug("locate called with "+str(request.json))
+    logconsole.info("locate called with "+str(request.json))
 
     if not request.json or not 'loc' in request.json:
         abort(400)
-    logconsole.debug("Locate called with "+str(request.json))
-    spot_db.openConn()
 
     res=spot_db.locateSpot(request.json['loc']['lt'],request.json['loc']['lg'])
     logconsole.debug("Locate found in db "+str(res))
+    if res == None:
+        abort(404)
+
 # Locate called with {u'loc': {u'lg': -117.71802732, u'lt': 33.58032164, u'al': 73}}
 # Locate found in db ('c1a1defc-0d93-427c-b0d7-601e08d1637d', 0L, datetime.timedelta(660), 4.63180451482997, 33.58035109, -117.71799196)
 
-    spot_db.cur.close()
-    spot_db.conn.close()	
     gspots = [
        {
          "at": 1,
@@ -315,11 +241,10 @@ def get_locate():
          "spot": [
            res[1],
          ],
-        "uid": "igor",
-        "uri": "http://spot.selfip.com:65000/spot/api/v1.0/spot?id=h2"
+        "uid": "hz",
        }
     ]
-    logconsole.debug("Locate constructed json response "+str(gspots))
+    logconsole.info("Locate constructed json response "+str(gspots))
 
     return jsonify( { 'spots': map(make_public_spot, gspots) } )
 

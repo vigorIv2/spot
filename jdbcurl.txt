@@ -6,3 +6,10 @@ openssl pkcs8 -topk8 -inform PEM -outform DER -in certs/client.root.key -out cer
 
 
 jdbc:postgresql://huhuladb00:26257/mydb?user=root&sslcert=/Users/ivasilchikov/spot/certs/client.root.der&sslkey=/Users/ivasilchikov/spot/certs/client.root.key.pk8&sslmode=require&ssl=true
+
+
+cockroach user set huhu --certs-dir=certs --host huhuladb00
+
+cockroach user set huhu --certs-dir=certs --host huhuladb00 --password
+
+cockroach sql --certs-dir=certs --host huhuladb00 -u huhulaman

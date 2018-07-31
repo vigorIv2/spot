@@ -1,5 +1,12 @@
 CREATE DATABASE if not exists huhula;
 
+CREATE USER huhulaman WITH PASSWORD 'sEBx9gjgzfo';
+
+ALTER USER huhulaman WITH PASSWORD 'xxxxxxxxx';
+
+
+GRANT select, insert, update, delete ON TABLE huhula.users, huhula.spots, huhula.occupy, huhula.parked, huhula.bill TO huhulaman;
+
 select  userhash from huhula.users limit 2000;
 
 -- delete from huhula.users where userhash like '%test%' limit 50;
@@ -17,6 +24,40 @@ CREATE TABLE huhula.users(
   userhash string not null,
   unique INDEX (userhash)
 );  
+
+drop table huhula.bill;
+
+CREATE TABLE huhula.bill(
+  id UUID PRIMARY KEY default gen_random_uuid(),
+  inserted_at TIMESTAMP not null DEFAULT now(),
+  updated_at TIMESTAMP not null DEFAULT now(),
+  user_id UUID references huhula.users not null,
+  for_date date not null,
+  informed_qty int not null default 0,
+  occupied_qty int not null default 0,
+  debit double precision not null default 0,
+  credit double precision not null default 0,  
+  gift double precision not null default 0,
+  penalty double precision not null default 0,
+  chain_date TIMESTAMP,
+  unique INDEX (user_id,for_date)
+);  
+
+alter table huhula.bill add column gift double precision not null default 0;
+alter table huhula.bill add column penalty double precision not null default 0;
+
+select * from huhula.bill;
+select * from huhula.occupy order by inserted_at desc limit 10;
+
+
+alter table huhula.users add column roles string[] default array[];  
+
+-- alter table huhula.users drop column roles;  
+
+select * from huhula.users where userhash in ('113989703630504660150','117684205293445461401');
+
+update huhula.users set roles = array['vendor'] where userhash in ('113989703630504660150','117684205293445461401');
+
 
 insert into huhula.users(userhash) values('patient zero');
 insert into huhula.users(userhash) values('strix');
@@ -52,20 +93,37 @@ CREATE TABLE huhula.spots(
   informer_id UUID references users not null,
   inserted_at TIMESTAMPTZ not null DEFAULT now(),
   informed_at int not null,
-  taken_at TIMESTAMP null,
-  taker_id UUID references users null,
   azimuth float not null,
   altitude float not null,
   longitude float not null,
   latitude float not null,
-  spot int not null,
-  compaint string null,
+  client_at int not null,
+  quantity int default 0,
+  orig_quantity default 0,
+  mode int default 0  -- 0 for manual 1 for auto reporting 
+  direction int[] default null  (-1 - for multiplcae spot with undefined directions
+);
+
+alter table huhula.spots add column orig_quantity int default 0;
+update huhula.spots set orig_quantity = array_length(direction,1) ;
+
+update huhula.spots set quantity = 9 where id='68635939-de9e-42c7-8092-a7405b91e5f4'
+
+select * from huhula.spots order by inserted_at desc limit 10;
+
+CREATE TABLE huhula.occupy(
+  id UUID PRIMARY KEY default gen_random_uuid(),
+  spot_id UUID references spots not null,
+  inserted_at TIMESTAMPTZ not null DEFAULT now(),
+  taken_at TIMESTAMP null,
+  taker_id UUID references users null,
   client_at int not null
 );
 
 
-alter table huhula.spots add column client_at int default 0;
+show create table huhula.occupy;
 
+select * from huhula.occupy order by inserted_at desc limit 20;
 
 -- drop TABLE huhula.parked;
 
