@@ -6,7 +6,7 @@ update huhula.bill set gift = 20 where id='061ee336-2a55-4e75-8ce6-876310aeafdc'
 
 select * from huhula.bill_payable order by for_date desc;
 
-
+select * from huhula.users;
 
 select sum(informed_qty) as iqty, sum(occupied_qty) as octy, sum(gift) as gift, sum(penalty) as penalty, sum(balance) as balance 
 from huhula.bill_payable 

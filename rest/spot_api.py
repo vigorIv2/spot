@@ -144,7 +144,7 @@ def get_balance():
     bal = {
         'id': request.json['id'],
     }
-    balancee = spot_db.getUserBalance(request.json['id'])
+    balance = spot_db.getUserBalance(request.json['id'])
     if balance is None :
         abort(400)
     logconsole.info("balance balance=" + str(balance))
