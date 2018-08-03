@@ -59,6 +59,12 @@ def make_public_spot(spot):
             new_spot[field] = spot[field]
     return new_spot
 
+def make_public_balance(bal):
+    new_bal = {}
+    for field in bal:
+        new_bal[field] = bal[field]
+    return new_bal
+
 def data_points(arr):
     mn = min(arr)
     mx = max(arr)
@@ -118,8 +124,7 @@ def get_register():
     user = {
         'id': request.json['id'],
         'wallet': '0x12341q42134khjsagdf2345235',
-        'created_at': time.time(),
-        'tokens': 20
+        'created_at': time.time()
     }
     informer_id=spot_db.getUserID(request.json['id'])
     if ( informer_id is None ) :
@@ -129,6 +134,29 @@ def get_register():
     user['roles']=props[0]
     logconsole.info("registered user "+request.json['id']+" db key ="+informer_id+" props="+str(props))
     return jsonify( { 'user': make_public_user(user) } ), 201
+
+@app.route('/spot/api/v1.0/balance', methods = ['POST'])
+@auth.login_required
+def get_balance():
+    logconsole.info("balance called with "+str(request.json))
+    if not request.json or not 'id' in request.json:
+        abort(400)
+    bal = {
+        'id': request.json['id'],
+    }
+    balancee = spot_db.getUserBalance(request.json['id'])
+    if balance is None :
+        abort(400)
+    logconsole.info("balance balance=" + str(balance))
+    bal['walilet_balance'] = balance[0]
+    bal['iqty'] = balance[1]
+    bal['oqty'] = balance[2]
+    bal['gift'] = balance[3]
+    bal['penalty'] = balance[4]
+    bal['new_balance'] = balance[5]
+
+    logconsole.info("balance bal=" + str(bal))
+    return jsonify( { 'balance': make_public_balance(bal) } ), 201
 
 @app.route('/spot/api/v1.0/spot', methods = ['POST'])
 @auth.login_required

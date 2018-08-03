@@ -130,7 +130,15 @@ class TestAccess(unittest.TestCase):
         self.assertTrue(spot_db.last_day_of_month(datetime.datetime.strptime("2018-11-21", "%Y-%m-%d").date()) == "2018-11-30")
         self.assertTrue(spot_db.last_day_of_month(datetime.datetime.strptime("2018-12-21", "%Y-%m-%d").date()) == "2018-12-31")
 
-# currently billing calculate on the fly 
+    def test_06_check_balance(self):
+        for u in test_users:
+           self._step_started_at = time.time()
+           payload = {"uid": u}
+           r = self.postit( ur + "/spot/api/v1.0/balance", payload )
+           self.assertTrue( r.status_code == 201 ) 
+
+
+ # currently billing calculate on the fly 
 #    def test_15_bill(self):
 #        if self.isIntranet():
 #            self._step_started_at = time.time()

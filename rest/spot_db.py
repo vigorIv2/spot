@@ -87,6 +87,27 @@ def getUserProperties(uid) :
             lconn.commit()
             g_pool.putconn(lconn)
 
+def getUserBalance(user) :
+       	lconn = g_pool.getconn()
+	cur = lconn.cursor() 
+        try:
+	    cur.execute("SELECT id,balance FROM users WHERE userhash = '%s'" % (user,))
+	    row=cur.fetchone()
+            if row == None:
+                return None
+            informer_id = row[0]
+            balance = row[1]
+	    cur.execute("select sum(informed_qty) as iqty, sum(occupied_qty) as octy, sum(gift) as gift, sum(penalty) as penalty, sum(balance) as balance from huhula.bill_payable where user_id = '%s'" % (informer_id,))
+	    row2=cur.fetchone()
+            if row2:
+		return (balance,row2[0],row2[1],row2,[2],row2[3],row2[4])
+	    else:
+		return None
+        finally:
+	    cur.close()		
+            lconn.commit()
+            g_pool.putconn(lconn)
+
 def cleanUp(users) :
         for u in users:
 	    informer_id=getUserID(u)

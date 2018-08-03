@@ -22,8 +22,28 @@ CREATE TABLE huhula.users(
   id UUID PRIMARY KEY default gen_random_uuid(),
   inserted_at TIMESTAMP not null DEFAULT now(),
   userhash string not null,
+  chain_date timestamp,
+  balance double precision default 0, 
   unique INDEX (userhash)
 );  
+
+-- alter table huhula.users add column chain_date;
+
+-- alter table huhula.users add column balance double precision default 0 ;
+
+select * from huhula.users limit 10;
+
+CREATE TABLE huhula.users(
+  id UUID PRIMARY KEY default gen_random_uuid(),
+  inserted_at TIMESTAMP not null DEFAULT now(),
+  userhash string not null,
+  unique INDEX (userhash)
+);  
+
+
+alter table huhula.users add column wallet_balance double precision not null default 0;
+alter table huhula.users add column chain_date TIMESTAMP;
+
 
 drop table huhula.bill;
 

@@ -1,9 +1,19 @@
-select * 
-from huhula.spots order by inserted_at desc limit 90;
+select * from huhula.spots order by inserted_at desc limit 90;
 
 use huhula;
 
-select * from huhula.bill;
+update huhula.bill set gift = 20 where id='061ee336-2a55-4e75-8ce6-876310aeafdc'
+
+select * from huhula.bill_payable order by for_date desc;
+
+
+
+select sum(informed_qty) as iqty, sum(occupied_qty) as octy, sum(gift) as gift, sum(penalty) as penalty, sum(balance) as balance 
+from huhula.bill_payable 
+where user_id = 'a94aa802-0e8e-41fe-a305-a6a3ee4ecebb';
+
+
+    
 
 select sum(orig_quantity) as qty, count(*) as cnt, informer_id, min(inserted_at) as mnat, max(inserted_at) as mxat
 from huhula.spots 
