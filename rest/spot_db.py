@@ -96,11 +96,11 @@ def getUserBalance(user) :
             if row == None:
                 return None
             informer_id = row[0]
-            balance = row[1]
+            balance = str(row[1])
 	    cur.execute("select sum(informed_qty) as iqty, sum(occupied_qty) as octy, sum(gift) as gift, sum(penalty) as penalty, sum(balance) as balance from huhula.bill_payable where user_id = '%s'" % (informer_id,))
 	    row2=cur.fetchone()
             if row2:
-		return (balance,row2[0],row2[1],row2,[2],row2[3],row2[4])
+		return (balance,str(row2[0]),str(row2[1]),str(row2[2]),str(row2[3]),str(row2[4]))
 	    else:
 		return None
         finally:
