@@ -1,1 +1,0 @@
-nohup ./bin/cockroach_node4 > node4_nohup.out  &

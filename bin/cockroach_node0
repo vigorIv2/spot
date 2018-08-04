@@ -1,1 +1,0 @@
-cockroach start --insecure --host=roachdb
