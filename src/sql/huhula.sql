@@ -7,6 +7,10 @@ ALTER USER huhulaman WITH PASSWORD 'xxxxxxxxx';
 
 GRANT select, insert, update, delete ON TABLE huhula.users, huhula.spots, huhula.occupy, huhula.parked, huhula.bill TO huhulaman;
 
+GRANT select ON TABLE huhula.bill_payable TO huhulaman;
+
+select * from huhula.users where userhash = '110702347223414307958'
+
 select  userhash from huhula.users limit 2000;
 
 -- delete from huhula.users where userhash like '%test%' limit 50;
@@ -88,9 +92,9 @@ alter table huhula.users add column roles string[] default array[];
 
 -- alter table huhula.users drop column roles;  
 
-select * from huhula.users where userhash in ('113989703630504660150','117684205293445461401');
+select * from huhula.users where userhash in ('113989703630504660150','117684205293445461401','110702347223414307958');
 
-update huhula.users set roles = array['vendor'] where userhash in ('113989703630504660150','117684205293445461401');
+update huhula.users set roles = array['vendor'] where userhash in ('113989703630504660150','117684205293445461401','110702347223414307958');
 
 
 insert into huhula.users(userhash) values('patient zero');

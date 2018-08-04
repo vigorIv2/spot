@@ -17,7 +17,7 @@ logconsole.debug("Debug CONSOLE")
 
 def initPool():
     global g_pool
-    cs = "postgresql://huhuladb00:26257/huhula?user=huhulaman&sslcert=/home/ubuntu/spot/certs/client.huhulaman.crt&sslkey=/home/ubuntu/spot/certs/client.huhulaman.key&sslmode=require&ssl=true"
+    cs = "postgresql://huhuladb00,huhuladb01,huhuladb02:26257/huhula?user=huhulaman&sslcert=/home/ubuntu/spot/certs/client.huhulaman.crt&sslkey=/home/ubuntu/spot/certs/client.huhulaman.key&sslmode=require&ssl=true"
     g_pool = SimpleConnectionPool(1, 7, cs)
 
 #    con = g_pool.getconn()
