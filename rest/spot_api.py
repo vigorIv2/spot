@@ -148,7 +148,7 @@ def get_balance():
     if balance is None :
         abort(400)
     logconsole.info("balance balance=" + str(balance))
-    bal['walilet_balance'] = balance[0]
+    bal['wallet_balance'] = balance[0]
     bal['iqty'] = balance[1]
     bal['oqty'] = balance[2]
     bal['gift'] = balance[3]
