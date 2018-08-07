@@ -187,7 +187,7 @@ def locateSpot(latitude0,longitude0) :
 			(latitude*pi()/180 - %s*pi()/180) as df, latitude, longitude from huhula.spots as sp   
 		where quantity > 0 -- and age(sp.inserted_at) < INTERVAL '2d2h1m1s1ms1us6ns'
 		order by age(sp.inserted_at)
-  		) where sqrt(df*df + dl*dl) * 6371e3 < 2000
+  		) where sqrt(df*df + dl*dl) * 6371e3 < 300
 		  order by sqrt(df*df + dl*dl) * 6371e3, age desc
   		limit 30""" % (longitude0,latitude0,latitude0,)
         logconsole.debug("SQL:" + selsql)

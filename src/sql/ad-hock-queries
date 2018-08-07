@@ -1,4 +1,4 @@
-select * from huhula.spots order by inserted_at desc limit 90;
+select substring(cast(inserted_at as string),1,16),* from huhula.spots order by inserted_at desc limit 90;
 
 use huhula;
 
