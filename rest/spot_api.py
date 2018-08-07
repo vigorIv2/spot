@@ -255,19 +255,22 @@ def get_locate():
     gspots = []
     for res in results:
         logconsole.debug("Locate debugging res="+str(res))
+        sid = res[0]
+        lg = res[5]
+        lt = res[4]
+        spot = res[1]
+        logconsole.debug("Locate debugging spot="+str(spot))
         gspot = {
-            {
-	        "sid": res[0],
+	        "sid": sid,
                 "loc": {
                     "al": 0,
-                    "lg": res[5],
-                    "lt": res[4]
+                    "lg": lg,
+                    "lt": lt
                 },
                 "spot": [
-                    res[1],
+                    spot,
                 ],
             }
-        }
         gspots += gspot
     logconsole.info("Locate constructed json response "+str(gspots))
 
