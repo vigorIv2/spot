@@ -181,15 +181,15 @@ def checkSameSpot(informer_id,spot,lat,lon) :
 
 
 def locateSpot(latitude0,longitude0) :
-        selsql = """select id, spot, age, sqrt(df*df + dl*dl) * 6371e3 as dist, latitude, longitude from (
-		select sp.id, direction[1] as spot, age(sp.inserted_at) as age, 
+        selsql = """select id, spot, substring(cast(age as string),1,16) as age, sqrt(df*df + dl*dl) * 6371e3 as dist, latitude, longitude from (
+		select sp.id, direction[1] as spot, sp.inserted_at as age,
 			(longitude*pi()/180 - %s*pi()/180) * cos((latitude*pi()/180 + %s*pi()/180)/2) as dl,
 			(latitude*pi()/180 - %s*pi()/180) as df, latitude, longitude from huhula.spots as sp   
 		where quantity > 0 -- and age(sp.inserted_at) < INTERVAL '2d2h1m1s1ms1us6ns'
-		order by age(sp.inserted_at) 
-  		) where sqrt(df*df + dl*dl) * 6371e3 < 2000000 
-		  order by sqrt(df*df + dl*dl) * 6371e3, age
-  		limit 10""" % (longitude0,latitude0,latitude0,)
+		order by age(sp.inserted_at)
+  		) where sqrt(df*df + dl*dl) * 6371e3 < 2000
+		  order by sqrt(df*df + dl*dl) * 6371e3, age desc
+  		limit 30""" % (longitude0,latitude0,latitude0,)
         logconsole.debug("SQL:" + selsql)
        	lconn = g_pool.getconn()
 	cur = lconn.cursor() 
