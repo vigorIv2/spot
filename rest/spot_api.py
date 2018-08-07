@@ -53,7 +53,7 @@ def make_public_user(user):
 def make_public_spot(spot):
     new_spot = {}
     for field in spot:
-        new_spot[field] = spot[field]
+        new_spot += spot[field]
     return new_spot
 
 def make_public_balance(bal):
@@ -260,18 +260,15 @@ def get_locate():
         lt = res[4]
         spot = res[1]
         logconsole.debug("Locate debugging spot="+str(spot))
-        gspot = {
+        gspots.append({
 	        "sid": sid,
                 "loc": {
                     "al": 0,
                     "lg": lg,
                     "lt": lt
                 },
-                "spot": [
-                    spot,
-                ],
-            }
-        gspots += gspot
+                "spot": [ spot ],
+            })
     logconsole.info("Locate constructed json response "+str(gspots))
 
     return jsonify( { 'spots': map(make_public_spot, gspots) } )
