@@ -254,6 +254,7 @@ def get_locate():
 # Locate found in db ('c1a1defc-0d93-427c-b0d7-601e08d1637d', 0L, datetime.timedelta(660), 4.63180451482997, 33.58035109, -117.71799196)
     gspots = []
     for res in results:
+        logconsole.debug("Locate debugging res="+str(res))
         gspot = {
             {
 	        "sid": res[0],
