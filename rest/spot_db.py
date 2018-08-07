@@ -189,13 +189,13 @@ def locateSpot(latitude0,longitude0) :
 		order by age(sp.inserted_at) 
   		) where sqrt(df*df + dl*dl) * 6371e3 < 2000000 
 		  order by sqrt(df*df + dl*dl) * 6371e3, age
-  		limit 1""" % (longitude0,latitude0,latitude0,)
+  		limit 10""" % (longitude0,latitude0,latitude0,)
         logconsole.debug("SQL:" + selsql)
        	lconn = g_pool.getconn()
 	cur = lconn.cursor() 
         try:
 	    cur.execute(selsql)
-            row=cur.fetchone()
+            row=cur.fetchall()
             if row:
                 return row
             else:

@@ -53,10 +53,7 @@ def make_public_user(user):
 def make_public_spot(spot):
     new_spot = {}
     for field in spot:
-        if field == 'id':
-            new_spot['uri'] = url_for('get_spot', id = spot['id'], _external = True)
-        else:
-            new_spot[field] = spot[field]
+        new_spot[field] = spot[field]
     return new_spot
 
 def make_public_balance(bal):
@@ -248,30 +245,29 @@ def get_locate():
     if not request.json or not 'loc' in request.json:
         abort(400)
 
-    res=spot_db.locateSpot(request.json['loc']['lt'],request.json['loc']['lg'])
-    logconsole.debug("Locate found in db "+str(res))
-    if res == None:
+    results=spot_db.locateSpot(request.json['loc']['lt'],request.json['loc']['lg'])
+    logconsole.debug("Locate found in db "+str(results))
+    if results == None:
         abort(404)
 
 # Locate called with {u'loc': {u'lg': -117.71802732, u'lt': 33.58032164, u'al': 73}}
 # Locate found in db ('c1a1defc-0d93-427c-b0d7-601e08d1637d', 0L, datetime.timedelta(660), 4.63180451482997, 33.58035109, -117.71799196)
-
-    gspots = [
-       {
-         "at": 1,
-         "deg": 1,
-	 "sid": res[0],
-         "loc": {
-           "al": 0,
-           "lg": res[5],
-           "lt": res[4]
-         },
-         "spot": [
-           res[1],
-         ],
-        "uid": "hz",
-       }
-    ]
+    gspots = []
+    for res in results:
+        gspot = {
+            {
+	        "sid": res[0],
+                "loc": {
+                    "al": 0,
+                    "lg": res[5],
+                    "lt": res[4]
+                },
+                "spot": [
+                    res[1],
+                ],
+            }
+        }
+        gspots += gspot
     logconsole.info("Locate constructed json response "+str(gspots))
 
     return jsonify( { 'spots': map(make_public_spot, gspots) } )
