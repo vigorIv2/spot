@@ -4,6 +4,7 @@ nohup_huhuladb*.out
 spot_api.pyc
 spot_db.pyc
 rest/spot_api.pyc
+rest/spot_msk.pyc
 rest/spot_db.pyc
 rest/spot_kml.pyc
 rest/spot_billing.pyc
