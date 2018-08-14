@@ -3,6 +3,7 @@
 from flask import Flask, jsonify, abort, request, make_response, url_for, Response
 import time
 from flask_httpauth import HTTPBasicAuth
+import datetime
 
 import spot_db
 import spot_kml
@@ -130,7 +131,7 @@ def get_register():
     if informer_id is None :
        spot_db.newUser(request.json['id'])
        informer_id=spot_db.getUserID(request.json['id'])
-       giftBill(informer_id, spot_db.last_day_of_month(datetime.datetime.fromtimestamp(time.time())), 20)
+       spot_db.giftBill(informer_id, spot_db.last_day_of_month(datetime.datetime.fromtimestamp(time.time())), 20)
     props = spot_db.getUserProperties(informer_id)
     user['roles']=props[0]
     logconsole.info("registered user "+request.json['id']+" db key ="+informer_id+" props="+str(props))
