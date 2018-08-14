@@ -95,6 +95,7 @@ class TestAccess(unittest.TestCase):
             qty += 3
             payload = {"uid": "unittest02", "ct":"12345", "deg":"10", "q":qty, "spot":[-2], "loc":{"lt":sp[0], "lg":sp[1], "al":-1}}
             r = self.postit( ur + "/spot/api/v1.0/spot", payload )
+            print "IV TRACE "+str(r.status_code)
             self.assertTrue( r.status_code == 201 ) 
 
     def test_04_take(self):
