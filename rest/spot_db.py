@@ -336,6 +336,28 @@ def upsertBill(pconn, user_id, for_date, informed_qty_delta, occupied_qty_delta)
         finally:
 	    cur.close()
 
+def giftBill(user_id, for_date, amount=0) :
+       	lconn = g_pool.getconn()
+	cur = lconn.cursor() 
+        try:
+            # first attempt to update, if it yeilds zero affected rows that meants it needs to be inserted
+	    usql = "update huhula.bill set updated_at=now(), gift=gift+%s where user_id='%s' and for_date=cast('%s' as date)" % (amount, user_id, for_date)
+            logconsole.debug("update bill gift sql:" + usql)
+	    cur.execute(usql)
+            if cur.rowcount == 0:
+                isql = "INSERT INTO huhula.bill(user_id, for_date, gift) values('%s',cast('%s' as date),%s)" % (user_id, for_date, amount)
+                logconsole.debug("insert bill sql:" + isql)
+	        cur.execute(isql)
+            lconn.commit()
+        except Exception as error:
+            jts = traceback.format_exc()
+            logconsole.error(jts)
+            lconn.rollback()
+	    raise Exception('Exception while update bill gift ', 'Bill Update Error')
+        finally:
+	    cur.close()
+            g_pool.putconn(lconn)
+
 def insertSpot(informer,informed_at,azimuth,altitude,longitude,latitude,spots,client_at,mode,qty) :
 	informer_id=getUserID(informer)
 	if ( informer_id is None ) :
@@ -361,6 +383,24 @@ def insertSpot(informer,informed_at,azimuth,altitude,longitude,latitude,spots,cl
         finally:
 	    cur.close()
             g_pool.putconn(lconn)
+
+
+def bulkInsertSpot(informer_id,longitude,latitude,qty) :
+       	lconn = g_pool.getconn()
+	cur = lconn.cursor() 
+        try:
+	    cur.execute("INSERT INTO huhula.spots(informer_id,informed_at,azimuth,altitude,longitude,latitude,direction,quantity,orig_quantity,client_at,mode) values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",
+                (informer_id,int(round(time.time() * 1000)),0,0.156,longitude,latitude,[-3],qty,qty,int(round(time.time() * 1000)),2))
+            lconn.commit()
+	    return 0		
+        except Exception as error:
+            jts = traceback.format_exc()
+            logconsole.error(jts)
+            lconn.rollback()
+        finally:
+	    cur.close()
+            g_pool.putconn(lconn)
+
 
 def getInformerID(sid) :
         lconn = g_pool.getconn()
