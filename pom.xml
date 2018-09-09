@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.huhula</groupId>
+    <artifactId>Lair</artifactId>
+    <version>0.00001</version>
+
+		<repositories>
+			<repository>
+				<id>central</id>
+				<name>Central Repository</name>
+				<url>http://repo.maven.apache.org/maven2</url>
+				<layout>default</layout>
+				<snapshots>
+					<enabled>false</enabled>
+				</snapshots>
+			</repository>
+		</repositories>
+	 
+		<pluginRepositories>
+			<pluginRepository>
+				<id>central</id>
+				<name>Central Repository</name>
+				<url>http://repo.maven.apache.org/maven2</url>
+				<layout>default</layout>
+				<snapshots>
+					<enabled>false</enabled>
+				</snapshots>
+				<releases>
+					<updatePolicy>never</updatePolicy>
+				</releases>
+			</pluginRepository>
+		</pluginRepositories>
+			
+		<properties>
+        <thread.fork>true</thread.fork>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <mem.initial>512m</mem.initial>
+        <mem.max>2048m</mem.max>
+        <jdk.version>1.8</jdk.version>
+        <top.dir>${project.basedir}/..</top.dir>
+        <timestamp>${maven.build.timestamp}</timestamp>
+        <maven.build.timestamp.format>yyyy-MM-dd HH:mm</maven.build.timestamp.format>
+    </properties>
+
+    <dependencies>
+			<!-- https://mvnrepository.com/artifact/org.web3j/core -->
+			<dependency>
+    		<groupId>org.web3j</groupId>
+    		<artifactId>core</artifactId>
+    		<version>3.5.0</version>
+			</dependency>
+  		<dependency>
+				<groupId>org.web3j</groupId>
+				<artifactId>crypto</artifactId>
+				<version>3.5.0</version>
+	  	</dependency>
+			<!-- https://mvnrepository.com/artifact/org.web3j/utils -->
+			<dependency>
+  			<groupId>org.web3j</groupId>
+				<artifactId>utils</artifactId>
+				<version>3.5.0</version>
+			</dependency>
+			<dependency>
+				<groupId>org.web3j</groupId>
+				<artifactId>codegen</artifactId>
+				<version>3.5.0</version>
+			</dependency>
+			<dependency>
+					<groupId>org.web3j</groupId>
+					<artifactId>tuples</artifactId>
+					<version>3.5.0</version>
+			</dependency>
+			<dependency>
+					<groupId>org.web3j</groupId>
+					<artifactId>abi</artifactId>
+					<version>3.5.0</version>
+			</dependency>
+			<!-- https://mvnrepository.com/artifact/org.web3j/rlp -->
+			<dependency>
+					<groupId>org.web3j</groupId>
+					<artifactId>rlp</artifactId>
+					<version>3.5.0</version>
+			</dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <!--Set a compiler level-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.5.1</version>
+                <configuration>
+                    <fork>${thread.fork}</fork>
+                    <meminitial>${mem.initial}</meminitial>
+                    <maxmem>${mem.max}</maxmem>
+                    <source>${jdk.version}</source>
+                    <target>${jdk.version}</target>
+                </configuration>
+            </plugin>
+            <!--Set the manifest and set the build as an uberjar -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>3.1.0</version>
+                <configuration>
+                    <finalName>Huhula-${project.version}</finalName>
+                    <!-- get all project dependencies -->
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                    <appendAssemblyId>false</appendAssemblyId>
+                    <!-- MainClass in mainfest make a executable jar -->
+                    <archive>
+                        <manifest>
+                            <mainClass>com.huhula.credentials.Wallets</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <!-- bind to the packaging phase -->
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+    </build>
+</project>

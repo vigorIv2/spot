@@ -1,6 +1,11 @@
 my-safe-directory
 flask/lib/python2.7/*
 nohup_huhuladb*.out
+.DS_Store
+src/.DS_Store
+src/main/.DS_Store
+src/main/java/.DS_Store
+src/main/java/com/.DS_Store
 spot_api.pyc
 spot_db.pyc
 rest/spot_api.pyc
@@ -12,6 +17,7 @@ huhuladb00/
 huhuladb01/
 huhuladb02/
 certs
+target
 flask
 testusers.txt
 nohup.out
