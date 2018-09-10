@@ -1,6 +1,8 @@
 my-safe-directory
 flask/lib/python2.7/*
 nohup_huhuladb*.out
+.conf
+logs/
 .DS_Store
 src/.DS_Store
 src/main/.DS_Store
