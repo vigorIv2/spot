@@ -4,7 +4,7 @@ CREATE USER walletman WITH PASSWORD 'xxxxxxxxx';
 
 ALTER USER walletman WITH PASSWORD 'xxxxxxxxx';
 
-GRANT select, insert, update, delete ON TABLE wallets.ethereum TO walletman;
+GRANT select, insert ON TABLE wallets.ethereum TO walletman;
 
 select * from wallets.ethereum;
 

@@ -13,56 +13,123 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
-import sun.rmi.runtime.Log;
 
 
 import java.io.File;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 
 public class Wallets {
 
     private java.io.File tempDir ;
     private static final Logger LOG = LoggerFactory.getLogger(Wallets.class);
     private Config defaultConfig ;
-    private Connection huhulaDbConn;
-    private Connection walletDbConn;
+    private String rootDir;
 
-    public Wallets(String configFileName) {
-        defaultConfig = ConfigFactory.parseFile(new File(configFileName));
-
-        LOG.info("db addr = "+defaultConfig.getString("conf.cocroachaddress"));
-        LOG.info("db user = "+defaultConfig.getString("conf.huhuladbuser"));
+    public Wallets(String _configFileName,String _rootDir) {
+        rootDir = _rootDir;
+        defaultConfig = ConfigFactory.parseFile(new File(_configFileName));
         tempDir = new File(defaultConfig.getString("conf.tempDir"));
-
     }
 
-    public void connectDb() {
+    public Connection connectDb(String dbSection) {
         try {
             Class.forName("org.postgresql.Driver");
-            String dbAddr = defaultConfig.getString("conf.cocroachaddress");
-            String dbPort = defaultConfig.getString("conf.cocroachport");
-            String dbName = defaultConfig.getString("conf.huhuladb");
-            String dbUser = defaultConfig.getString("conf.huhuladbuser");
-            String dbPwd = defaultConfig.getString("conf.huhuladbpwd");
-            huhulaDbConn = DriverManager.getConnection("jdbc:postgresql://" + dbAddr + ":" + dbPort + "/" + dbName + "?user=" + dbUser + "&sslcert=/Users/ivasilchikov/spot/certs/client.huhulaman.der&sslkey=/Users/ivasilchikov/spot/certs/client.huhulaman.key.pk8&sslmode=require&ssl=true", dbUser, dbPwd);
+            String dbAddr = defaultConfig.getString("conf."+dbSection+".dbaddress");
+            String dbPort = defaultConfig.getString("conf."+dbSection+".dbport");
+            String dbName = defaultConfig.getString("conf."+dbSection+".dbname");
+            String dbUser = defaultConfig.getString("conf."+dbSection+".dbuser");
+            String dbPwd = defaultConfig.getString("conf."+dbSection+".dbpassword");
+
+            String jdbcUrl = "jdbc:postgresql://" + dbAddr + ":" + dbPort + "/" + dbName + "?user=" + dbUser + "&sslcert="+rootDir+"/certs/client."+dbUser+".der&sslkey="+rootDir+"/certs/client."+dbUser+".key.pk8&sslmode=require&ssl=true";
+            LOG.info("Connecting to "+jdbcUrl);
+            Connection aConn = DriverManager.getConnection(jdbcUrl, dbUser, dbPwd);
+            aConn.setAutoCommit(false);
+            return aConn;
         } catch ( Throwable ce ) {
-            LOG.error("Error on attempt to connect to db",ce);
+            LOG.error("Error on attempt to connect to db ",ce);
         }
+        return null;
     }
 
-    public void readDb() throws java.sql.SQLException {
+    public String saveWallet(Connection walletsDbConn, String json) {
+        String uuid = null;
         try {
-            // Create the "accounts" table.
-            ResultSet res = huhulaDbConn.createStatement().executeQuery("SELECT * FROM users");
-            while (res.next()) {
-                System.out.printf("\taccount %s: %s\n", res.getString("id"), res.getString("userhash"));
+            LOG.info("Beginning to saveWallet");
+            PreparedStatement ps = walletsDbConn.prepareStatement("insert into ethereum(utc_json) values(?)", Statement.RETURN_GENERATED_KEYS);
+            ps.setString(1,json);
+            ps.executeUpdate();
+            ResultSet rs = ps.getGeneratedKeys();
+            if(rs != null && rs.next()){
+                uuid=rs.getString(1);
+                LOG.info("Generated row id "+uuid);
             }
-        } finally {
-            // Close the database connection.
-            huhulaDbConn.close();
+            rs.close();
+            ps.close();
+            walletsDbConn.commit();
+        } catch ( SQLException se ) {
+            LOG.error("SQLException in saveWallet", se);
+        }
+        return uuid;
+    }
+
+    public void provisionWallets() {
+        Connection huhulaDbConn = null;
+        Connection walletsDbConn = null;
+        PreparedStatement ps = null;
+        PreparedStatement ups = null;
+        try {
+            try {
+                LOG.info("Beginning to provision new wallets");
+                huhulaDbConn = connectDb("huhula");
+                walletsDbConn = connectDb("wallets");
+                ps = walletsDbConn.prepareStatement("insert into ethereum(utc_json) values(?)", Statement.RETURN_GENERATED_KEYS);
+                ups = huhulaDbConn.prepareStatement("update users set wid = ? where id = ?");
+
+                ResultSet res = huhulaDbConn.createStatement().executeQuery("SELECT id, userhash FROM users where wid is null;");
+                while (res.next()) {
+                    String uid = res.getString("id");
+                    String uhash = res.getString("userhash");
+                    LOG.info("Provisioning wallet for user ID="+uid);
+                    String pwd = get_SHA_512_SecurePassword(uid, uhash);
+                    String keyFile = generateWallet(pwd);
+                    LOG.info("Wallet file generated key Length = "+keyFile.length());
+
+                    // save to db
+                    ps.setString(1,keyFile);
+                    ps.executeUpdate();
+                    ResultSet rs = ps.getGeneratedKeys();
+                    if(rs != null && rs.next()) { // get the id of generated row and insert it to users as fk
+                        String wid=rs.getString(1);
+                        LOG.info("Generated wallet row id "+wid);
+                        try {
+                            ups.setString(1, wid);
+                            ups.setString(2, uid);
+                            ups.executeUpdate();
+                            walletsDbConn.commit();
+                            huhulaDbConn.commit();
+                            LOG.info("Updated user id "+uid+" with wid "+wid);
+                        } catch ( SQLException sqe ) {
+                            LOG.error("SQLException while updating huhula or wallets",sqe);
+                            huhulaDbConn.rollback();
+                            walletsDbConn.rollback();
+                        }
+                    }
+                    rs.close();
+                }
+                res.close();
+            } finally {
+                LOG.info("Done provisioning new wallets");
+                if ( ps != null )
+                    ps.close();
+                if ( ups != null )
+                    ups.close();
+                if ( huhulaDbConn != null )
+                    huhulaDbConn.close();
+                if ( walletsDbConn != null )
+                    walletsDbConn.close();
+            }
+        } catch ( SQLException se ) {
+            LOG.error("SQLException in provisionWallets", se);
         }
     }
 
@@ -105,32 +172,21 @@ public class Wallets {
     }
 
     public static void main(String [] args) {
-        OptionParser parser = new OptionParser( "wc:" );
+        OptionParser parser = new OptionParser( "wc:r:" );
         parser.accepts("c").withRequiredArg();
-
+        parser.accepts("r").withRequiredArg();
 
         OptionSet options = parser.parse( args );
         assert( options.has("c") );
         assert( options.hasArgument("c") );
+        assert( options.has("r") );
+        assert( options.hasArgument("r") );
         String configName = options.valueOf("c").toString();
-        Wallets ws = new Wallets(configName);
-
+        String rootDir = options.valueOf("r").toString();
+        Wallets ws = new Wallets(configName,rootDir);
 
         if ( options.has("w") ) { // create wallets
-            // just some temp code for now
-            String pwd = ws.get_SHA_512_SecurePassword("0414cae0-0492-4e2e-bd58-230938eb06a9", "110865176290720544754");
-            String keyFileName = ws.generateWallet(pwd);
-
-
-            LOG.info("Wallet file content " + keyFileName);
-            LOG.info("Wallet pwd " + pwd);
-
-            ws.connectDb();
-            try {
-                ws.readDb();
-            } catch (SQLException se) {
-                LOG.error("SQLException ", se);
-            }
+            ws.provisionWallets();
         }
     }
 }
