@@ -66,6 +66,12 @@ def make_public_balance(bal):
         new_bal[field] = bal[field]
     return new_bal
 
+def make_public_reference(ref):
+    new_ref = {}
+    for field in ref:
+        new_ref[field] = ref[field]
+    return new_ref
+
 def data_points(arr):
     mn = min(arr)
     mx = max(arr)
@@ -136,6 +142,22 @@ def get_register():
     user['roles']=props[0]
     logconsole.info("registered user "+request.json['id']+" db key ="+informer_id+" props="+str(props))
     return jsonify( { 'user': make_public_user(user) } ), 201
+
+@app.route('/spot/api/v1.0/refer', methods = ['POST'])
+@auth.login_required
+def get_refer():
+    logconsole.info("refer called with "+str(request.json))
+    if not request.json or not 'id' in request.json:
+        abort(400)
+    reference = {
+        'id': request.json['id'],
+    }
+    ref_id=spot_db.newReference(request.json['id'])
+    if ref_id is None :
+        abort(400)
+    reference['ref']=ref_id
+    logconsole.info("reference response "+str(reference))
+    return jsonify( { 'reference': make_public_reference(reference) } ), 201
 
 @app.route('/spot/api/v1.0/balance', methods = ['POST'])
 @auth.login_required

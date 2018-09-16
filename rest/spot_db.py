@@ -154,6 +154,21 @@ def getUserID(user) :
                 lconn.commit()
         	g_pool.putconn(lconn)
 
+def newReference(user) :
+	sender_id=getUserID(user)
+	if sender_id == None:
+		return None
+        lconn = g_pool.getconn()
+	cur = lconn.cursor()
+	try: 
+	        cur.execute("INSERT INTO reference(sender_id) values(%s) RETURNING id;", (sender_id,))
+		reference=cur.fetchone()[0]	
+		return reference
+	finally:
+		cur.close()
+                lconn.commit()
+        	g_pool.putconn(lconn)
+	return None
 
 def checkSameSpot(informer_id,spot,lat,lon) :
 	selsql = """select count(*) as cnt 
