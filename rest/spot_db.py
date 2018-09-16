@@ -170,6 +170,38 @@ def newReference(user) :
         	g_pool.putconn(lconn)
 	return None
 
+def closeReferrence(ref, receiver_id) :
+        lconn = g_pool.getconn()
+        cur = lconn.cursor()
+        try:
+           cur.execute("update reference set receiver_id=%s, updated_at=now() where receiver_id is null and id=%s", (receiver_id,ref,))
+           if cur.rowcount == 0:
+                return 404
+        except Exception as error:
+            jts = traceback.format_exc()
+            logconsole.error(jts)
+            lconn.rollback()
+        finally:
+            cur.close()
+            lconn.commit()
+            g_pool.putconn(lconn)
+        return 0
+
+def getSenderId(ref) :
+        lconn = g_pool.getconn()
+	cur = lconn.cursor() 
+	cur.execute("SELECT sender_id FROM reference WHERE receiver_id is null and id = '%s'" % (ref,))
+	row = cur.fetchone()
+	try: 
+		if row:
+			return row[0]
+		else:
+			return None
+	finally:
+		cur.close()
+                lconn.commit()
+        	g_pool.putconn(lconn)
+
 def checkSameSpot(informer_id,spot,lat,lon) :
 	selsql = """select count(*) as cnt 
 		from huhula.spots 
