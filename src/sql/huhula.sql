@@ -1,4 +1,3 @@
-CREATE DATABASE if not exists huhula;
 
 CREATE USER huhulaman WITH PASSWORD 'sEBx9gjgzfo';
 
@@ -27,9 +26,13 @@ CREATE TABLE huhula.users(
   inserted_at TIMESTAMP not null DEFAULT now(),
   userhash string not null,
   chain_date timestamp,
-  balance double precision default 0, 
+  balance double precision default 0,
+  wid UUID, // reference to wallets 
   unique INDEX (userhash)
 );  
+
+alter table huhula.users add column wid UUID;
+
 
 -- alter table huhula.users add column chain_date;
 
