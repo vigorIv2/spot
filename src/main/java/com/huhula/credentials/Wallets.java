@@ -89,8 +89,9 @@ public class Wallets {
                 while (res.next()) {
                     String uid = res.getString("id");
                     String uhash = res.getString("userhash");
-                    LOG.info("Provisioning wallet for user ID="+uid);
-                    String pwd = get_SHA_512_SecurePassword(uid, uhash);
+                    LOG.info("Provisioning wallet for user ID="+uid+"+"+uhash);
+
+                    String pwd = get_SHA_1_SecurePassword(uid, uhash);
                     String keyFile = generateWallet(pwd);
                     LOG.info("Wallet file generated key Length = "+keyFile.length());
 
@@ -133,10 +134,28 @@ public class Wallets {
         }
     }
 
-    public String get_SHA_512_SecurePassword(String passwordToHash, String salt){
+    public String deprecated_get_SHA_512_SecurePassword(String passwordToHash, String salt){
         String generatedPassword = null;
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-512");
+            md.update(salt.getBytes(StandardCharsets.UTF_8));
+            byte[] bytes = md.digest(passwordToHash.getBytes(StandardCharsets.UTF_8));
+            StringBuilder sb = new StringBuilder();
+            for(int i=0; i< bytes.length ;i++){
+                sb.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
+            }
+            generatedPassword = sb.toString();
+        }
+        catch (NoSuchAlgorithmException e){
+            e.printStackTrace();
+        }
+        return generatedPassword;
+    }
+
+    public String get_SHA_1_SecurePassword(String passwordToHash, String salt){
+        String generatedPassword = null;
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-1");
             md.update(salt.getBytes(StandardCharsets.UTF_8));
             byte[] bytes = md.digest(passwordToHash.getBytes(StandardCharsets.UTF_8));
             StringBuilder sb = new StringBuilder();
@@ -157,24 +176,26 @@ public class Wallets {
         try {
             fileName = WalletUtils.generateFullNewWalletFile(password, tempDir);
             content = new String(Files.readAllBytes(Paths.get(tempDir+"/"+fileName)));
+            LOG.info("File " + tempDir + "/" + fileName + " password=" + password);
         } catch (Throwable t) {
             LOG.error("Error while creating wallet file",t);
-        } finally {
-            if ( ! fileName.isEmpty() ) {
-                try {
-                    Files.delete(Paths.get(tempDir+"/"+fileName));
-                } catch ( Throwable et ) {
-                    LOG.error("Error on attempt to delete file "+tempDir+"/"+fileName);
-                }
-            }
+//        } finally {
+//            if ( ! fileName.isEmpty() ) {
+//                try {
+//                    Files.delete(Paths.get(tempDir+"/"+fileName));
+//                } catch ( Throwable et ) {
+//                    LOG.error("Error on attempt to delete file "+tempDir+"/"+fileName);
+//                }
+//            }
         }
         return content;
     }
 
     public static void main(String [] args) {
-        OptionParser parser = new OptionParser( "wc:r:" );
+        OptionParser parser = new OptionParser( "wc:r:p:" );
         parser.accepts("c").withRequiredArg();
         parser.accepts("r").withRequiredArg();
+        parser.accepts("p").withRequiredArg();
 
         OptionSet options = parser.parse( args );
         assert( options.has("c") );
@@ -187,6 +208,13 @@ public class Wallets {
 
         if ( options.has("w") ) { // create wallets
             ws.provisionWallets();
+        } else
+        if ( options.has("p") ) { // create wallets
+            String uid = options.valueOf("p").toString().split("\\+")[0];
+            String userhash = options.valueOf("p").toString().split("\\+")[1];
+            LOG.info("Recovering password for uid="+uid+" uhash="+userhash);
+            String pwd = ws.get_SHA_1_SecurePassword(uid, userhash);
+            System.out.println(pwd);
         }
     }
 }

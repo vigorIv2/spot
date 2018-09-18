@@ -4,7 +4,7 @@ CREATE USER huhulaman WITH PASSWORD 'sEBx9gjgzfo';
 ALTER USER huhulaman WITH PASSWORD 'xxxxxxxxx';
 
 
-GRANT select, insert, update, delete ON TABLE huhula.users, huhula.spots, huhula.occupy, huhula.parked, huhula.bill TO huhulaman;
+GRANT select, insert, update, delete ON TABLE huhula.users, huhula.spots, huhula.occupy, huhula.parked, huhula.bill, huhula.reference TO huhulaman;
 
 GRANT select ON TABLE huhula.bill_payable TO huhulaman;
 
@@ -87,7 +87,7 @@ CREATE VIEW huhula.bill_payable
   select * from huhula.bill_payable;
   
 
-select * from huhula.bill;
+select * from huhula.bill order by inserted_at desc;
 select * from huhula.occupy order by inserted_at desc limit 10;
 
 
@@ -97,7 +97,9 @@ alter table huhula.users add column roles string[] default array[];
 
 select * from huhula.users where userhash in ('113989703630504660150','117684205293445461401','110702347223414307958');
 
-update huhula.users set roles = array['vendor'] where userhash in ('113989703630504660150','117684205293445461401','110702347223414307958');
+update huhula.users set roles = array['vendor'] ;
+
+where userhash in ('113989703630504660150','117684205293445461401','110702347223414307958');
 
 
 insert into huhula.users(userhash) values('patient zero');
@@ -219,10 +221,30 @@ select (cast(longitude as float)*pi()/180 - -117.72369671*pi()/180) * cos((cast(
 -- where round(latitude,4) = 33.5783 and round(longitude,4)=-117.7237
 order by  sqrt(df*df + dl*dl) * 6371e3 
 
-select * from users;
+select * from huhula.users;
+
+delete from huhula.users where userhash = 'reference-test'
 
 select u.userhash, s.inserted_at, latitude, longitude from spots s
 inner join users u on (s.informer_id = u.id)
 order by inserted_at desc ;
 
+
     
+CREATE TABLE huhula.reference(
+  id UUID PRIMARY KEY default gen_random_uuid(),
+  sender_id UUID references huhula.users not null,
+  receiver_id UUID references huhula.users,
+  inserted_at TIMESTAMPTZ not null DEFAULT now(),
+  updated_at TIMESTAMPTZ,
+  from_url string
+);
+
+
+select * from huhula.reference;
+select * from huhula.users;
+select * from huhula.bill order by inserted_at desc ;
+
+delete from huhula.reference;
+
+
