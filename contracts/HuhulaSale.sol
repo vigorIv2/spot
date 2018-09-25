@@ -21,7 +21,7 @@ contract HuhulaSale is Ownable, TimedCrowdsale(block.timestamp + 1, block.timest
   uint256 public minLotSize = 5 ether; 
 
   constructor() public 
-    Crowdsale(71396, 0xa4aA1C90f02265d189a96207Be92597fFEaD54D2, new HuhulaToken("Huhula spot","HUHU") ) {
+    Crowdsale(23356, 0xa4aA1C90f02265d189a96207Be92597fFEaD54D2, new HuhulaToken("Huhula spot","HUHU") ) {
   }
 
   function calcTokens(uint256 weiAmount) internal constant returns(uint256) {

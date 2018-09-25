@@ -1,12 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="df545b6c-524e-441d-932a-c8cac652385b" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/huhula/contract/ContractInteractions.java" afterDir="false" />
+    <list default="true" id="df545b6c-524e-441d-932a-c8cac652385b" name="Default Changelist" comment="reu">
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/huhula/credentials/Settings.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/com/huhula/ContractWeb3jtest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/com/huhula/HuhulaTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/com/huhula/SampleKeys.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/com/huhula/Web3jtest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/huhula/credentials/Wallets.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/huhula/credentials/Wallets.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/sql/huhula.sql" beforeDir="false" afterPath="$PROJECT_DIR$/src/sql/huhula.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/contracts/HuhulaSale.sol" beforeDir="false" afterPath="$PROJECT_DIR$/contracts/HuhulaSale.sol" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/huhula/Huhula.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/huhula/contract/ContractInteractions.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/huhula/contract/ContractInteractions.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/target/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -15,43 +22,60 @@
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="CoverageDataManager">
+    <SUITE FILE_PATH="coverage/lair$Wallets.ic" NAME="Wallets Coverage Results" MODIFIED="1537342237582" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">
+      <FILTER>com.huhula.credentials.*</FILTER>
+    </SUITE>
+  </component>
+  <component name="CoverageViewManager">
+    <option name="myElementSize" value="172" />
+  </component>
   <component name="FUSProjectUsageTrigger">
     <session id="-1992644748">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="4" />
-          <entry key="project.open.time.1" value="1" />
-          <entry key="project.open.time.2" value="1" />
+          <entry key="project.closed" value="10" />
+          <entry key="project.open.time.1" value="4" />
+          <entry key="project.open.time.2" value="3" />
+          <entry key="project.open.time.21" value="1" />
           <entry key="project.open.time.3" value="2" />
           <entry key="project.open.time.6" value="1" />
-          <entry key="project.opened" value="5" />
+          <entry key="project.open.time.8" value="1" />
+          <entry key="project.opened" value="12" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
-          <entry key="conf" value="2" />
-          <entry key="java" value="4" />
-          <entry key="xml" value="1" />
+          <entry key="class" value="3" />
+          <entry key="conf" value="12" />
+          <entry key="java" value="27" />
+          <entry key="py" value="1" />
+          <entry key="xml" value="2" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
-          <entry key="HOCON" value="2" />
-          <entry key="JAVA" value="4" />
-          <entry key="XML" value="1" />
+          <entry key="CLASS" value="3" />
+          <entry key="HOCON" value="12" />
+          <entry key="JAVA" value="27" />
+          <entry key="PLAIN_TEXT" value="1" />
+          <entry key="XML" value="2" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="conf" value="28" />
-          <entry key="java" value="3444" />
+          <entry key="conf" value="220" />
+          <entry key="dummy" value="16" />
+          <entry key="java" value="5814" />
+          <entry key="txt" value="3" />
           <entry key="xml" value="18" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="HOCON" value="28" />
-          <entry key="JAVA" value="3444" />
+          <entry key="HOCON" value="220" />
+          <entry key="JAVA" value="5814" />
+          <entry key="PLAIN_TEXT" value="19" />
           <entry key="XML" value="18" />
         </counts>
       </usages-collector>
@@ -64,12 +88,25 @@
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/huhula/Huhula.java">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/huhula/credentials/Settings.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="10110">
-              <caret line="698" column="65" selection-start-line="698" selection-start-column="60" selection-end-line="698" selection-end-column="65" />
+            <state relative-caret-position="116">
+              <caret line="25" selection-start-line="25" selection-end-line="25" />
               <folding>
                 <element signature="imports" expanded="true" />
+                <element signature="e#1064#1065#0" expanded="true" />
+                <element signature="e#856#857#0" expanded="true" />
+                <element signature="e#888#889#0" expanded="true" />
+                <element signature="e#926#927#0" expanded="true" />
+                <element signature="e#963#964#0" expanded="true" />
+                <element signature="e#1006#1007#0" expanded="true" />
+                <element signature="e#1049#1050#0" expanded="true" />
+                <element signature="e#1076#1077#0" expanded="true" />
+                <element signature="e#1116#1117#0" expanded="true" />
+                <element signature="e#1148#1149#0" expanded="true" />
+                <element signature="e#1188#1189#0" expanded="true" />
+                <element signature="e#867#868#0" expanded="true" />
+                <element signature="e#927#928#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -78,22 +115,17 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/huhula/contract/ContractInteractions.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="202">
-              <caret line="32" column="20" selection-start-line="32" selection-start-column="20" selection-end-line="32" selection-end-column="20" />
-              <folding>
-                <element signature="imports" expanded="true" />
-                <element signature="e#1104#1105#0" expanded="true" />
-                <element signature="e#1130#1131#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="60">
+              <caret line="4" column="14" selection-start-line="4" selection-start-column="14" selection-end-line="4" selection-end-column="14" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/huhula/credentials/Wallets.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="214">
-              <caret line="92" lean-forward="true" selection-start-line="92" selection-end-line="92" />
+            <state relative-caret-position="276">
+              <caret line="23" column="77" selection-start-line="23" selection-start-column="1" selection-end-line="23" selection-end-column="77" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -102,10 +134,66 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/test/java/com/huhula/ContractWeb3jtest.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="323">
+              <caret line="46" column="40" selection-start-line="46" selection-start-column="40" selection-end-line="46" selection-end-column="40" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/test/java/com/huhula/HuhulaTest.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="234">
+              <caret line="169" column="73" selection-start-line="169" selection-start-column="73" selection-end-line="169" selection-end-column="73" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/config.py">
+          <provider selected="true" editor-type-id="text-editor" />
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/huhula/contract/HuhulaSale.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-1148">
+              <caret line="37" column="13" selection-start-line="37" selection-start-column="13" selection-end-line="37" selection-end-column="13" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/huhula/contract/HuhulaToken.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="124">
+              <caret line="38" column="13" selection-start-line="38" selection-start-column="13" selection-end-line="38" selection-end-column="13" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/.conf/defaults.conf">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="105">
-              <caret line="7" column="20" selection-start-line="7" selection-start-column="20" selection-end-line="7" selection-end-column="20" />
+            <state relative-caret-position="210">
+              <caret line="14" column="18" selection-start-line="14" selection-start-column="13" selection-end-line="14" selection-end-column="18" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/.conf/user.conf">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="15">
+              <caret line="1" selection-start-line="1" selection-end-line="1" />
             </state>
           </provider>
         </entry>
@@ -118,6 +206,12 @@
         <option value="Class" />
       </list>
     </option>
+  </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>Credentials</find>
+      <find>deploy</find>
+    </findStrings>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -135,9 +229,22 @@
       <list>
         <option value="$PROJECT_DIR$/src/main/resources/log4j.conf" />
         <option value="$PROJECT_DIR$/pom.xml" />
-        <option value="$PROJECT_DIR$/.conf/defaults.conf" />
-        <option value="$PROJECT_DIR$/src/main/java/com/huhula/contract/ContractInteractions.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/huhula/credentials/Wallets.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/huhula/HuhulaTest.java" />
+        <option value="$PROJECT_DIR$/src/test/java/com/huhula/CredentialsTest.java" />
+        <option value="$PROJECT_DIR$/src/test/java/com/huhula/Web3jtest.java" />
+        <option value="$PROJECT_DIR$/.conf/env/main.conf" />
+        <option value="$PROJECT_DIR$/.conf/env/rinkeyby.conf" />
+        <option value="$PROJECT_DIR$/.conf/defaults.conf" />
+        <option value="$PROJECT_DIR$/.conf/user.conf" />
+        <option value="$PROJECT_DIR$/src/main/java/com/huhula/credentials/WalletsConfig.java" />
+        <option value="$PROJECT_DIR$/src/test/java/com/huhula/SampleKeys.java" />
+        <option value="$PROJECT_DIR$/.conf/env/rinkeby.conf" />
+        <option value="$PROJECT_DIR$/.conf/env/ganache.conf" />
+        <option value="$PROJECT_DIR$/src/main/java/com/huhula/credentials/Settings.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/huhula/contract/ContractInteractions.java" />
+        <option value="$PROJECT_DIR$/src/test/java/com/huhula/ContractWeb3jtest.java" />
+        <option value="$PROJECT_DIR$/src/test/java/com/huhula/HuhulaTest.java" />
       </list>
     </option>
   </component>
@@ -156,8 +263,9 @@
     </packageJsonPaths>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="y" value="23" />
-    <option name="width" value="1257" />
+    <option name="x" value="39" />
+    <option name="y" value="25" />
+    <option name="width" value="1179" />
     <option name="height" value="777" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
@@ -177,6 +285,12 @@
               <item name="lair" type="b2602c69:ProjectViewProjectNode" />
               <item name="spot" type="462c0819:PsiDirectoryNode" />
               <item name=".conf" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="lair" type="b2602c69:ProjectViewProjectNode" />
+              <item name="spot" type="462c0819:PsiDirectoryNode" />
+              <item name=".conf" type="462c0819:PsiDirectoryNode" />
+              <item name="env" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="lair" type="b2602c69:ProjectViewProjectNode" />
@@ -229,19 +343,53 @@
               <item name="main" type="462c0819:PsiDirectoryNode" />
               <item name="resources" type="462c0819:PsiDirectoryNode" />
             </path>
+            <path>
+              <item name="lair" type="b2602c69:ProjectViewProjectNode" />
+              <item name="spot" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="sql" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="lair" type="b2602c69:ProjectViewProjectNode" />
+              <item name="spot" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="test" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="lair" type="b2602c69:ProjectViewProjectNode" />
+              <item name="spot" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="test" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="lair" type="b2602c69:ProjectViewProjectNode" />
+              <item name="spot" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="test" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="huhula" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="lair" type="b2602c69:ProjectViewProjectNode" />
+              <item name="spot" type="462c0819:PsiDirectoryNode" />
+              <item name="tests" type="462c0819:PsiDirectoryNode" />
+            </path>
           </expand>
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
       <pane id="PackagesPane" />
-      <pane id="AndroidView" />
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
+    <property name="Downloaded.Files.Path.Enabled" value="false" />
+    <property name="Repository.Attach.JavaDocs" value="false" />
+    <property name="Repository.Attach.Sources" value="false" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1536942546047" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1537852835454" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="/usr/local/bin/node" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
@@ -262,14 +410,61 @@
       </list>
     </option>
   </component>
-  <component name="RunManager">
-    <configuration name="Wallets" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="com.huhula.credentials.Wallets" />
+  <component name="RunManager" selected="JUnit.HuhulaTest">
+    <configuration name="CredentialsTest.testCredentialsFromECKeyPair" type="AndroidJUnit" factoryName="Android JUnit" temporary="true" nameIsGenerated="true">
+      <module name="lair" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.huhula.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.huhula" />
+      <option name="MAIN_CLASS_NAME" value="com.huhula.CredentialsTest" />
+      <option name="METHOD_NAME" value="testCredentialsFromECKeyPair" />
+      <option name="TEST_OBJECT" value="method" />
+      <option name="WORKING_DIRECTORY" value="$MODULE_DIR$" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="HuhulaTest (1)" type="AndroidJUnit" factoryName="Android JUnit" temporary="true" nameIsGenerated="true">
+      <module name="lair" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.huhula.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.huhula" />
+      <option name="MAIN_CLASS_NAME" value="com.huhula.HuhulaTest" />
+      <option name="WORKING_DIRECTORY" value="$MODULE_DIR$" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="HuhulaTest" type="AndroidJUnit" factoryName="Android JUnit" temporary="true" nameIsGenerated="true">
+      <module name="lair" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.huhula.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.huhula" />
+      <option name="MAIN_CLASS_NAME" value="com.huhula.HuhulaTest" />
+      <option name="WORKING_DIRECTORY" value="$MODULE_DIR$" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Web3jtest" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.huhula.Web3jtest" />
       <module name="lair" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="com.huhula.credentials.*" />
+          <option name="PATTERN" value="com.huhula.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
@@ -279,6 +474,21 @@
     </configuration>
     <configuration default="true" type="Application" factoryName="Application">
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="HuhulaTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="lair" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.huhula.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.huhula" />
+      <option name="MAIN_CLASS_NAME" value="com.huhula.HuhulaTest" />
+      <option name="WORKING_DIRECTORY" value="%MODULE_WORKING_DIR%" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -297,9 +507,20 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <list>
+      <item itemvalue="Android JUnit.HuhulaTest" />
+      <item itemvalue="Android JUnit.HuhulaTest (1)" />
+      <item itemvalue="JUnit.HuhulaTest" />
+      <item itemvalue="Android JUnit.CredentialsTest.testCredentialsFromECKeyPair" />
+      <item itemvalue="Application.Web3jtest" />
+    </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Application.Wallets" />
+        <item itemvalue="JUnit.HuhulaTest" />
+        <item itemvalue="Android JUnit.HuhulaTest (1)" />
+        <item itemvalue="Application.Web3jtest" />
+        <item itemvalue="Android JUnit.CredentialsTest.testCredentialsFromECKeyPair" />
+        <item itemvalue="Android JUnit.HuhulaTest" />
       </list>
     </recent_temporary>
   </component>
@@ -329,16 +550,55 @@
       <workItem from="1536640295795" duration="4904000" />
       <workItem from="1536700971305" duration="3545000" />
       <workItem from="1537239584847" duration="2576000" />
+      <workItem from="1537290116135" duration="9000" />
+      <workItem from="1537340531345" duration="2654000" />
+      <workItem from="1537397137399" duration="434000" />
+      <workItem from="1537457580872" duration="96000" />
+      <workItem from="1537479281191" duration="4585000" />
+      <workItem from="1537758783591" duration="12232000" />
+      <workItem from="1537832975826" duration="6329000" />
     </task>
     <servers />
   </component>
+  <component name="TestHistory">
+    <history-entry file="HuhulaTest - 2018.09.24 at 21h 03m 21s.xml">
+      <configuration name="HuhulaTest" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="HuhulaTest - 2018.09.24 at 21h 04m 43s.xml">
+      <configuration name="HuhulaTest" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="HuhulaTest - 2018.09.24 at 21h 07m 51s.xml">
+      <configuration name="HuhulaTest" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="HuhulaTest - 2018.09.24 at 21h 11m 04s.xml">
+      <configuration name="HuhulaTest" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="HuhulaTest - 2018.09.24 at 21h 13m 12s.xml">
+      <configuration name="HuhulaTest" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="HuhulaTest - 2018.09.24 at 21h 13m 24s.xml">
+      <configuration name="HuhulaTest" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="HuhulaTest - 2018.09.24 at 21h 14m 12s.xml">
+      <configuration name="HuhulaTest" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="HuhulaTest - 2018.09.24 at 21h 17m 17s.xml">
+      <configuration name="HuhulaTest" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="HuhulaTest - 2018.09.24 at 21h 36m 03s.xml">
+      <configuration name="HuhulaTest" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="HuhulaTest - 2018.09.24 at 21h 37m 24s.xml">
+      <configuration name="HuhulaTest" configurationId="JUnit" />
+    </history-entry>
+  </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="24491000" />
+    <option name="totallyTimeSpent" value="50830000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="23" width="1257" height="777" extended-state="0" />
+    <frame x="39" y="25" width="1179" height="777" extended-state="0" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.23045267" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.25593668" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Image Layers" order="2" />
       <window_info id="Designer" order="3" />
@@ -347,7 +607,7 @@
       <window_info id="Favorites" order="6" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.329927" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.42043796" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -366,6 +626,7 @@
       <window_info anchor="right" id="Palette&#9;" order="6" />
       <window_info anchor="right" id="Database" order="7" />
       <window_info anchor="right" id="Maven Projects" order="8" />
+      <window_info anchor="right" id="Coverage" order="9" side_tool="true" weight="0.3297609" />
     </layout>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -374,49 +635,208 @@
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
   </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/test/java/com/huhula/HuhulaTest.java</url>
+          <line>79</line>
+          <properties />
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/test/java/com/huhula/HuhulaTest.java</url>
+          <line>132</line>
+          <properties />
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/test/java/com/huhula/HuhulaTest.java</url>
+          <line>167</line>
+          <properties />
+          <option name="timeStamp" value="3" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/src/main/java/com/huhhula/Huhula.java" />
+    <entry file="file://$PROJECT_DIR$/src/main/resources/log4j.conf" />
     <entry file="file://$PROJECT_DIR$/pom.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1005">
-          <caret line="67" selection-start-line="67" selection-end-line="67" />
+        <state relative-caret-position="1110">
+          <caret line="74" selection-start-line="74" selection-end-line="74" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/resources/log4j.conf" />
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/huhula/HuhulaTest.java" />
+    <entry file="jar://$MAVEN_REPOSITORY$/org/web3j/core/3.5.0/core-3.5.0.jar!/org/web3j/tx/Contract.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="87">
+          <caret line="45" column="22" selection-start-line="45" selection-start-column="22" selection-end-line="45" selection-end-column="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/org/web3j/core/3.5.0/core-3.5.0.jar!/org/web3j/ens/contracts/generated/ENS.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-223">
+          <caret line="34" column="19" selection-start-line="34" selection-start-column="19" selection-end-line="34" selection-end-column="19" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/org/web3j/abi/3.5.0/abi-3.5.0.jar!/org/web3j/abi/datatypes/generated/Uint256.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="165">
+          <caret line="17" column="30" lean-forward="true" selection-start-line="17" selection-start-column="11" selection-end-line="17" selection-end-column="30" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/huhula/Huhula.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="10110">
-          <caret line="698" column="65" selection-start-line="698" selection-start-column="60" selection-end-line="698" selection-end-column="65" />
+        <state relative-caret-position="9135">
+          <caret line="633" selection-start-line="633" selection-end-line="633" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/.conf/defaults.conf">
+    <entry file="file://$PROJECT_DIR$/src/test/java/com/huhula/CredentialsTest.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="105">
-          <caret line="7" column="20" selection-start-line="7" selection-start-column="20" selection-end-line="7" selection-end-column="20" />
+        <state relative-caret-position="15">
+          <caret line="8" column="13" selection-start-line="8" selection-start-column="13" selection-end-line="8" selection-end-column="13" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/huhula/contract/ContractInteractions.java">
+    <entry file="file://$PROJECT_DIR$/src/test/java/com/huhula/SampleKeys.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="202">
-          <caret line="32" column="20" selection-start-line="32" selection-start-column="20" selection-end-line="32" selection-end-column="20" />
+        <state relative-caret-position="249">
+          <caret line="25" column="84" selection-start-line="25" selection-start-column="42" selection-end-line="25" selection-end-column="84" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#1104#1105#0" expanded="true" />
-            <element signature="e#1130#1131#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/test/java/com/huhula/Web3jtest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="233">
+          <caret line="21" column="16" selection-start-line="21" selection-start-column="16" selection-end-line="21" selection-end-column="16" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.conf/env/ganache.conf">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="105">
+          <caret line="7" column="8" selection-start-line="7" selection-start-column="8" selection-end-line="7" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.conf/env/main.conf">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret column="5" selection-start-column="5" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.conf/env/rinkeby.conf">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="90">
+          <caret line="6" selection-start-line="6" selection-end-line="6" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.conf/defaults.conf">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="210">
+          <caret line="14" column="18" selection-start-line="14" selection-start-column="13" selection-end-line="14" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.conf/user.conf">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="15">
+          <caret line="1" selection-start-line="1" selection-end-line="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/huhula/credentials/Settings.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="116">
+          <caret line="25" selection-start-line="25" selection-end-line="25" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#1064#1065#0" expanded="true" />
+            <element signature="e#856#857#0" expanded="true" />
+            <element signature="e#888#889#0" expanded="true" />
+            <element signature="e#926#927#0" expanded="true" />
+            <element signature="e#963#964#0" expanded="true" />
+            <element signature="e#1006#1007#0" expanded="true" />
+            <element signature="e#1049#1050#0" expanded="true" />
+            <element signature="e#1076#1077#0" expanded="true" />
+            <element signature="e#1116#1117#0" expanded="true" />
+            <element signature="e#1148#1149#0" expanded="true" />
+            <element signature="e#1188#1189#0" expanded="true" />
+            <element signature="e#867#868#0" expanded="true" />
+            <element signature="e#927#928#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/huhula/contract/HuhulaToken.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="124">
+          <caret line="38" column="13" selection-start-line="38" selection-start-column="13" selection-end-line="38" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/huhula/contract/HuhulaSale.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1148">
+          <caret line="37" column="13" selection-start-line="37" selection-start-column="13" selection-end-line="37" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/config.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/huhula/contract/ContractInteractions.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="60">
+          <caret line="4" column="14" selection-start-line="4" selection-start-column="14" selection-end-line="4" selection-end-column="14" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/test/java/com/huhula/ContractWeb3jtest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="323">
+          <caret line="46" column="40" selection-start-line="46" selection-start-column="40" selection-end-line="46" selection-end-column="40" />
+          <folding>
+            <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/huhula/credentials/Wallets.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="214">
-          <caret line="92" lean-forward="true" selection-start-line="92" selection-end-line="92" />
+        <state relative-caret-position="276">
+          <caret line="23" column="77" selection-start-line="23" selection-start-column="1" selection-end-line="23" selection-end-column="77" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/test/java/com/huhula/HuhulaTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="234">
+          <caret line="169" column="73" selection-start-line="169" selection-start-column="73" selection-end-line="169" selection-end-column="73" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
@@ -452,7 +872,7 @@
       </state>
       <state key="GlobalLibrariesConfigurable.UI">
         <settings>
-          <last-edited>scala-sdk-2.10.0</last-edited>
+          <last-edited>org.junit.contrib:junit-theories:4.12</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>
