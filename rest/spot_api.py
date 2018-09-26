@@ -134,14 +134,16 @@ def get_register():
         'created_at': time.time()
     }
     informer_id=spot_db.getUserID(request.json['id'])
-    refer=request.json['referrer']
+    refer = None
+    if 'referrer' in request.json:
+    	refer = request.json['referrer']
     if informer_id is None :
        spot_db.newUser(request.json['id'])
        informer_id=spot_db.getUserID(request.json['id'])
        spot_db.giftBill(informer_id, spot_db.last_day_of_month(datetime.datetime.fromtimestamp(time.time())), 20)
     props = spot_db.getUserProperties(informer_id)
     if refer != None:
-       sender_id=spot_db.getSenderId(refer)
+       sender_id = spot_db.getSenderId(refer)
        if sender_id != None and sender_id != informer_id:
 	  spot_db.closeReferrence(refer, informer_id)
           spot_db.giftBill(informer_id, spot_db.last_day_of_month(datetime.datetime.fromtimestamp(time.time())), 10)
