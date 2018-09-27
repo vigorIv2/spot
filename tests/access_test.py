@@ -159,6 +159,26 @@ class TestAccess(unittest.TestCase):
                 	r = self.postit( ur + "/spot/api/v1.0/register", npayload )
                 	self.assertTrue( r.status_code == 201 )
 	    pu = u
+
+    def test_08_double_referral(self):
+        self._step_started_at = time.time()
+        payload = {"id":test_users[1]}
+        for ur in urls:
+            r = self.postit( ur + "/spot/api/v1.0/refer", payload )
+            self.assertTrue( r.status_code == 201 )
+            refjson = json.loads(r.text)
+            rid = refjson["reference"]["ref"]
+            npayload = payload
+	    npayload['ref'] = rid	
+	    npayload['id'] = test_users[2] # previous user to avoud refering yourself
+	    logging.info("refering "+str(npayload))
+            r = self.postit( ur + "/spot/api/v1.0/register", npayload )
+            self.assertTrue( r.status_code == 201 )
+            r = self.postit( ur + "/spot/api/v1.0/register", npayload )
+            self.assertTrue( r.status_code == 201 )
+
+
+#
 # urrently billing calculate on the fly 
 #    def test_15_bill(self):
 #        if self.isIntranet():

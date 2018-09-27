@@ -182,6 +182,7 @@ def closeReferrence(ref, receiver_id) :
             jts = traceback.format_exc()
             logconsole.error(jts)
             lconn.rollback()
+            return 404
         finally:
             cur.close()
             lconn.commit()

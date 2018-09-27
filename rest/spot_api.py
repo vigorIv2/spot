@@ -139,10 +139,18 @@ def get_register():
     props = spot_db.getUserProperties(informer_id)
     if refer != None:
        sender_id = spot_db.getSenderId(refer)
-       if sender_id != None and sender_id != informer_id:
-	  spot_db.closeReferrence(refer, informer_id)
-          spot_db.giftBill(informer_id, spot_db.last_day_of_month(datetime.datetime.fromtimestamp(time.time())), 10)
-          spot_db.giftBill(sender_id, spot_db.last_day_of_month(datetime.datetime.fromtimestamp(time.time())), 10)
+       if sender_id == None:
+          logconsole.info("attempt to re-use closed reference prevented informer_id="+informer_id+" ref="+refer)
+       else:
+          if sender_id == informer_id:
+    	     logconsole.info("attempt to self refer prevented informer_id="+informer_id+" ref="+refer)
+          else:
+	     rc = spot_db.closeReferrence(refer, informer_id)
+	     if rc != 0:
+		abort(rc)
+	     spot_db.giftBill(informer_id, spot_db.last_day_of_month(datetime.datetime.fromtimestamp(time.time())), 10)
+	     spot_db.giftBill(sender_id, spot_db.last_day_of_month(datetime.datetime.fromtimestamp(time.time())), 10)
+	     logconsole.info("reference accepted, tokens granted, informer_id="+informer_id+" sender_id="+sender_id+" ref="+refer)
 	
     user['roles']=props[0]
     logconsole.info("registered user "+request.json['id']+" db key ="+informer_id+" props="+str(props))
