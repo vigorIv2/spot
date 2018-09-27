@@ -95,7 +95,6 @@ class TestAccess(unittest.TestCase):
             qty += 3
             payload = {"uid": "unittest02", "ct":"12345", "deg":"10", "q":qty, "spot":[-2], "loc":{"lt":sp[0], "lg":sp[1], "al":-1}}
             r = self.postit( ur + "/spot/api/v1.0/spot", payload )
-            print "IV TRACE "+str(r.status_code)
             self.assertTrue( r.status_code == 201 ) 
 
     def test_04_take(self):
@@ -140,7 +139,27 @@ class TestAccess(unittest.TestCase):
                 self.assertTrue( r.status_code == 201 ) 
 
 
- # currently billing calculate on the fly 
+    def test_07_referral(self):
+	pu = None	
+        for u in test_users:
+            self._step_started_at = time.time()
+            payload = {"id":u}
+            for ur in urls:
+                r = self.postit( ur + "/spot/api/v1.0/refer", payload )
+                self.assertTrue( r.status_code == 201 )
+                refjson = json.loads(r.text)
+                rid = refjson["reference"]["ref"]
+                r = self.postit( ur + "/spot/api/v1.0/register", payload )
+                self.assertTrue( r.status_code == 201 )
+		if pu != None:
+			npayload = payload
+			npayload['ref'] = rid	
+			npayload['id'] = pu # previous user to avoud refering yourself
+			logging.info("refering "+str(npayload))
+                	r = self.postit( ur + "/spot/api/v1.0/register", npayload )
+                	self.assertTrue( r.status_code == 201 )
+	    pu = u
+# urrently billing calculate on the fly 
 #    def test_15_bill(self):
 #        if self.isIntranet():
 #            self._step_started_at = time.time()
@@ -167,6 +186,7 @@ class TestAccess(unittest.TestCase):
         self._step_started_at = time.time()
         if self.isIntranet():
             spot_db.cleanUp(test_users)
+
 #        self.echo_elapsed_time()
         elapsed = time.time() - self._started_at
         elapsed_step = time.time() - self._step_started_at

@@ -121,6 +121,7 @@ def cleanUp(users) :
 	        	cur.execute("delete FROM occupy WHERE taker_id = '%s'" % (informer_id,))
 	        	cur.execute("delete FROM parked WHERE informer_id = '%s'" % (informer_id,))
 	        	cur.execute("delete FROM bill WHERE user_id = '%s'" % (informer_id,))
+	        	cur.execute("delete FROM reference WHERE sender_id = '%s'" % (informer_id,))
 		finally:
 			cur.close()		
         		g_pool.putconn(lconn)

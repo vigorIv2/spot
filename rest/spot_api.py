@@ -43,20 +43,15 @@ def make_public_user(user):
     new_user = {}
     for field in user:
         if field == 'id':
-            new_user['uri'] = url_for('get_register', id = user['id'], _external = True)
-        else:
-            if field == 'wallet':
-                new_user['wallet'] = "hidden"
-            else:
-                new_user[field] = user[field]
+          if field == 'wallet':
+              new_user['wallet'] = "hidden"
+          else:
+              new_user[field] = user[field]
     return new_user
 
 def make_public_spot(spot):
     new_spot = {}
     for field in spot:
-        if field == 'id':
-            new_spot['uri'] = url_for('get_spot', id = spot['id'], _external = True)
-        else:
             new_spot[field] = spot[field]
     return new_spot
 
@@ -135,8 +130,8 @@ def get_register():
     }
     informer_id=spot_db.getUserID(request.json['id'])
     refer = None
-    if 'referrer' in request.json:
-    	refer = request.json['referrer']
+    if 'ref' in request.json:
+    	refer = request.json['ref']
     if informer_id is None :
        spot_db.newUser(request.json['id'])
        informer_id=spot_db.getUserID(request.json['id'])
