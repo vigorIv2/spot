@@ -42,11 +42,8 @@ def not_found(error):
 def make_public_user(user):
     new_user = {}
     for field in user:
-        if field == 'id':
-          if field == 'wallet':
-              new_user['wallet'] = "hidden"
-          else:
-              new_user[field] = user[field]
+      if field != 'wallet': # skip wallet - it is misleading 
+         new_user[field] = user[field]
     return new_user
 
 def make_public_spot(spot):
@@ -137,6 +134,7 @@ def get_register():
        informer_id=spot_db.getUserID(request.json['id'])
        spot_db.giftBill(informer_id, spot_db.last_day_of_month(datetime.datetime.fromtimestamp(time.time())), 20)
     props = spot_db.getUserProperties(informer_id)
+    logconsole.info("registering user "+request.json['id']+" informer_id="+informer_id+" props="+str(props))
     if refer != None:
        sender_id = spot_db.getSenderId(refer)
        if sender_id == None:

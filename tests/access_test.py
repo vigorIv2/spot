@@ -151,6 +151,11 @@ class TestAccess(unittest.TestCase):
                 rid = refjson["reference"]["ref"]
                 r = self.postit( ur + "/spot/api/v1.0/register", payload )
                 self.assertTrue( r.status_code == 201 )
+		regjson = json.loads(r.text)
+		self.assertTrue( "user" in regjson )
+		self.assertTrue( "created_at" in regjson["user"] )
+		self.assertTrue( "id" in regjson["user"] )
+		self.assertTrue( "roles" in regjson["user"] )
 		if pu != None:
 			npayload = payload
 			npayload['ref'] = rid	
