@@ -10,7 +10,7 @@ GRANT select ON TABLE huhula.bill_payable TO huhulaman;
 
 select * from huhula.users where userhash = '110702347223414307958'
 
-select  userhash from huhula.users limit 2000;
+select userhash from huhula.users limit 2000;
 
 -- delete from huhula.users where userhash like '%test%' limit 50;
 
@@ -27,11 +27,13 @@ CREATE TABLE huhula.users(
   userhash string not null,
   chain_date timestamp,
   balance double precision default 0,
+  account string, 
   wid UUID, // reference to wallets 
   unique INDEX (userhash)
 );  
 
 alter table huhula.users add column wid UUID;
+alter table huhula.users add column account string;
 
 
 -- alter table huhula.users add column chain_date;
@@ -68,7 +70,17 @@ CREATE TABLE huhula.bill(
   unique INDEX (user_id,for_date)
 );  
 
-alter table huhula.bill drop column credit;
+alter table huhula.bill add column gas_cost double precision;
+
+select * from huhula.bill;
+
+update huhula.bill set chain_date = null;
+
+select * from huhula.users;
+
+select b.user_id,  u.userhash, b.gift, b.penalty from huhula.bill b 
+join huhula.users u on (b.user_id = u.id) 
+where b.chain_date is null 
 
 update huhula.bill set updated_at=now(), informed_qty=informed_qty+2, occupied_qty=occupied_qty+0, credit=cast((cast((informed_qty+2)*0.1 as double precision)+gift) as double precision), debit=cast((cast((occupied_qty+0) as double precision)+penalty) as double precision) where user_id='d8437a22-14b0-4e72-9672-2c3eb6664c2e' and for_date=cast('2018-07-31 08:43:36.093000' as date)
 
@@ -84,8 +96,12 @@ CREATE VIEW huhula.bill_payable
   (SELECT user_id, for_date, informed_qty, occupied_qty, gift, penalty, cast(informed_qty*0.1 as double precision)+gift as credit, cast(occupied_qty as double precision)+penalty as debit 
   FROM huhula.bill where chain_date is null);
 
-  select * from huhula.bill_payable;
+select * from huhula.bill_payable;
   
+select bp.user_id, bp.for_date, u.userhash, u.wid, bp.balance 
+from huhula.bill_payable bp join huhula.users u on (bp.user_id = u.id) 
+where not u.wid is null
+order by bp.user_id, bp.for_date
 
 select * from huhula.bill order by inserted_at desc;
 select * from huhula.occupy order by inserted_at desc limit 10;
@@ -239,6 +255,8 @@ CREATE TABLE huhula.reference(
   updated_at TIMESTAMPTZ,
   from_url string
 );
+
+
 
 
 select * from huhula.reference;

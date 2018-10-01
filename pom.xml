@@ -9,6 +9,7 @@
     <artifactId>Lair</artifactId>
     <version>0.00002</version>
 
+
     <repositories>
 			<repository>
 				<id>central</id>
@@ -45,6 +46,7 @@
         <top.dir>${project.basedir}/..</top.dir>
         <timestamp>${maven.build.timestamp}</timestamp>
         <maven.build.timestamp.format>yyyy-MM-dd HH:mm</maven.build.timestamp.format>
+        <web3j.version>3.5.0</web3j.version>
     </properties>
 
     <dependencies>
@@ -90,61 +92,78 @@
 			<dependency>
     		<groupId>org.web3j</groupId>
     		<artifactId>core</artifactId>
-    		<version>3.5.0</version>
+    		<version>${web3j.version}</version>
       </dependency>
-  		<dependency>
-				<groupId>org.web3j</groupId>
-				<artifactId>crypto</artifactId>
-				<version>3.5.0</version>
-	  	</dependency>
+            <dependency>
+                <groupId>org.web3j</groupId>
+                <artifactId>crypto</artifactId>
+                <version>${web3j.version}</version>
+            </dependency>
 			<!-- https://mvnrepository.com/artifact/org.web3j/utils -->
 			<dependency>
-  			<groupId>org.web3j</groupId>
+      			<groupId>org.web3j</groupId>
 				<artifactId>utils</artifactId>
-				<version>3.5.0</version>
+				<version>${web3j.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.web3j</groupId>
 				<artifactId>codegen</artifactId>
-				<version>3.5.0</version>
+				<version>${web3j.version}</version>
 			</dependency>
 			<dependency>
-					<groupId>org.web3j</groupId>
-					<artifactId>tuples</artifactId>
-					<version>3.5.0</version>
+                <groupId>org.web3j</groupId>
+                <artifactId>tuples</artifactId>
+                <version>${web3j.version}</version>
 			</dependency>
 			<dependency>
-					<groupId>org.web3j</groupId>
-					<artifactId>abi</artifactId>
-					<version>3.5.0</version>
+                <groupId>org.web3j</groupId>
+                <artifactId>abi</artifactId>
+                <version>${web3j.version}</version>
 			</dependency>
 			<!-- https://mvnrepository.com/artifact/org.web3j/rlp -->
 			<dependency>
-					<groupId>org.web3j</groupId>
-					<artifactId>rlp</artifactId>
-					<version>3.5.0</version>
+                <groupId>org.web3j</groupId>
+                <artifactId>rlp</artifactId>
+                <version>${web3j.version}</version>
 			</dependency>
+            <!-- https://mvnrepository.com/artifact/org.web3j/parity -->
+            <dependency>
+                <groupId>org.web3j</groupId>
+                <artifactId>parity</artifactId>
+                <version>${web3j.version}</version>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/org.web3j/geth -->
+            <dependency>
+                <groupId>org.web3j</groupId>
+                <artifactId>geth</artifactId>
+                <version>${web3j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.json</groupId>
+                <artifactId>json</artifactId>
+                <version>20180813</version>
+            </dependency>
     </dependencies>
 
     <build>
         <plugins>
-						<plugin>
-							<artifactId>exec-maven-plugin</artifactId>
-							<groupId>org.codehaus.mojo</groupId>
-              <version>1.6.0</version>
-							<executions>
-								<execution><!-- Run our version calculation script -->
-									<id>Solidity to Java</id>
-									<phase>generate-sources</phase>
-									<goals>
-										<goal>exec</goal>
-									</goals>
-									<configuration>
-										<executable>${basedir}/scripts/generate-java.sh</executable>
-									</configuration>
-								</execution>
-							</executions>
-						</plugin>
+            <plugin>
+                <artifactId>exec-maven-plugin</artifactId>
+                <groupId>org.codehaus.mojo</groupId>
+                <version>1.6.0</version>
+                <executions>
+                    <execution><!-- Run our version calculation script -->
+                        <id>Solidity to Java</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>${basedir}/scripts/generate-java.sh</executable>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
 
             <!--Set a compiler level-->
             <plugin>
@@ -170,7 +189,7 @@
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
-                    <appendAssemblyId>false</appendAssemblyId>
+                    <appendAssemblyId>true</appendAssemblyId>
                     <!-- MainClass in mainfest make a executable jar -->
                     <archive>
                         <manifest>
@@ -189,14 +208,14 @@
                     </execution>
                 </executions>
             </plugin>
-					<plugin>
-							<groupId>org.apache.maven.plugins</groupId>
-							<artifactId>maven-surefire-plugin</artifactId>
-							<version>2.22.0</version>
-							<configuration>
-									<groups>com.huhula.contract.HuhulaSale</groups>
-							</configuration>
-					</plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.22.0</version>
+                <configuration>
+                        <groups>com.huhula.contract.HuhulaSale</groups>
+                </configuration>
+            </plugin>
         </plugins>
         <resources>
             <resource>

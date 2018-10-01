@@ -1,6 +1,8 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
-<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/" debug="false">
+
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+
 
 <appender name="FILEHUHULA" class="org.apache.log4j.RollingFileAppender">
         <param name="Threshold" value="INFO"/>
@@ -25,14 +27,15 @@
         </layout>
 </appender>
 
-<category name="org.apache.spark.util.Utils"> <priority value="OFF" /> </category>
-
 <appender name="console" class="org.apache.log4j.ConsoleAppender">
     <layout class="org.apache.log4j.PatternLayout">
   <param name="ConversionPattern"
     value="%d{yyyy-MM-dd HH:mm:ss,SSS} %c %p [%t] %m%n" />
     </layout>
 </appender>
+
+<category name="org.web3j.protocol.http.HttpService"> <priority value="DEBUG" /> </category>
+<category name="com.huhula.credentials.Settings"> <priority value="DEBUG" /> </category>
 
 <root>
   <level value="DEBUG" />
