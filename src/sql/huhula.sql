@@ -10,6 +10,9 @@ GRANT select ON TABLE huhula.bill_payable TO huhulaman;
 
 select * from huhula.users where userhash = '110702347223414307958'
 
+update huhula.users set userhash='p110865176290720544754' where userhash='110865176290720544754';
+ 
+
 select userhash from huhula.users limit 2000;
 
 -- delete from huhula.users where userhash like '%test%' limit 50;
@@ -97,6 +100,12 @@ CREATE VIEW huhula.bill_payable
   FROM huhula.bill where chain_date is null);
 
 select * from huhula.bill_payable;
+
+
+select sum(informed_qty) as iqty, sum(occupied_qty) as octy, sum(gift) as gift, sum(penalty) as penalty, sum(balance) as balance 
+from huhula.bill_payable where user_id = '6aef6d09-394f-47ae-bb69-ed334d4eb7f4';
+
+select * from huhula.users where userhash = '113989703630504660150';
   
 select bp.user_id, bp.for_date, u.userhash, u.wid, bp.balance 
 from huhula.bill_payable bp join huhula.users u on (bp.user_id = u.id) 
@@ -262,6 +271,9 @@ CREATE TABLE huhula.reference(
 select * from huhula.reference;
 select * from huhula.users;
 select * from huhula.bill order by inserted_at desc ;
+
+
+select * from huhula.bill
 
 delete from huhula.reference;
 

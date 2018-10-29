@@ -1,8 +1,6 @@
 package com.huhula.contract;
 
 import com.huhula.credentials.Settings;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.web3j.crypto.CipherException;
@@ -28,7 +26,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+
+/*
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
+
 import java.util.concurrent.Future;
+
 
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNot.not;
@@ -75,7 +79,7 @@ import static org.junit.Assert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNot.not;
 import static org.web3j.codegen.Console.exitError;
-
+*/
 
 public class ContractInteractions {
 
@@ -84,7 +88,7 @@ public class ContractInteractions {
     Web3j web3j;
     ClientTransactionManager ctm;
     Settings conf;
-    double tokenDecilmals = 1000000;
+    public static double tokenDecilmals = 1000000;
 
     private static final Logger LOG = LoggerFactory.getLogger(ContractInteractions.class);
 
@@ -190,31 +194,62 @@ public class ContractInteractions {
         return false;
     }
 
-    public void depositToUser(Double balance, String account, Credentials creds){
+    /**
+     * to deposit balance of tokence
+     * @param value
+     * @param account
+     * @param creds
+     * @return
+     */
+
+    public BigDecimal depositToUser(Double value, String account){
+        BigDecimal res = null;
         try {
-            LOG.debug("Transferring token to account:"+account+" amount:"+balance);
+            LOG.debug("Transferring token to account:"+account+" amount:"+value);
 
-            RemoteCall rc = token.transfer(account, BigInteger.valueOf(Math.round(balance * tokenDecilmals)));
+            RemoteCall rc = token.transfer(account, BigInteger.valueOf(Math.round(value * tokenDecilmals)));
 
-            Thread.sleep(5000);
+            Thread.sleep(3000);
             CompletableFuture cf = rc.sendAsync();
 
             while (!cf.isDone()) {
                 LOG.info(".");
-                Thread.sleep(5000);
+                Thread.sleep(1000);
             }
 
             TransactionReceipt tr = (TransactionReceipt)cf.get();
             String status = tr.toString();
-            LOG.info("Transferred token to account:"+account+" amount:"+balance+" status:"+status);
-            LOG.info("Gas used "+tr.getGasUsed());
+            LOG.info("Transferred token to account:"+account+" amount:"+value+" status:"+status+"; Gas used "+tr.getGasUsed());
+            res = new BigDecimal(tr.getGasUsed());
         } catch ( InterruptedException | ExecutionException ie ){
             LOG.error("InterruptedException while sending tokens to "+account,ie);
         }
+        return res;
     }
 
-    public void withdrawalFromUser(Double balance, String account, Credentials creds){
+    public BigDecimal withdrawalFromUser(Double value, String account){
+        BigDecimal res = null;
+        try {
+            LOG.debug("Withdrawing token from account:"+account+" amount:"+value);
 
+            RemoteCall rc = token.huhulaReturnToOwner(account, BigInteger.valueOf(Math.round(value * tokenDecilmals)));
+
+            Thread.sleep(3000);
+            CompletableFuture cf = rc.sendAsync();
+
+            while (!cf.isDone()) {
+                LOG.info(".");
+                Thread.sleep(1000);
+            }
+
+            TransactionReceipt tr = (TransactionReceipt)cf.get();
+            String status = tr.toString();
+            LOG.info("Withdrawn token from account:"+account+" amount:"+value+" status:"+status+"; Gas used "+tr.getGasUsed());
+            res = new BigDecimal(tr.getGasUsed());
+        } catch ( InterruptedException | ExecutionException ie ){
+            LOG.error("InterruptedException while withdrawing tokens from "+account,ie);
+        }
+        return res;
     }
 
     public void shutdown() {

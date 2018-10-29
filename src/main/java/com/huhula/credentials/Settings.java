@@ -36,8 +36,12 @@ public class Settings {
         return getString("tempDir");
     }
 
-    public String getUtcFile() {
-        return getChain("utc_file");
+    public String getPoolUtcFile() {
+        return getChain("pool_utc_file");
+    }
+
+    public String getOwnerUtcFile() {
+        return getChain("owner_utc_file");
     }
 
     public double getMinBalance() {

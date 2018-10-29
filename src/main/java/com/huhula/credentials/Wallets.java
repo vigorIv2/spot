@@ -112,6 +112,27 @@ public class Wallets {
         }
     }
 
+    public void submitUpdated(Connection huhulaDbConn,Connection walletsDbConn, PreparedStatement psuserupdate, PreparedStatement psbillupdate, String uid, BigInteger utokbalAfter, BigDecimal gasused, Date fordate) throws SQLException {
+        try {
+            psuserupdate.setBigDecimal (1, new BigDecimal(utokbalAfter));
+            psuserupdate.setString(2, uid);
+            int rcu = psuserupdate.executeUpdate();
+            assert(rcu == 1);
+
+            psbillupdate.setBigDecimal(1,gasused);
+            psbillupdate.setString(2,uid);
+            psbillupdate.setDate(3,fordate);
+            int rcub = psbillupdate.executeUpdate();
+            assert(rcub == 1);
+            huhulaDbConn.commit();
+            walletsDbConn.commit();
+        } catch (SQLException ue) {
+            LOG.error("SQLException on update uid:" + uid, ue);
+            huhulaDbConn.rollback();
+            walletsDbConn.rollback();
+        }
+    }
+
     public void payOff(String huhulaPwd) {
 
         Connection huhulaDbConn = null;
@@ -125,7 +146,7 @@ public class Wallets {
             LOG.error("ContractInteractions class is not healthy, giving up");
             return;
         } else {
-            huhulacreds = ci.loadCredentials(huhulaPwd, conf.getUtcFile());
+            huhulacreds = ci.loadCredentials(huhulaPwd, conf.getPoolUtcFile());
         }
         if ( huhulacreds == null ) {
             LOG.error("Credentials are empty, exiting");
@@ -160,7 +181,7 @@ public class Wallets {
                     "order by bp.user_id, bp.for_date";
             LOG.debug("SQL "+selectBillSql);
             psuserupdate = huhulaDbConn.prepareStatement("update users set chain_date = now(), balance = ? where id = ?;");
-            psbillupdate = huhulaDbConn.prepareStatement("update bill set chain_date = now() where user_id = ? and for_date = ?;");
+            psbillupdate = huhulaDbConn.prepareStatement("update bill set chain_date = now(), gas_cost = ? where user_id = ? and for_date = ?;");
 
             ResultSet res = huhulaDbConn.createStatement().executeQuery(selectBillSql);
             while (res.next()) {
@@ -169,41 +190,39 @@ public class Wallets {
                 String userhash = res.getString(3);
                 String wid = res.getString(4);
                 Double balance = res.getDouble(5);
-                String uacct = res.getString(6);
-
-                psuserupdate.setDouble(1, balance);
-                psuserupdate.setString(2, uid);
-
-                psbillupdate.setString(1,uid);
-                psbillupdate.setDate(2,fordate);
-
-                LOG.info("Paying off balance of "+balance+" for user uid:"+uid+" date "+fordate);
+                String uacct = "0x"+res.getString(6);
+                BigInteger utokbalAfter = null;
+                BigInteger utokbalBefore = ci.getTokenBalance(uacct);
+                LOG.info("Paying off balance of "+balance+" for user uid:"+uid+" date "+fordate+" Tokens Balance Before:"+utokbalBefore);
                 if (balance > 0) {
-                    ci.depositToUser(balance, "0x"+uacct, huhulacreds);
-                } else if (balance < 0) {
-//                    String[] wallet = fetchWallet(walletsDbConn, wid);
-//                    String ffn = conf.getTempDir() + File.separator + wallet[0];
-//                    saveWalletFile(ffn, wallet[1]);
-//                    String pwd = get_SHA_1_SecurePassword(uid, userhash);
-//                    Credentials creds = ci.loadCredentials(pwd, ffn);
-//                    ci.withdrawalFromUser(Math.abs(balance), conf.getPool(), creds);
+                    BigDecimal gasused = ci.depositToUser(balance, uacct);
+                    utokbalAfter = ci.getTokenBalance(uacct)
+                            .divide(BigDecimal.valueOf(ContractInteractions.tokenDecilmals).toBigInteger());
+                    submitUpdated(huhulaDbConn,walletsDbConn,psuserupdate,psbillupdate,uid,utokbalAfter,gasused,fordate);
+                } else if (balance < 0) { // for negative balance we need to make him to buy tokens
+                    LOG.info("Negative balance "+balance+", handling");
+                    String[] wallet = fetchWallet(walletsDbConn, wid);
+                    String ffn = conf.getTempDir() + File.separator + wallet[0];
+                    saveWalletFile(ffn, wallet[1]);
+                    String pwd = get_SHA_1_SecurePassword(uid, userhash);
+                    Credentials creds = ci.loadCredentials(pwd, ffn);
+                    BigInteger abstokval = BigDecimal.valueOf(Math.abs(balance*ci.tokenDecilmals)).toBigInteger();
+                    if ( utokbalBefore.compareTo(abstokval) >= 0) {
+                        LOG.info("User account "+creds.getAddress()+" token balance "+utokbalBefore+" withdraw some tokens "+abstokval);
+                        BigDecimal gasused = ci.withdrawalFromUser(Math.abs(balance), huhulacreds.getAddress());
+                        utokbalAfter = ci.getTokenBalance(uacct)
+                                .divide(BigDecimal.valueOf(ContractInteractions.tokenDecilmals).toBigInteger());
+                        submitUpdated(huhulaDbConn,walletsDbConn,psuserupdate,psbillupdate,uid,utokbalAfter,gasused,fordate);
+                    } else {
+                        LOG.info("User account "+creds.getAddress()+" token balance "+utokbalBefore+" too low, must buy more tokens");
+                    }
                 } else { // balance = 0
                     LOG.info("Balance equals to zero, nothing to update");
                 }
-                try {
-                    int rcu = psuserupdate.executeUpdate();
-                    assert(rcu == 1);
-                    int rcub = psbillupdate.executeUpdate();
-                    assert(rcub == 1);
-                    huhulaDbConn.commit();
-                    walletsDbConn.commit();
-                } catch (SQLException ue) {
-                    LOG.error("SQLException on update uid:" + uid, ue);
-                    huhulaDbConn.rollback();
-                    walletsDbConn.rollback();
-                }
+                LOG.info("Payed off balance of "+balance+" for user uid:"+uid+" date "+fordate+" Tokens Balance After:"+utokbalAfter);
             }
             res.close();
+            psbillupdate.close();
             psuserupdate.close();
             LOG.info("Finished to pay off balances of tokens");
         } catch (SQLException se) {
@@ -354,7 +373,7 @@ public class Wallets {
             System.out.println("   -w to create wallets");
             System.out.println("   -r <root dir>");
             System.out.println("   -p <recover password from uid>");
-            System.out.println("   -b <huhula pwd>");
+            System.out.println("   -b <huhula pwd> balance payoff");
             System.out.println("   -e <blockchain environment such as rinkeby | main | ganache>");
             System.exit(1);
         }
