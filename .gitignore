@@ -1,6 +1,7 @@
 my-safe-directory
 flask/lib/python2.7/*
 nohup_huhuladb*.out
+build/contracts/
 keystore/
 .utc-acct.json
 .idea/*
@@ -32,7 +33,6 @@ debug.log
 rest/maps/ag_*
 .env
 test_web2py/
-build/
 flaskexit/
 flow-typed/
 node_modules/
