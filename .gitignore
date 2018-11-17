@@ -1,7 +1,7 @@
 my-safe-directory
 flask/lib/python2.7/*
 nohup_huhuladb*.out
-build/contracts/
+build/
 keystore/
 .utc-acct.json
 .idea/*
