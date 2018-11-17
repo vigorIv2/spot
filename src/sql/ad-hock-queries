@@ -2,6 +2,28 @@ select substring(cast(inserted_at as string),1,16),* from huhula.spots order by 
 
 use huhula;
 
+
+
+select * from huhula.reference limit 10;
+select * from huhula.users;
+select * from huhula.bill order by inserted_at desc ;
+
+delete FROM huhula.reference ;
+
+-- vigor 20 tokens
+-- db.etl.ninja 50 tokens
+-- illcallu2 30 tokens
+-- vasilchikov 43.8 tokens
+
+
+select * from huhula.users where userhash like '11305%';
+
+
+update huhula.users set userhash = 'a113058319832682604022' where userhash = '113058319832682604022';
+update huhula.users set userhash = 'a110865176290720544754' where userhash = '110865176290720544754';
+update huhula.users set userhash = 'a117684205293445461401' where userhash = '117684205293445461401';
+
+
 update huhula.bill set gift = 20 where id='061ee336-2a55-4e75-8ce6-876310aeafdc'
 
 select * from huhula.bill_payable order by for_date desc;

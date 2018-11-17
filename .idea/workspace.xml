@@ -1,14 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="df545b6c-524e-441d-932a-c8cac652385b" name="Default Changelist" comment="reu">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/huhula/contract/ContractInteractions.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/huhula/contract/ContractInteractions.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/huhula/credentials/Settings.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/huhula/credentials/Settings.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/huhula/credentials/Wallets.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/huhula/credentials/Wallets.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/sql/huhula.sql" beforeDir="false" afterPath="$PROJECT_DIR$/src/sql/huhula.sql" afterDir="false" />
-    </list>
+    <list default="true" id="df545b6c-524e-441d-932a-c8cac652385b" name="Default Changelist" comment="reu" />
     <ignored path="$PROJECT_DIR$/target/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -28,7 +21,7 @@
     <session id="-1992644748">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="20" />
+          <entry key="project.closed" value="21" />
           <entry key="project.open.time.1" value="7" />
           <entry key="project.open.time.11" value="1" />
           <entry key="project.open.time.12" value="1" />
@@ -588,7 +581,7 @@
       <workItem from="1538447728659" duration="9314000" />
       <workItem from="1538539993026" duration="366000" />
       <workItem from="1540790010292" duration="555000" />
-      <workItem from="1540790668420" duration="1492000" />
+      <workItem from="1540790668420" duration="1709000" />
     </task>
     <servers />
   </component>
@@ -625,11 +618,10 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="115255000" />
+    <option name="totallyTimeSpent" value="115472000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="10" y="23" width="1247" height="777" extended-state="0" />
-    <editor active="true" />
     <layout>
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.24896266" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />

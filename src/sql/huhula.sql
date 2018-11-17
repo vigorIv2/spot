@@ -8,9 +8,8 @@ GRANT select, insert, update, delete ON TABLE huhula.users, huhula.spots, huhula
 
 GRANT select ON TABLE huhula.bill_payable TO huhulaman;
 
-select * from huhula.users where userhash = '110702347223414307958'
 
-update huhula.users set userhash='p110865176290720544754' where userhash='110865176290720544754';
+
  
 
 select userhash from huhula.users limit 2000;
@@ -268,13 +267,5 @@ CREATE TABLE huhula.reference(
 
 
 
-select * from huhula.reference;
-select * from huhula.users;
-select * from huhula.bill order by inserted_at desc ;
-
-
-select * from huhula.bill
-
-delete from huhula.reference;
 
 

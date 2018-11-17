@@ -1,0 +1,7 @@
+#!/bin/bash
+
+jq .abi ${HOME}/spot/build/contracts/HuhulaSale.json  > ${HOME}/spot/build/huhula.abi
+jq .bytecode ${HOME}/spot/build/contracts/HuhulaSale.json | sed -e 's/^"//' -e 's/"$//' > ${HOME}/spot/build/huhula.bin
+
+web3j solidity generate ${HOME}/spot/build/huhula.bin ${HOME}/spot/build/huhula.abi -o ${HOME}/spot/src/main/java -p com.huhhula
+

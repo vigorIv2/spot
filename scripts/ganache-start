@@ -1,0 +1,11 @@
+mkdir -p keystore
+ganache-cli \
+  --port="7546" \
+  --mnemonic "copy obey episode awake damp vacant protect hold wish primary travel shy" \
+  --deterministic \
+  --acctKeys /Users/ivasilchikov/spot/keystore/ganache-accounts.json \
+  --unlock 0,1,2,3,4,5,6,7,8,9 \
+  --verbose \
+  --networkId=5777 \
+  --gasLimit=7984452 \
+  --gasPrice=2000000000;

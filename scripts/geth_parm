@@ -1,0 +1,1 @@
+geth --datadir node1/ --syncmode 'full' --port 30311 --rpc --rpcaddr 'localhost' --rpccorsdomain "*" --rpcport 8501 --rpcapi 'personal,db,eth,net,web3,txpool,miner' --bootnodes xxx--networkid xxx

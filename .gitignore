@@ -36,7 +36,6 @@ build/
 flaskexit/
 flow-typed/
 node_modules/
-scripts/
 truffle-config.js
 truffle.js
 node0_nohup.out

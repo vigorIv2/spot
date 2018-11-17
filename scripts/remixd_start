@@ -1,0 +1,2 @@
+remixd -s /Users/ivasilchikov/spot/build --mist --geth --frontend /Users/ivasilchikov/spot/build --rpc-port 8545 --frontend-port 8084 --auto-mine
+

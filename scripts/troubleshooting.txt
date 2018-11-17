@@ -1,0 +1,21 @@
+// The account that will buy GUS tokens.
+> account1 = web3.eth.accounts[1]
+'0xddac5d057c79facd674bc95dfd9104076fd34d6b'
+// The address of the GUS token instance that was created when the crowdsale contract was deployed
+// assign the result of GustavoCoinCrowdsale.deployed() to the variable crowdsale
+> GustavoCoinCrowdsale.deployed().then(inst => { crowdsale = inst })
+> undefined
+> crowdsale.token().then(addr => { tokenAddress = addr } )
+> tokenAddress
+'0x87a784686ef69304ac0cb1fcb845e03c82f4ce16'
+
+// Buying GUS tokens
+> GustavoCoinCrowdsale.deployed().then(inst => inst.sendTransaction({ from: account1, value: web3.toWei(5, "ether")}))
+
+// Check the amount of GUS tokens for account1 again. It should have some now.
+> gustavoCoinInstance.balanceOf(account1).then(balance => account1GusTokenBalance = balance.toString(10))
+'5000000000000000000000'
+// When we created our token we made it with 18 decimals, which the same as what ether has. That's a lot of zeros, let's display without the decimals:
+> web3.fromWei(account1GusTokenBalance, "ether")
+'5000'
+
