@@ -331,7 +331,7 @@ def newUser(user) :
        	lconn = g_pool.getconn()
 	cur = lconn.cursor() 
         try:
-	    cur.execute("INSERT INTO huhula.users(userhash) values(%s)",(user,))
+	    cur.execute("INSERT INTO huhula.users(userhash,roles) values(%s,array['promoter'])",(user,))
             lconn.commit()
         except Exception as error:
             jts = traceback.format_exc()
