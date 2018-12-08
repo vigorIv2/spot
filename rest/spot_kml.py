@@ -16,8 +16,10 @@ def gen_html(nlat,nlon,ufn):
 	result="""<html>
 <head>
         <title>Leaflet</title>
-        <link rel="stylesheet" href="http://unpkg.com/leaflet@1.3.1/dist/leaflet.css" />
-        <script src="http://unpkg.com/leaflet@1.3.1/dist/leaflet.js"></script>
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css" integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
+   crossorigin="" />
+        <script src="https://unpkg.com/leaflet@1.3.4/dist/leaflet.js" integrity="sha512-nMMmRyTVoLYqjP9hrbed9S+FzjZHW5gY1TWCHA5ckwXZBadntCNs8kEqAWdrb9O7rxbCaA4lKTIWjDXZxflOcA=="
+   crossorigin=""></script>
         <script src="/maps/layer/vector/KML.js"></script>
 </head>
 <body>
@@ -25,6 +27,13 @@ def gen_html(nlat,nlon,ufn):
         <script type='text/javascript'>
                 var map = new L.Map('map', {center: new L.LatLng("""+str(nlat)+","+str(nlon)+"""), zoom: 17, dragging: !L.Browser.mobile });
                 var osm = new L.TileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
+		L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+    			attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+    maxZoom: 18,
+    id: 'mapbox.streets',
+    accessToken: 'pk.eyJ1IjoidmFzaWxjaGlrb3YiLCJhIjoiY2pvaHI5ajZoMDFhZzNxbjF5dnlwOWFycSJ9.1Xp8pzjy7Q8FzB_WTKic2A'
+}).addTo(map);
+
                 var track = new L.KML("/"""+ufn+"""", {async: true});
                 track.on("loaded", function(e) {
                         map.fitBounds(e.target.getBounds());
