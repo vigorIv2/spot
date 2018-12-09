@@ -1,5 +1,5 @@
---index-url http://pip.battle.net:6081/api/pypi/pip-virtual/simple/
---trusted-host pip.battle.net 
+#--index-url http://pip.battle.net:6081/api/pypi/pip-virtual/simple/
+#--trusted-host pip.battle.net 
 PyYAML==3.12
 requests==2.18.4
 argparse==1.4.0

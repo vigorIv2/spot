@@ -17,15 +17,15 @@ test_internet:
 
 test_intranet:
 	@echo starting test access to site via intranet
-	PYTHONPATH=rest python2 ./tests/access_test.py "http://192.168.0.210" "http://192.168.0.211"
+	PYTHONPATH=rest python2 ./tests/access_test.py "http://192.168.0.210:2080" "http://192.168.0.211:2080"
 
 test_intranet0:
 	@echo starting test access to site via intranet
-	PYTHONPATH=rest python2 ./tests/access_test.py "http://192.168.0.210" 
+	PYTHONPATH=rest python2 ./tests/access_test.py "http://192.168.0.210:2080" 
 
 test_intranet1:
 	@echo starting test access to site via intranet
-	PYTHONPATH=rest python2 ./tests/access_test.py "http://192.168.0.211" 
+	PYTHONPATH=rest python2 ./tests/access_test.py "http://192.168.0.211:2080" 
 
 test_msk:
 	@echo starting test apidata.mos.ru
