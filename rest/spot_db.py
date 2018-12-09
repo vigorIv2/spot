@@ -155,6 +155,63 @@ def getUserID(user) :
                 lconn.commit()
         	g_pool.putconn(lconn)
 
+def countReferrals(user) :
+	sender_id=getUserID(user)
+	if sender_id == None:
+		return None
+        lconn = g_pool.getconn()
+        lconn = g_pool.getconn()
+	cur = lconn.cursor() 
+	cur.execute("select count(*) from huhula.referral r inner join huhula.link l on (l.referral_id = r.id) where sender_id = '%s'" % (sender_id,))
+	row = cur.fetchone()
+	try: 
+		if row:
+			return row[0]
+		else:
+			return 0
+	finally:
+		cur.close()
+                lconn.commit()
+        	g_pool.putconn(lconn)
+
+def newReferral(user,non_members) :
+	sender_id=getUserID(user)
+	if sender_id == None:
+		return None
+        lconn = g_pool.getconn()
+	cur = lconn.cursor()
+	try: 
+	        cur.execute("INSERT INTO referral(sender_id) values(%s) RETURNING id;", (sender_id,))
+		reference=cur.fetchone()[0]
+		for to_hash in non_members:
+	        	cur.execute("INSERT INTO link(referral_id,to_hash) values(%s,%s);", (reference,to_hash,))
+		return reference
+        except Exception as error:
+            jts = traceback.format_exc()
+            logconsole.error(jts)
+            lconn.rollback()
+            return None
+ 	finally:
+		cur.close()
+                lconn.commit()
+        	g_pool.putconn(lconn)
+	return None
+
+def getReferral(userhash) :
+        lconn = g_pool.getconn()
+	cur = lconn.cursor() 
+	cur.execute("SELECT id FROM link WHERE to_hash = '%s'" % (userhash,))
+	row = cur.fetchone()
+	try: 
+		if row:
+			return row[0]
+		else:
+			return None
+	finally:
+		cur.close()
+                lconn.commit()
+        	g_pool.putconn(lconn)
+
 def newReference(user) :
 	sender_id=getUserID(user)
 	if sender_id == None:
@@ -324,6 +381,21 @@ def getNearSpots(lt,lg,hd) :
         finally:
 	    cur.close()
             lconn.commit()
+            g_pool.putconn(lconn)
+
+
+def revokeRole(user,role) :
+       	lconn = g_pool.getconn()
+	cur = lconn.cursor() 
+        try:
+	    cur.execute("update huhula.users set roles=array_remove(roles,%s) where userhash=%s",(role,user,))
+            lconn.commit()
+        except Exception as error:
+            jts = traceback.format_exc()
+            logconsole.error(jts)
+            lconn.rollback()
+        finally:
+	    cur.close()
             g_pool.putconn(lconn)
 
 
