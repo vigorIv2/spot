@@ -162,7 +162,7 @@ def countReferrals(user) :
         lconn = g_pool.getconn()
         lconn = g_pool.getconn()
 	cur = lconn.cursor() 
-	cur.execute("select count(*) from huhula.referral r inner join huhula.link l on (l.referral_id = r.id) where sender_id = '%s'" % (sender_id,))
+	cur.execute("select count(*) from huhula.referral r inner join huhula.link l on (l.referral_id = r.id) where r.sender_id = '%s' and not l.updated_at is null " % (sender_id,))
 	row = cur.fetchone()
 	try: 
 		if row:
@@ -195,6 +195,24 @@ def newReferral(user,non_members) :
 		cur.close()
                 lconn.commit()
         	g_pool.putconn(lconn)
+	return None
+
+def closeReferral(referral_id,user_hash) :
+        lconn = g_pool.getconn()
+	cur = lconn.cursor()
+	try: 
+	    cur.execute("update referral set updated_at=now() where referral_id=%s and to_hash=%s and updated_at is null ", (referral_id,user_hash,))
+            if cur.rowcount > 0:
+               return cur.rowcount
+        except Exception as error:
+            jts = traceback.format_exc()
+            logconsole.error(jts)
+            lconn.rollback()
+            return None
+ 	finally:
+	    cur.close()
+            lconn.commit()
+            g_pool.putconn(lconn)
 	return None
 
 def getReferral(userhash) :

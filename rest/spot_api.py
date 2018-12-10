@@ -191,13 +191,12 @@ def get_referral():
     logconsole.info("number of user "+request.json['id']+" referrals is equal "+str(referralsCnt))
     non_members = [] 
     for link_hash in request.json['links']:
-        if (len(non_members) + referralsCnt) >= 3:
+        if (len(non_members) + referralsCnt) >= 30:
 	     logconsole.info("user "+request.json['id']+" has referred plenty, preventing mass referrals" )
              reference['rejected'].append(link_hash)
 	else:		
-	     logconsole.info("checking user exists with link_hash "+link_hash)
-             informer_id = spot_db.getUserID(link_hash)
-             if informer_id is None:
+             user_id = spot_db.getUserID(link_hash)
+             if user_id is None:
 	          logconsole.info("user does not exist with link_hash "+link_hash+" checking if referal was sent")
                   ref_id = spot_db.getReferral(link_hash)
                   if ref_id is None:
@@ -207,17 +206,17 @@ def get_referral():
 	             logconsole.info("referal has already been sent for link_hash "+link_hash)
                      reference['rejected'].append(link_hash)
              else:
-	          logconsole.info("user does exist with link_hash "+link_hash)
+	          logconsole.info("user exists with link_hash "+link_hash)
                   reference['rejected'].append(link_hash)
     if len(non_members) > 0: # some candidate not registered yet
 	logconsole.info("adding non_members "+str(non_members))
-        ref_id=spot_db.newReferral(request.json['id'],non_members)
-        if ref_id is None:
-            abort(400)
-        reference['ref']=ref_id
+        if not 'dryrun' in request.json: 
+           ref_id=spot_db.newReferral(request.json['id'],non_members)
+           if ref_id is None:
+              abort(400)
+           reference['ref']=ref_id
     else:
-	logconsole.info("all referral candidates were rejected, revoke role promoter")
-        reference['rejects']="all"
+	logconsole.info("all referral candidates were rejected")
       
     logconsole.info("referral response "+str(reference))
     return jsonify( { 'referral': make_public_referral(reference) } ), 201
