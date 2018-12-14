@@ -120,6 +120,40 @@ def get_map():
     resp.headers['Content-type'] = 'text/html'
     return resp
 
+@app.route('/spot/api/v1.0/newregister', methods = ['POST'])
+@auth.login_required
+def get_newregister():
+    logconsole.info("new register called with "+str(request.json))
+    if not request.json or not 'id' in request.json:
+        abort(400)
+    user = {
+        'id': request.json['id'],
+        'wallet': '0x123415235',
+        'created_at': time.time()
+    }
+    user_id=spot_db.getUserID(request.json['id'])
+    refer = None
+    if 'ref' in request.json:
+    	refer = request.json['ref']
+    if user_id is None :
+       spot_db.newUser(request.json['id'])
+       user_id = spot_db.getUserID(request.json['id'])
+       spot_db.giftBill(user_id, spot_db.last_day_of_month(datetime.datetime.fromtimestamp(time.time())), 20)
+    props = spot_db.getUserProperties(user_id)
+    logconsole.info("new registering user "+request.json['id']+" user_id="+user_id+" props="+str(props))
+    if refer != None:
+       (closedRefCnt,sender_id) = spot_db.closeReferral(refer,request.json['id'])
+       if closedRefCnt is None or sender_id is None or closedRefCnt == 0 :
+          logconsole.info("prevented attempt to use non existing or closed referral user_id="+user_id+" ref="+refer)
+       else:
+	  spot_db.giftBill(user_id, spot_db.last_day_of_month(datetime.datetime.fromtimestamp(time.time())), 10)
+	  spot_db.giftBill(sender_id, spot_db.last_day_of_month(datetime.datetime.fromtimestamp(time.time())), 10)
+	  logconsole.info("reference accepted, tokens granted, user_id="+user_id+" sender_id="+sender_id+" ref="+refer)
+	
+    user['roles']=props[0]
+    logconsole.info("new registered user "+request.json['id']+" db key ="+user_id+" props="+str(props))
+    return jsonify( { 'user': make_public_user(user) } ), 201
+
 @app.route('/spot/api/v1.0/register', methods = ['POST'])
 @auth.login_required
 def get_register():
@@ -195,19 +229,23 @@ def get_referral():
 	     logconsole.info("user "+request.json['id']+" has referred plenty, preventing mass referrals" )
              reference['rejected'].append(link_hash)
 	else:		
-             user_id = spot_db.getUserID(link_hash)
-             if user_id is None:
-	          logconsole.info("user does not exist with link_hash "+link_hash+" checking if referal was sent")
-                  ref_id = spot_db.getReferral(link_hash)
-                  if ref_id is None:
-	     	     logconsole.info("referal has not been sent for "+link_hash)
-                     non_members.append(link_hash)
-                  else:
-	             logconsole.info("referal has already been sent for link_hash "+link_hash)
-                     reference['rejected'].append(link_hash)
-             else:
-	          logconsole.info("user exists with link_hash "+link_hash)
+             if link_hash == request.json['id']: 
+	          logconsole.info("self reference attempt with link_hash "+link_hash+" prevented")
                   reference['rejected'].append(link_hash)
+             else:
+             	  user_id = spot_db.getUserID(link_hash)
+		  if user_id is None:
+		      logconsole.info("user does not exist with link_hash "+link_hash+" checking if referal was sent")
+		      ref_id = spot_db.getReferral(link_hash)
+	              if ref_id is None:
+			  logconsole.info("referal has not been sent for "+link_hash)
+			  non_members.append(link_hash)
+		      else:
+			  logconsole.info("referal has already been sent for link_hash "+link_hash)
+			  reference['rejected'].append(link_hash)
+		  else:
+	              logconsole.info("user exists with link_hash "+link_hash)
+		      reference['rejected'].append(link_hash)
     if len(non_members) > 0: # some candidate not registered yet
 	logconsole.info("adding non_members "+str(non_members))
         if not 'dryrun' in request.json: 

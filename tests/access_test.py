@@ -175,12 +175,38 @@ class TestAccess(unittest.TestCase):
             rid = refjson["reference"]["ref"]
             npayload = payload
 	    npayload['ref'] = rid	
-	    npayload['id'] = test_users[2] # previous user to avoud refering yourself
+	    npayload['id'] = test_users[2] # previous user to avoid refering yourself
 	    logging.info("refering "+str(npayload))
             r = self.postit( ur + "/spot/api/v1.0/register", npayload )
             self.assertTrue( r.status_code == 201 )
             r = self.postit( ur + "/spot/api/v1.0/register", npayload )
             self.assertTrue( r.status_code == 201 )
+
+    def test_09_referral(self):
+	pu = None	
+        for u in test_users:
+            self._step_started_at = time.time()
+            payload = {"id":u,"links":[u+"_bro1",u+"_bro2"]}
+            for ur in urls:
+                r = self.postit( ur + "/spot/api/v1.0/referral", payload )
+                self.assertTrue( r.status_code == 201 )
+                refjson = json.loads(r.text)
+                rid = refjson["referral"]["ref"]
+                r = self.postit( ur + "/spot/api/v1.0/newregister", payload )
+                self.assertTrue( r.status_code == 201 )
+		regjson = json.loads(r.text)
+		self.assertTrue( "user" in regjson )
+		self.assertTrue( "created_at" in regjson["user"] )
+		self.assertTrue( "id" in regjson["user"] )
+		self.assertTrue( "roles" in regjson["user"] )
+		if pu != None:
+			npayload = payload
+			npayload['ref'] = rid	
+			npayload['id'] = pu # previous user to avoid refering yourself
+			logging.info("refering "+str(npayload))
+                	r = self.postit( ur + "/spot/api/v1.0/register", npayload )
+                	self.assertTrue( r.status_code == 201 )
+	    pu = u
 
 
 #

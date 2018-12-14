@@ -118,6 +118,8 @@ def cleanUp(users) :
 
 		cur = lconn.cursor() 
 		try:
+	        	cur.execute("delete FROM link WHERE referral_id = (select id from referral where sender_id = '%s')" % (informer_id,))
+	        	cur.execute("delete FROM referral where sender_id = '%s'" % (informer_id,))
 	        	cur.execute("delete FROM occupy WHERE taker_id = '%s'" % (informer_id,))
 	        	cur.execute("delete FROM parked WHERE informer_id = '%s'" % (informer_id,))
 	        	cur.execute("delete FROM bill WHERE user_id = '%s'" % (informer_id,))
@@ -160,7 +162,6 @@ def countReferrals(user) :
 	if sender_id == None:
 		return None
         lconn = g_pool.getconn()
-        lconn = g_pool.getconn()
 	cur = lconn.cursor() 
 	cur.execute("select count(*) from huhula.referral r inner join huhula.link l on (l.referral_id = r.id) where r.sender_id = '%s' and not l.updated_at is null " % (sender_id,))
 	row = cur.fetchone()
@@ -177,33 +178,15 @@ def countReferrals(user) :
 def newReferral(user,non_members) :
 	sender_id=getUserID(user)
 	if sender_id == None:
-		return None
+	    return None
         lconn = g_pool.getconn()
 	cur = lconn.cursor()
 	try: 
-	        cur.execute("INSERT INTO referral(sender_id) values(%s) RETURNING id;", (sender_id,))
-		reference=cur.fetchone()[0]
-		for to_hash in non_members:
-	        	cur.execute("INSERT INTO link(referral_id,to_hash) values(%s,%s);", (reference,to_hash,))
-		return reference
-        except Exception as error:
-            jts = traceback.format_exc()
-            logconsole.error(jts)
-            lconn.rollback()
-            return None
- 	finally:
-		cur.close()
-                lconn.commit()
-        	g_pool.putconn(lconn)
-	return None
-
-def closeReferral(referral_id,user_hash) :
-        lconn = g_pool.getconn()
-	cur = lconn.cursor()
-	try: 
-	    cur.execute("update referral set updated_at=now() where referral_id=%s and to_hash=%s and updated_at is null ", (referral_id,user_hash,))
-            if cur.rowcount > 0:
-               return cur.rowcount
+	    cur.execute("INSERT INTO referral(sender_id) values(%s) RETURNING id;", (sender_id,))
+	    reference=cur.fetchone()[0]
+	    for to_hash in non_members:
+	        cur.execute("INSERT INTO link(referral_id,to_hash) values(%s,%s);", (reference,to_hash,))
+	    return reference
         except Exception as error:
             jts = traceback.format_exc()
             logconsole.error(jts)
@@ -215,10 +198,44 @@ def closeReferral(referral_id,user_hash) :
             g_pool.putconn(lconn)
 	return None
 
+def closeReferral(referral_id,user_hash) :
+        lconn = g_pool.getconn()
+	cur = lconn.cursor()
+	try: 
+	    cur.execute("update link set updated_at=now() where referral_id=%s and to_hash=%s and updated_at is null ", (referral_id,user_hash,))
+            rc = cur.rowcount
+            sender_id = getReferralSender(referral_id)
+            return (rc, sender_id)
+        except Exception as error:
+            jts = traceback.format_exc()
+            logconsole.error(jts)
+            lconn.rollback()
+            return None
+ 	finally:
+	    cur.close()
+            lconn.commit()
+            g_pool.putconn(lconn)
+	return None
+
+def getReferralSender(referral_id) :
+        lconn = g_pool.getconn()
+	cur = lconn.cursor() 
+	cur.execute("select distinct sender_id from referral where id = '%s' " % (referral_id,))
+	row = cur.fetchone()
+	try: 
+		if row:
+			return row[0]
+		else:
+			return None
+	finally:
+		cur.close()
+                lconn.commit()
+        	g_pool.putconn(lconn)
+
 def getReferral(userhash) :
         lconn = g_pool.getconn()
 	cur = lconn.cursor() 
-	cur.execute("SELECT id FROM link WHERE to_hash = '%s'" % (userhash,))
+	cur.execute("SELECT referral_id FROM link WHERE to_hash = '%s'" % (userhash,))
 	row = cur.fetchone()
 	try: 
 		if row:
