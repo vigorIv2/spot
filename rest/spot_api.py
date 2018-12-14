@@ -215,6 +215,7 @@ def get_refer():
 def get_referral():
     logconsole.info("referral called with "+str(request.json))
     if not request.json or not 'id' in request.json or not 'links' in request.json :
+    	logconsole.info("returning 400 id "+request.json['id']+" request "+str(request))
         abort(400)
 
     reference = {
@@ -251,7 +252,8 @@ def get_referral():
         if not 'dryrun' in request.json: 
            ref_id=spot_db.newReferral(request.json['id'],non_members)
            if ref_id is None:
-              abort(400)
+    	      logconsole.info("returning 403 id "+request.json['id'])
+              abort(403)
            reference['ref']=ref_id
     else:
 	logconsole.info("all referral candidates were rejected")

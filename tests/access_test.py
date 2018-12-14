@@ -189,9 +189,11 @@ class TestAccess(unittest.TestCase):
             payload = {"id":u,"links":[u+"_bro1",u+"_bro2"]}
             for ur in urls:
                 r = self.postit( ur + "/spot/api/v1.0/referral", payload )
+                print "refer status code "+str(r.status_code) 
                 self.assertTrue( r.status_code == 201 )
                 refjson = json.loads(r.text)
                 rid = refjson["referral"]["ref"]
+                payload = {"id":u,"ref":rid}
                 r = self.postit( ur + "/spot/api/v1.0/newregister", payload )
                 self.assertTrue( r.status_code == 201 )
 		regjson = json.loads(r.text)
