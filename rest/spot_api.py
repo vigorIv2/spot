@@ -64,6 +64,12 @@ def make_public_reference(ref):
         new_ref[field] = ref[field]
     return new_ref
 
+def make_public_referral(ref):
+    new_ref = {}
+    for field in ref:
+        new_ref[field] = ref[field]
+    return new_ref
+
 def data_points(arr):
     mn = min(arr)
     mx = max(arr)
@@ -169,6 +175,51 @@ def get_refer():
     reference['ref']=ref_id
     logconsole.info("reference response "+str(reference))
     return jsonify( { 'reference': make_public_reference(reference) } ), 201
+
+@app.route('/spot/api/v1.0/referral', methods = ['POST'])
+@auth.login_required
+def get_referral():
+    logconsole.info("referral called with "+str(request.json))
+    if not request.json or not 'id' in request.json or not 'links' in request.json :
+        abort(400)
+
+    reference = {
+        'id': request.json['id'],
+        'rejected': []
+    }
+    referralsCnt=spot_db.countReferrals(request.json['id'])
+    logconsole.info("number of user "+request.json['id']+" referrals is equal "+str(referralsCnt))
+    non_members = [] 
+    for link_hash in request.json['links']:
+        if (len(non_members) + referralsCnt) >= 30:
+	     logconsole.info("user "+request.json['id']+" has referred plenty, preventing mass referrals" )
+             reference['rejected'].append(link_hash)
+	else:		
+             user_id = spot_db.getUserID(link_hash)
+             if user_id is None:
+	          logconsole.info("user does not exist with link_hash "+link_hash+" checking if referal was sent")
+                  ref_id = spot_db.getReferral(link_hash)
+                  if ref_id is None:
+	     	     logconsole.info("referal has not been sent for "+link_hash)
+                     non_members.append(link_hash)
+                  else:
+	             logconsole.info("referal has already been sent for link_hash "+link_hash)
+                     reference['rejected'].append(link_hash)
+             else:
+	          logconsole.info("user exists with link_hash "+link_hash)
+                  reference['rejected'].append(link_hash)
+    if len(non_members) > 0: # some candidate not registered yet
+	logconsole.info("adding non_members "+str(non_members))
+        if not 'dryrun' in request.json: 
+           ref_id=spot_db.newReferral(request.json['id'],non_members)
+           if ref_id is None:
+              abort(400)
+           reference['ref']=ref_id
+    else:
+	logconsole.info("all referral candidates were rejected")
+      
+    logconsole.info("referral response "+str(reference))
+    return jsonify( { 'referral': make_public_referral(reference) } ), 201
 
 @app.route('/spot/api/v1.0/balance', methods = ['POST'])
 @auth.login_required
