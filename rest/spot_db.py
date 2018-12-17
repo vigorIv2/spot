@@ -348,10 +348,10 @@ def locateSpot(latitude0,longitude0) :
 
 
 def getReportedSpots(rid,hd) :
-	if rid.isnumeric():
-		informer_id=getUserID(rid)
-	else:
+	if '-' in rid:
 		informer_id=rid
+	else:
+		informer_id=getUserID(rid)
 	if informer_id == None: 
 		return 404
         selsql = "select longitude, latitude from huhula.spots as sp where sp.informer_id = '%s' and age(sp.inserted_at) < INTERVAL '%sh'" % (informer_id,hd,)
