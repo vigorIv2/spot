@@ -2,11 +2,28 @@ select substring(cast(inserted_at as string),1,16),* from huhula.spots order by 
 
 use huhula;
 
+select distinct sender_id from huhula.referral r join huhula.link l on (l.referral_id = r.id) where l.to_hash = 'sdsdfsdf';
+
+-- how to grant permission
+update huhula.users set roles = array['promoter', 'developer','tester','vendor']
+where userhash in ('416ea5d65c8f81fde25acf5d6f5cef87','ffcf1a3fc66ad451624bd17addca9b31','110702347223414307958');
+
+delete from huhula.link;
+delete from huhula.referral;
+
+select * from huhula.referral;
+select * from huhula.link;
 
 
 select * from huhula.reference limit 10;
 select * from huhula.users;
 select * from huhula.bill order by inserted_at desc ;
+
+insert into huhula.referral(sender_id,to_hash) values('0ba082d9-1ffe-432e-babc-9ba097bdca83',array['refer1','refer22']);
+
+select * from huhula.referral;
+
+
 
 delete FROM huhula.reference ;
 

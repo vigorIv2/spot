@@ -4,7 +4,7 @@ CREATE USER huhulaman WITH PASSWORD 'sEBx9gjgzfo';
 ALTER USER huhulaman WITH PASSWORD 'xxxxxxxxx';
 
 
-GRANT select, insert, update, delete ON TABLE huhula.users, huhula.spots, huhula.occupy, huhula.parked, huhula.bill, huhula.reference TO huhulaman;
+GRANT select, insert, update, delete ON TABLE huhula.users, huhula.spots, huhula.occupy, huhula.parked, huhula.bill, huhula.reference, huhula.referral, huhula.link TO huhulaman;
 
 GRANT select ON TABLE huhula.bill_payable TO huhulaman;
 
@@ -42,15 +42,7 @@ alter table huhula.users add column account string;
 
 -- alter table huhula.users add column balance double precision default 0 ;
 
-select * from huhula.users limit 10;
-
-CREATE TABLE huhula.users(
-  id UUID PRIMARY KEY default gen_random_uuid(),
-  inserted_at TIMESTAMP not null DEFAULT now(),
-  userhash string not null,
-  unique INDEX (userhash)
-);  
-
+select * from huhula.users limit 10;f
 
 alter table huhula.users add column wallet_balance double precision not null default 0;
 alter table huhula.users add column chain_date TIMESTAMP;
@@ -125,33 +117,6 @@ update huhula.users set roles = array['vendor'] ;
 
 where userhash in ('113989703630504660150','117684205293445461401','110702347223414307958');
 
-
-insert into huhula.users(userhash) values('patient zero');
-insert into huhula.users(userhash) values('strix');
-insert into huhula.users(userhash) values('owl');
-insert into huhula.users(userhash) values('olga');
-insert into huhula.users(userhash) values('daniel');
-insert into huhula.users(userhash) values('Ivan');
-insert into huhula.users(userhash) values('Igor');
-insert into huhula.users(userhash) values('Vladimir');
--- drop TABLE huhula.spots;
-/*
-CREATE TABLE huhula.spots(
-  id UUID PRIMARY KEY default gen_random_uuid(),
-  informer_id UUID references users not null,
-  inserted_at TIMESTAMPTZ not null DEFAULT now(),
-  informed_at int not null,
-  taken_at TIMESTAMP null,
-  taker_id UUID references users null,
-  azimuth decimal(8,5) not null,
-  altitude decimal(19,15) not null,
-  longitude decimal(19,15) not null,
-  latitude decimal(19,15) not null,
-  spot int not null,
-  compaint string null
-  client_at int not null
-);
-*/
 
 -- drop TABLE huhula.spotsfloat;
 
@@ -264,8 +229,24 @@ CREATE TABLE huhula.reference(
   from_url string
 );
 
+drop table  huhula.referral;
 
+CREATE TABLE huhula.referral(
+  id UUID PRIMARY KEY default gen_random_uuid(),
+  sender_id UUID references huhula.users not null,
+  inserted_at TIMESTAMPTZ not null DEFAULT now()
+)
 
+drop table  huhula.link;
+
+CREATE TABLE huhula.link(
+  id UUID PRIMARY KEY default gen_random_uuid(),
+  referral_id UUID references huhula.referral not null,
+  to_hash string not null,
+  inserted_at TIMESTAMPTZ not null DEFAULT now(),
+  updated_at TIMESTAMPTZ,
+  INDEX (to_hash)
+)
 
 
 

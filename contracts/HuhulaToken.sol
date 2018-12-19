@@ -1,4 +1,4 @@
-pragma solidity ^0.4.18;
+pragma solidity ^0.5.0;
 
 import "openzeppelin-solidity/contracts/token/ERC20/CappedToken.sol";
 import "openzeppelin-solidity/contracts/token/ERC20/PausableToken.sol";
@@ -12,7 +12,7 @@ contract HuhulaToken is CappedToken(700000000000000), PausableToken(), BurnableT
   string public symbol = "HUHU";
   uint256 public decimals = 6;
 
-  constructor(string tokenName, string tokenSymbol) public {
+  constructor(string memory tokenName, string memory tokenSymbol) public {
 	  name = tokenName;
 	  symbol = tokenSymbol;
   }
