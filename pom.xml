@@ -46,7 +46,7 @@
         <top.dir>${project.basedir}/..</top.dir>
         <timestamp>${maven.build.timestamp}</timestamp>
         <maven.build.timestamp.format>yyyy-MM-dd HH:mm</maven.build.timestamp.format>
-        <web3j.version>3.5.0</web3j.version>
+        <web3j.version>3.6.0</web3j.version>
     </properties>
 
     <dependencies>

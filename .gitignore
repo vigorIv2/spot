@@ -1,10 +1,9 @@
 my-safe-directory
-nohup_huhuladb*.out
 build/
 keystore/
 .utc-acct.json
 .idea/*
-**/flask/*/
+flask/*
 .conf
 logs/
 .DS_Store
@@ -19,16 +18,10 @@ rest/spot_msk.pyc
 rest/spot_db.pyc
 rest/spot_kml.pyc
 rest/spot_billing.pyc
-huhuladb00/
-huhuladb01/
-huhuladb02/
 certs
 target
 testusers.txt
-nohup.out
 errors.log
-cockroach-data/
-debug.log
 rest/maps/ag_*
 .env
 test_web2py/
@@ -37,8 +30,3 @@ flow-typed/
 node_modules/
 truffle-config.js
 truffle.js
-node0_nohup.out
-node3/
-node3_nohup.out
-node4/
-node4_nohup.out
