@@ -1,5 +1,6 @@
 my-safe-directory
 build/
+tmp/
 keystore/
 .utc-acct.json
 .idea/*
