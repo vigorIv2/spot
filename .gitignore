@@ -1,10 +1,9 @@
 my-safe-directory
-nohup_huhuladb*.out
 build/
 keystore/
 .utc-acct.json
 .idea/*
-**/flask/*/
+flask/*
 .conf
 logs/
 .DS_Store
@@ -12,6 +11,7 @@ src/.DS_Store
 src/main/.DS_Store
 src/main/java/.DS_Store
 src/main/java/com/.DS_Store
+debug.log
 spot_api.pyc
 spot_db.pyc
 rest/spot_api.pyc
@@ -22,10 +22,7 @@ rest/spot_billing.pyc
 certs
 target
 testusers.txt
-nohup.out
 errors.log
-cockroach-data/
-debug.log
 rest/maps/ag_*
 .env
 test_web2py/

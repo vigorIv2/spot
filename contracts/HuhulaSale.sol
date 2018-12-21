@@ -24,7 +24,7 @@ contract HuhulaSale is Ownable, TimedCrowdsale(block.timestamp + 1, block.timest
     Crowdsale(23356, 0xa4aA1C90f02265d189a96207Be92597fFEaD54D2, new HuhulaToken("Huhula spot","HUHU") ) {
   }
 
-  function calcTokens(uint256 weiAmount) internal pure returns(uint256) {
+  function calcTokens(uint256 weiAmount) internal view returns(uint256) {
     // calculate token amount to be sent to buyer
     uint256 tokens = weiAmount.mul(rate).mul(1000000).div(1 ether).div(100);
     uint256 tokensLeft = HuhulaToken(token).cap().sub(token.totalSupply());

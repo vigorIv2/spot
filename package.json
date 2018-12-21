@@ -1,5 +1,5 @@
 {
-  "name": "shack-crowdsale",
+  "name": "spot-crowdsale",
   "version": "1.0.0",
   "description": "Solidity Contracts for the SHACk SHAC Token",
   "main": "y",
@@ -25,8 +25,7 @@
     "shelljs": "^0.8.2",
     "text-encoding": "^0.6.4",
     "web3": "^0.18.4",
-    "web3-provider-engine": "^13.8.0",
-    "zeppelin": "0.0.3"
+    "web3-provider-engine": "^13.8.0"
   },
   "devDependencies": {
     "babel-polyfill": "^6.26.0",
