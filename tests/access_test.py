@@ -194,7 +194,7 @@ class TestAccess(unittest.TestCase):
                 refjson = json.loads(r.text)
                 rid = refjson["referral"]["ref"]
                 payload = {"id":u,"ref":rid}
-                r = self.postit( ur + "/spot/api/v1.0/newregister", payload )
+                r = self.postit( ur + "/spot/api/v1.0/register", payload )
                 self.assertTrue( r.status_code == 201 )
 		regjson = json.loads(r.text)
 		self.assertTrue( "user" in regjson )

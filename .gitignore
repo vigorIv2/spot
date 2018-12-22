@@ -6,6 +6,7 @@ keystore/
 flask/*
 .conf
 logs/
+debug.log
 .DS_Store
 src/.DS_Store
 src/main/.DS_Store

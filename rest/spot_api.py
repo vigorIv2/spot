@@ -120,7 +120,7 @@ def get_map():
     resp.headers['Content-type'] = 'text/html'
     return resp
 
-@app.route('/spot/api/v1.0/newregister', methods = ['POST'])
+@app.route('/spot/api/v1.0/register', methods = ['POST'])
 @auth.login_required
 def get_newregister():
     logconsole.info("new register called with "+str(request.json))
@@ -154,7 +154,7 @@ def get_newregister():
     logconsole.info("new registered user "+request.json['id']+" db key ="+user_id+" props="+str(props))
     return jsonify( { 'user': make_public_user(user) } ), 201
 
-@app.route('/spot/api/v1.0/register', methods = ['POST'])
+@app.route('/spot/api/v1.0/oldregister', methods = ['POST'])
 @auth.login_required
 def get_register():
     logconsole.info("register called with "+str(request.json))
