@@ -76,6 +76,26 @@ def data_points(arr):
     av = (mx - mn) / len(arr)
     return mn,mx,av+mn
 	
+@app.route('/spot/api/v1.0/usage', methods = ['GET'])
+#@auth.login_required
+def get_usage():
+    hd = request.args.get('hd', "8760")
+    if not hd.isdigit():
+      hd = "8760"
+    logconsole.info("running usage with hd="+str(hd))
+    usage_array=spot_db.getSpotClusters(hd)
+    logconsole.info("coords usage returned "+str(usage_array))
+    html = "<html><body><h1>Empty</h1></body></html>"
+    if usage_array != None and len(usage_array) > 0:
+        html = "<html><body><table border='1' cellpadding='0' cellspacing='0' width='400px'>"
+        html += "<tr><th>Qty</th><th>Date</th><th>Lon</th><th>Lat</th><th>map</th></tr>"
+        for r in usage_array:
+	   html += "<tr><td>"+str(r[0])+"</td><td>"+str(r[1])+"</td><td>"+str(r[2])+"</td><td>"+str(r[3])+"<td><a href=\"/spot/api/v1.0/map?hd=8760&lt="+str(r[3])+"&lg="+str(r[2])+"\">map</a></td></tr>"
+        html += "</table></body></html>"
+    resp = make_response(html, 200)
+    resp.headers['Content-type'] = 'text/html'
+    return resp
+
 @app.route('/spot/api/v1.0/map', methods = ['GET'])
 #@auth.login_required
 def get_map():

@@ -418,6 +418,51 @@ def getNearSpots(lt,lg,hd) :
             lconn.commit()
             g_pool.putconn(lconn)
 
+def getAllNearSpots(lt,lg,hd) :
+        selsql = """select longitude, latitude from (
+                select sp.id, age(sp.inserted_at) as age, 
+                        (longitude*pi()/180 - %s*pi()/180) * cos((latitude*pi()/180 + %s*pi()/180)/2) as dl,
+                        (latitude*pi()/180 - %s*pi()/180) as df, latitude, longitude from huhula.spots as sp   
+                where age(sp.inserted_at) < INTERVAL '%sh'
+                order by age(sp.inserted_at) 
+                ) where sqrt(df*df + dl*dl) * 6371e3 < 20000 
+                  order by sqrt(df*df + dl*dl) * 6371e3, age
+                """ % (lg,lt,lt,hd,)
+        logconsole.debug("SQL:" + selsql)
+       	lconn = g_pool.getconn()
+	cur = lconn.cursor() 
+        try:
+            cur.execute(selsql)
+            rows=cur.fetchall()
+            if rows:
+                return rows
+            else:
+                return None
+        finally:
+	    cur.close()
+            lconn.commit()
+            g_pool.putconn(lconn)
+
+def getSpotClusters(hd) :
+        selsql = """select count(*), cast(max(s.inserted_at) as date), 
+round(longitude,2) as lg, round(latitude,2) as lt
+from huhula.spots s where age(s.inserted_at) < INTERVAL '%sh'
+group by round(longitude,2), round(latitude,2)
+order by round(longitude,2) limit 5000""" % (hd,)
+        logconsole.debug("SQL:" + selsql)
+       	lconn = g_pool.getconn()
+	cur = lconn.cursor() 
+        try:
+            cur.execute(selsql)
+            rows=cur.fetchall()
+            if rows:
+                return rows
+            else:
+                return None
+        finally:
+	    cur.close()
+            lconn.commit()
+            g_pool.putconn(lconn)
 
 def revokeRole(user,role) :
        	lconn = g_pool.getconn()
