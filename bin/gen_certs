@@ -1,0 +1,34 @@
+#!/usr/bin/bash -v
+cockroach cert create-ca --certs-dir=certs --ca-key=my-safe-directory/ca.key
+
+cockroach cert create-client root --certs-dir=certs --ca-key=my-safe-directory/ca.key
+
+
+cockroach cert create-node \
+	localhost \
+	$(hostname) \
+	--certs-dir=certs \
+	--ca-key=my-safe-directory/ca.key
+
+
+
+cockroach cert create-client --certs-dir=certs --ca-key=my-safe-directory/ca.key huhulaman
+
+cockroach cert create-node localhost $(hostname) --certs-dir=certs --ca-key=my-safe-directory/ca.key
+
+openssl x509 -in certs/client.huhulaman.crt -inform pem -outform der -out certs/client.huhulaman.der  
+openssl pkcs8 -topk8 -inform PEM -outform DER -in certs/client.huhulaman.key -out certs/client.huhulaman.key.pk8 -nocrypt 
+
+
+#jdbc:postgresql://huhuladb00:26257/mydb?user=root&sslcert=/Users/ivasilchikov/spot/certs/client.root.der&sslkey=/Users/ivasilchikov/spot/certs/client.root.key.pk8&sslmode=require&ssl=true
+
+
+openssl x509 -in certs/client.huhulaman.crt -inform pem -outform der -out certs/client.huhulaman.der
+openssl pkcs8 -topk8 -inform PEM -outform DER -in certs/client.huhulaman.key -out ./certs/client.huhulaman.key.pk8 -nocrypt
+
+
+cockroach user set huhu --certs-dir=certs --host huhuladb00
+
+cockroach user set huhu --certs-dir=certs --host huhuladb00 --password
+
+cockroach sql --certs-dir=certs --host huhuladb00 -u huhulaman

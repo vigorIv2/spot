@@ -4,7 +4,7 @@ CREATE USER huhulaman WITH PASSWORD 'sEBx9gjgzfo';
 ALTER USER huhulaman WITH PASSWORD 'xxxxxxxxx';
 
 
-GRANT select, insert, update, delete ON TABLE huhula.users, huhula.spots, huhula.occupy, huhula.parked, huhula.bill, huhula.reference TO huhulaman;
+GRANT select, insert, update, delete ON TABLE huhula.users, huhula.spots, huhula.occupy, huhula.parked, huhula.bill, huhula.reference, huhula.referral, huhula.link TO huhulaman;
 
 GRANT select ON TABLE huhula.bill_payable TO huhulaman;
 

@@ -27,6 +27,14 @@ test_intranet1:
 	@echo starting test access to site via intranet
 	PYTHONPATH=rest python2 ./tests/access_test.py "http://192.168.0.211:2080" 
 
+test_localhost8000:
+	@echo starting test access to site via intranet localhost
+	PYTHONPATH=rest python2 ./tests/access_test.py "http://127.0.0.1:8000" 
+
+test_localhost80:
+	@echo starting test access to site via intranet localhost
+	PYTHONPATH=rest python2 ./tests/access_test.py "http://127.0.0.1:80" 
+
 test_msk:
 	@echo starting test apidata.mos.ru
 	PYTHONPATH=rest python2 ./tests/msk_test.py 

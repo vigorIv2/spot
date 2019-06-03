@@ -1,3 +1,4 @@
+cockroach cert create-ca --certs-dir=certs --ca-key=my-safe-directory/ca.key
 
 cockroach cert create-client --certs-dir=certs --ca-key=my-safe-directory/ca.key ivasilchikov
 

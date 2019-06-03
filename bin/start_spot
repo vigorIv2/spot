@@ -1,5 +1,5 @@
 #!/bin/bash
-cd /home/ubuntu/spot
+cd /home/vigor/spot/rest
 killall spot_api.py
 PW=`pwd`
 nohup ${PW}/spot_api.py &

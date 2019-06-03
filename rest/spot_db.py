@@ -17,7 +17,7 @@ logconsole.debug("Debug CONSOLE")
 
 def initPool():
     global g_pool
-    cs = "postgresql://huhuladb00:26257/huhula?user=huhulaman&sslcert=/home/ubuntu/spot/certs/client.huhulaman.crt&sslkey=/home/ubuntu/spot/certs/client.huhulaman.key&sslmode=require&ssl=true"
+    cs = "postgresql://huhuladb00:26257/huhula?user=huhulaman&sslcert=/home/vigor/spot/certs/client.huhulaman.crt&sslkey=/home/vigor/spot/certs/client.huhulaman.key&sslmode=require&ssl=true"
     g_pool = SimpleConnectionPool(1, 9, cs)
 
 #    con = g_pool.getconn()
@@ -29,8 +29,10 @@ initPool()
 def openConnoldStyle():
 	global conn
 	global cur
-#	conn = psycopg2.connect(database="huhula", user="root", host="roachdb", port=26257)
-        cs = "postgresql://huhuladb00:26257/huhula?user=huhulaman&sslcert=/home/ubuntu/spot/certs/client.huhulaman.crt&sslkey=/home/ubuntu/spot/certs/client.huhulaman.key&sslmode=require&ssl=true"
+#	conn = psycopg2.connect(database="huhula", user="root", host="huhuladb00", port=26257)
+
+# secure way :
+        cs = "postgresql://huhuladb00:26257/huhula?user=huhulaman&sslcert=/home/vigor/spot/certs/client.huhulaman.crt&sslkey=/home/vigor/spot/certs/client.huhulaman.key&sslmode=require&ssl=true"
         conn = psycopg2.connect(cs)
 
 	conn.set_session(autocommit=True)
