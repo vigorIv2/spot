@@ -31,3 +31,5 @@ flow-typed/
 node_modules/
 truffle-config.js
 truffle.js
+**/certs
+**/my-safe-directory

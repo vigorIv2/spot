@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-configmap
+data:
+  cockroachdbSiteName: {{ .Values.siteName | default .Release.Name }}
+  cocroachdbStorage: {{ .Values.storageSize | default "70Gi" }}
