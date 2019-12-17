@@ -1,0 +1,7 @@
+setuptools
+cockroachdb
+psycopg2-binary
+gunicorn
+flask
+flask_httpauth
+pyyaml

@@ -33,3 +33,4 @@ truffle-config.js
 truffle.js
 **/certs
 **/my-safe-directory
+**/.pgpass
