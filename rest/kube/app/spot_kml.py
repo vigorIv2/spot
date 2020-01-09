@@ -5,12 +5,12 @@ import io
 
 def gen_kml(ca,ufn):
         with io.open(ufn, 'w', encoding='utf-8') as outfile:
-                outfile.write(unicode("<?xml version=\"1.0\" ?>\n<kml>\n<Document>\n"))
+                outfile.write("<?xml version=\"1.0\" ?>\n<kml>\n<Document>\n")
                 if ca != None:
                         for row in ca:
                                 l="<Placemark><Point><coordinates>"+str(row[0])+","+str(row[1])+"</coordinates></Point></Placemark>\n"
-                                outfile.write(unicode(l))
-                outfile.write(unicode("</Document>\n</kml>\n"))
+                                outfile.write(l)
+                outfile.write("</Document>\n</kml>\n")
 
 def gen_html(nlat,nlon,ufn):
         result="""<html>

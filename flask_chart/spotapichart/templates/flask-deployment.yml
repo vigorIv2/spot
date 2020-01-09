@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.siteName }}
+  labels:
+    name: {{ .Values.siteName }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Values.siteName }}
+      name: {{ .Values.siteName }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.siteName }}
+        name: {{ .Values.siteName }}
+    spec:
+      containers:
+      - name: {{ .Values.siteName }}
+        imagePullPolicy: IfNotPresent
+        image: {{ .Values.image.repository }}
+        env:
+        - name: FLASK_ENV
+          value: "DEV"
+        - name: COCKROACHDB_USER
+          valueFrom:
+            secretKeyRef:
+              name: cockroachdb-credentials
+              key: user
+        - name: COCKROACHDB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: cockroachdb-credentials
+              key: password
+      restartPolicy: Always
+

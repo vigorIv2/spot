@@ -34,3 +34,4 @@ truffle.js
 **/certs
 **/my-safe-directory
 **/.pgpass
+**/secret.yml

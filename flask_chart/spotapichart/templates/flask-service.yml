@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.siteName }}
+  labels:
+    service: {{ .Values.siteName }}
+spec:
+  selector:
+    app: {{ .Values.siteName }}
+  ports:
+  - port: {{ .Values.spotapiport }}
+    targetPort: {{ .Values.spotapiport }}
+  selector:
+    app: {{ .Values.siteName }}
+
